@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRE · Claro BR — Motor de Precificação Nativa</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F6F9;
+    color: #1A1A1A;
+    line-height: 1.55;
+  }
+  .page { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #032D60 0%, #011E41 100%);
+    border-radius: 12px;
+    padding: 48px 40px;
+    color: #fff;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(1,118,211,0.12);
+  }
+  .hero-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.55);
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 32px; font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 14px;
+  }
+  .hero p {
+    font-size: 15px; color: rgba(255,255,255,0.78); max-width: 580px;
+    margin-bottom: 28px; line-height: 1.6;
+  }
+  .hero-kpis { display: flex; gap: 28px; flex-wrap: wrap; }
+  .hero-kpi { text-align: center; }
+  .hero-kpi .val { font-size: 26px; font-weight: 800; color: #fff; }
+  .hero-kpi .lbl { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+  /* Section title */
+  .section-title {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #5A5A5A;
+    margin-bottom: 16px; margin-top: 36px;
+  }
+
+  /* Card grid */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .card {
+    background: #fff; border-radius: 8px; border: 1px solid #E0E0E0;
+    padding: 20px 22px; text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { border-color: #0176D3; box-shadow: 0 2px 12px rgba(1,118,211,0.12); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .card-icon { font-size: 22px; }
+  .badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 10px;
+  }
+  .badge-ok      { background: #E8F5E9; color: #2E7D32; }
+  .badge-warn    { background: #FFF3E0; color: #E65C00; }
+  .badge-pending { background: #E3F2FD; color: #0176D3; }
+  .badge-info    { background: #F3E5F5; color: #6A1B9A; }
+  .card h3 { font-size: 15px; font-weight: 700; color: #032D60; }
+  .card p  { font-size: 13px; color: #555; line-height: 1.5; }
+  .card-link { font-size: 12px; color: #0176D3; margin-top: auto; font-weight: 500; }
+
+  /* Perf summary */
+  .perf-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 16px;
+  }
+  .perf-card {
+    background: #fff; border-radius: 8px; border: 1px solid #E0E0E0;
+    padding: 16px; text-align: center;
+  }
+  .perf-val { font-size: 24px; font-weight: 800; }
+  .perf-lbl { font-size: 11px; color: #777; margin-top: 4px; line-height: 1.4; }
+  .perf-note { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+  /* Timeline */
+  .timeline { display: flex; gap: 0; margin: 16px 0; flex-wrap: wrap; }
+  .tl-step {
+    flex: 1; min-width: 180px;
+    background: #fff; border: 1px solid #E0E0E0;
+    border-radius: 0; padding: 14px 16px;
+    border-right: none; position: relative;
+  }
+  .tl-step:first-child { border-radius: 8px 0 0 8px; }
+  .tl-step:last-child  { border-right: 1px solid #E0E0E0; border-radius: 0 8px 8px 0; }
+  .tl-step.done  { border-top: 3px solid #2E7D32; }
+  .tl-step.doing { border-top: 3px solid #E65C00; }
+  .tl-step.next  { border-top: 3px solid #0176D3; }
+  .tl-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .tl-tag.done  { color: #2E7D32; }
+  .tl-tag.doing { color: #E65C00; }
+  .tl-tag.next  { color: #0176D3; }
+  .tl-step h4 { font-size: 13px; font-weight: 700; color: #032D60; margin-bottom: 4px; }
+  .tl-step p  { font-size: 11px; color: #666; }
+
+  /* Warning callout */
+  .callout {
+    border-radius: 8px; padding: 14px 18px;
+    display: flex; gap: 12px; align-items: flex-start;
+    margin: 16px 0;
+  }
+  .callout-warn { background: #FFF3E0; border-left: 3px solid #E65C00; }
+  .callout-info { background: #E3F2FD; border-left: 3px solid #0176D3; }
+  .callout p { font-size: 13px; line-height: 1.5; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 28px 20px; }
+    .hero h1 { font-size: 24px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .perf-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-label">Salesforce Industries · Business Rules Engine</div>
+    <h1>BRE · Claro BR<br>Motor de Precificação Nativa</h1>
+    <p>Documentação técnica da prova de conceito de precificação declarativa —
+       substituição do motor Apex monolítico por Expression Sets e Decision Matrices
+       nativas do Salesforce Industries.</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi"><div class="val">4</div><div class="lbl">POCs provadas</div></div>
+      <div class="hero-kpi"><div class="val">53/53</div><div class="lbl">cenários REST validados</div></div>
+      <div class="hero-kpi"><div class="val">60 req/s</div><div class="lbl">throughput medido</div></div>
+      <div class="hero-kpi"><div class="val">0</div><div class="lbl">linhas de Apex</div></div>
+    </div>
+  </div>
+
+  <!-- Seletor de público -->
+  <div class="section-title">Por onde começar — escolha seu perfil</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px">
+    <a href="docs/para-gestores.html" style="text-decoration:none;background:#032D60;border-radius:10px;padding:22px 20px;display:flex;flex-direction:column;gap:10px;color:#fff;transition:opacity 0.15s" onmouseover="this.style.opacity=0.88" onmouseout="this.style.opacity=1">
+      <div style="font-size:28px">👔</div>
+      <div style="font-size:15px;font-weight:800;line-height:1.3">Sou Gestor<br><span style="font-weight:400;font-size:13px;opacity:0.75">ou Tomador de Decisão</span></div>
+      <div style="font-size:12px;opacity:0.72;line-height:1.5">O que foi provado, riscos, ROI e as decisões que precisam ser tomadas agora.</div>
+      <div style="font-size:12px;font-weight:700;opacity:0.85;margin-top:auto">Visão executiva →</div>
+    </a>
+    <a href="docs/para-funcionais.html" style="text-decoration:none;background:#0176D3;border-radius:10px;padding:22px 20px;display:flex;flex-direction:column;gap:10px;color:#fff;transition:opacity 0.15s" onmouseover="this.style.opacity=0.88" onmouseout="this.style.opacity=1">
+      <div style="font-size:28px">📊</div>
+      <div style="font-size:15px;font-weight:800;line-height:1.3">Sou do Time Funcional<br><span style="font-weight:400;font-size:13px;opacity:0.75">Pricing, Produto ou Negócio</span></div>
+      <div style="font-size:12px;opacity:0.72;line-height:1.5">Como o BRE funciona, como ler e alterar regras, auditoria e governança sem código.</div>
+      <div style="font-size:12px;font-weight:700;opacity:0.85;margin-top:auto">Como o BRE funciona →</div>
+    </a>
+    <a href="docs/guia-bre.html" style="text-decoration:none;background:#1E3A5F;border-radius:10px;padding:22px 20px;display:flex;flex-direction:column;gap:10px;color:#fff;transition:opacity 0.15s" onmouseover="this.style.opacity=0.88" onmouseout="this.style.opacity=1">
+      <div style="font-size:28px">⚙️</div>
+      <div style="font-size:15px;font-weight:800;line-height:1.3">Sou Técnico<br><span style="font-weight:400;font-size:13px;opacity:0.75">Desenvolvedor ou Arquiteto</span></div>
+      <div style="font-size:12px;opacity:0.72;line-height:1.5">Guia técnico de criação de BRE, SFDX, XML, troubleshooting e testes de carga.</div>
+      <div style="font-size:12px;font-weight:700;opacity:0.85;margin-top:auto">Guia técnico →</div>
+    </a>
+  </div>
+
+  <!-- Recomendação -->
+  <a href="docs/recomendacao.html" style="text-decoration:none;display:block;background:linear-gradient(135deg,#032D60,#0176D3);border-radius:10px;padding:22px 28px;margin-bottom:28px;display:flex;align-items:center;gap:20px;color:#fff">
+    <div style="font-size:32px;flex-shrink:0">🎯</div>
+    <div style="flex:1">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;opacity:0.6;margin-bottom:4px">Documento definitivo</div>
+      <div style="font-size:16px;font-weight:800;line-height:1.3;margin-bottom:4px">Recomendação: adotar o BRE como motor de precificação</div>
+      <div style="font-size:13px;opacity:0.75;line-height:1.5">Evidências das 4 POCs · tese central · critério BRE vs. Apex · riscos · próximos passos</div>
+    </div>
+    <div style="font-size:13px;font-weight:700;opacity:0.85;flex-shrink:0">Ver recomendação →</div>
+  </a>
+
+  <!-- Performance summary -->
+  <div class="section-title">Resultados de performance — medidos</div>
+  <div class="perf-row">
+    <div class="perf-card">
+      <div class="perf-val" style="color:#2E7D32">60 req/s</div>
+      <div class="perf-lbl">Throughput máx.</div>
+      <div class="perf-note">20 clientes · 5k linhas</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-val" style="color:#0176D3">7,3 ms</div>
+      <div class="perf-lbl">Bulk ×200 por avaliação</div>
+      <div class="perf-note">300k linhas na matriz</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-val" style="color:#E65C00">×2,7</div>
+      <div class="perf-lbl">Crescimento p50</div>
+      <div class="perf-note">5k → 300k linhas (O(1))</div>
+    </div>
+    <div class="perf-card">
+      <div class="perf-val" style="color:#6A1B9A">30×</div>
+      <div class="perf-lbl">Menos linhas vs. monolito</div>
+      <div class="perf-note">sem gestão de índices</div>
+    </div>
+  </div>
+  <a href="docs/performance.html" style="font-size:13px;color:#0176D3;text-decoration:none;font-weight:500;">
+    Ver dashboard completo de performance →
+  </a>
+
+  <!-- Roadmap -->
+  <div class="section-title">Jornada das POCs</div>
+  <div class="timeline">
+    <div class="tl-step done">
+      <div class="tl-tag done">✓ Provada</div>
+      <h4>POC 1 · Pipeline</h4>
+      <p>Motor base · 1 ES · 4 matrizes · 12/12 cenários</p>
+    </div>
+    <div class="tl-step done">
+      <div class="tl-tag done">✓ Provada</div>
+      <h4>POC 2 · Composto</h4>
+      <p>Geo · pagamento · OTC · 12/12 cenários</p>
+    </div>
+    <div class="tl-step done">
+      <div class="tl-tag done">✓ Provada</div>
+      <h4>POC 3 · Avançado</h4>
+      <p>Bundle · bônus · multa · 11/11 cenários</p>
+    </div>
+    <div class="tl-step doing">
+      <div class="tl-tag doing">↻ Em validação</div>
+      <h4>POC Completa</h4>
+      <p>12 matrizes · COALESCE 5 níveis · ~25 steps</p>
+    </div>
+    <div class="tl-step next">
+      <div class="tl-tag next">→ Próxima</div>
+      <h4>Sprint 0</h4>
+      <p>Piloto com dados reais · 4–6 semanas</p>
+    </div>
+  </div>
+
+  <!-- POCs -->
+  <div class="section-title">Provas de Conceito</div>
+  <div class="card-grid">
+    <a href="docs/poc-bre-claro.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">⚙️</span>
+        <span class="badge badge-ok">Provada · 12/12</span>
+      </div>
+      <h3>POC 1 · Motor Pipeline</h3>
+      <p>Expression Set com 7 steps orquestrando 4 Decision Matrices.
+         Prova o motor declarativo ponta a ponta via REST API.</p>
+      <span class="card-link">Ver documentação →</span>
+    </a>
+    <a href="docs/poc-bre-composto.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">🗺️</span>
+        <span class="badge badge-ok">Provada · 12/12</span>
+      </div>
+      <h3>POC 2 · Preço Composto</h3>
+      <p>Precificação geográfica com COALESCE Cidade > UF > Nacional,
+         forma de pagamento e OTC de adesão.</p>
+      <span class="card-link">Ver documentação →</span>
+    </a>
+    <a href="docs/poc-bre-avancado.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">📦</span>
+        <span class="badge badge-ok">Provada · 11/11</span>
+      </div>
+      <h3>POC 3 · Preço Avançado</h3>
+      <p>Bundle fechado (TV×Net×Fone×Móvel), bônus condicionado a crédito,
+         multa de fidelização e desconto estrutural.</p>
+      <span class="card-link">Ver documentação →</span>
+    </a>
+    <a href="docs/poc-bre-completa.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">🔮</span>
+        <span class="badge badge-ok">Provada · 18/18</span>
+      </div>
+      <h3>POC Completa · Unificada</h3>
+      <p>12 mecanismos mapeados do Apex em 1 Expression Set com COALESCE
+         geográfico de 5 níveis. A POC definitiva.</p>
+      <span class="card-link">Ver documentação →</span>
+    </a>
+    <a href="docs/visao-negocio-precificacao.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">📋</span>
+        <span class="badge badge-info">Negócio</span>
+      </div>
+      <h3>Visão de Negócio</h3>
+      <p>Argumento de negócio: por que migrar do motor Apex para o BRE nativo
+         do Salesforce Industries.</p>
+      <span class="card-link">Ver documento →</span>
+    </a>
+  </div>
+
+  <!-- Para gestores e funcionais -->
+  <div class="section-title">Conteúdo por Público</div>
+  <div class="card-grid">
+    <a href="docs/para-gestores.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">👔</span>
+        <span class="badge badge-info">Gestores</span>
+      </div>
+      <h3>Visão Executiva</h3>
+      <p>O que foi provado, riscos identificados, roadmap e as decisões necessárias
+         para avançar com a implementação.</p>
+      <span class="card-link">Ver visão executiva →</span>
+    </a>
+    <a href="docs/para-funcionais.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">📊</span>
+        <span class="badge badge-info">Funcional</span>
+      </div>
+      <h3>Como o BRE Funciona</h3>
+      <p>Para times de pricing, produto e negócio: pipeline, Decision Matrix,
+         auditoria de preço, governança e glossário sem código.</p>
+      <span class="card-link">Ver guia funcional →</span>
+    </a>
+  </div>
+
+  <!-- Guias técnicos -->
+  <div class="section-title">Guias Técnicos &amp; Performance</div>
+  <div class="card-grid">
+    <a href="docs/performance.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">📊</span>
+        <span class="badge badge-pending">Dados reais</span>
+      </div>
+      <h3>Dashboard de Performance</h3>
+      <p>Resultados completos dos testes de carga: escala O(1), throughput,
+         latência e comparativo BRE vs. Monolito Apex/SOQL.</p>
+      <span class="card-link">Ver dashboard →</span>
+    </a>
+    <a href="docs/guia-bre.html" class="card">
+      <div class="card-top">
+        <span class="card-icon">📖</span>
+        <span class="badge badge-info">Runbook</span>
+      </div>
+      <h3>Criar e Alterar BRE</h3>
+      <p>Guia técnico completo: Decision Matrix + Expression Set via SFDX CLI,
+         carregamento de linhas, versionamento e troubleshooting.</p>
+      <span class="card-link">Ver guia →</span>
+    </a>
+  </div>
+
+  <div class="callout callout-warn" style="margin-top:36px">
+    <span style="font-size:18px">⚠️</span>
+    <p><strong>POC Completa em execução.</strong>
+       Os testes de performance do Expression Set <code>PrecoCompleto</code> (12 matrizes · ~25 steps)
+       ainda estão em andamento. O dashboard de performance e o slide 14 da apresentação serão
+       atualizados automaticamente quando os dados estiverem disponíveis.</p>
+  </div>
+
+</div><!-- /.page -->
+
+<!-- ── Sidebar global ─────────────────────────────────────────────────────── -->
+<link rel="stylesheet" href="assets/site.css">
+<script>var BRE_BASE = '.';</script>
+<script src="assets/nav.js"></script>
+</body>
+</html>

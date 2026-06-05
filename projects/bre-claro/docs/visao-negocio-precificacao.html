@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Repensar a precificação · Argumento de negócio (vendas + manutenção)</title>
+<style>
+  :root {
+    --bg: #f7f8fa; --surface: #ffffff; --surface-2: #f1f3f5; --surface-3: #eaedf0;
+    --text: #1c2024; --text-2: #5b6470; --text-3: #8a929c;
+    --stroke: #e2e6ea; --stroke-2: #d4d9de;
+    --accent: #2b6cb0; --accent-soft: #e8f0f9;
+    --success: #2f8a57; --success-soft: #e6f4ec;
+    --warning: #b7791f; --warning-soft: #fbf2e0;
+    --danger: #c0392b; --danger-soft: #fbeae8;
+    --info: #2b6cb0; --info-soft: #e8f0f9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55; font-size: 15px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { font-size: 25px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  p { margin: 0; }
+  .sub { color: var(--text-2); }
+  .small { font-size: 13px; }
+  .tertiary { color: var(--text-3); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.86em;
+    background: var(--surface-3); border-radius: 4px; padding: 1px 5px; color: var(--text); }
+  .divider { height: 1px; background: var(--stroke); margin: 28px 0; border: none; }
+  section { margin-top: 6px; }
+  .stack { display: flex; flex-direction: column; }
+  .gap6 > * + * { margin-top: 6px; }
+  .gap8 > * + * { margin-top: 8px; }
+  .gap10 > * + * { margin-top: 10px; }
+  .gap14 > * + * { margin-top: 14px; }
+  .gap24 > * + * { margin-top: 24px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid4, .grid3, .grid2 { grid-template-columns: 1fr; } }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .stat { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; padding: 14px 16px; }
+  .stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat .l { font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+  .stat.danger .v { color: var(--danger); }
+  .stat.warning .v { color: var(--warning); }
+  .stat.success .v { color: var(--success); }
+  .card { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; }
+  .card .hd { padding: 12px 16px; border-bottom: 1px solid var(--stroke); font-weight: 600; font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .card .bd { padding: 16px; }
+  .callout { border-radius: 10px; padding: 14px 16px; border: 1px solid var(--stroke-2); }
+  .callout .ct { font-weight: 600; margin-bottom: 4px; }
+  .callout.info { background: var(--info-soft); border-color: #cfe0f2; }
+  .callout.success { background: var(--success-soft); border-color: #c6e6d4; }
+  .callout.warning { background: var(--warning-soft); border-color: #ecd9ad; }
+  .callout.danger { background: var(--danger-soft); border-color: #f0c8c2; }
+  .callout.info .ct { color: var(--info); }
+  .callout.success .ct { color: var(--success); }
+  .callout.warning .ct { color: var(--warning); }
+  .callout.danger .ct { color: var(--danger); }
+  .pill { display: inline-flex; align-items: center; font-size: 12px; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; }
+  .pill.neutral { background: var(--surface-3); color: var(--text-2); }
+  .pill.info { background: var(--info-soft); color: var(--info); }
+  .pill.success { background: var(--success-soft); color: var(--success); }
+  .pill.warning { background: var(--warning-soft); color: var(--warning); }
+  .pill.danger { background: var(--danger-soft); color: var(--danger); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); font-weight: 600; }
+  tr.danger td { background: var(--danger-soft); }
+  tr.success td { background: var(--success-soft); }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; }
+  td.center, th.center { text-align: center; }
+  pre { background: var(--surface-3); border: 1px solid var(--stroke-2); border-radius: 6px; padding: 12px; margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; overflow-x: auto; }
+  .chart { display: flex; align-items: flex-end; gap: 14px; height: 180px; padding: 8px 4px 0; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; max-width: 64px; border-radius: 4px 4px 0 0; }
+  .bar.info { background: var(--accent); }
+  .bar.success { background: var(--success); }
+  .bar.danger { background: var(--danger); }
+  .bar-val { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .bar-cat { font-size: 12px; color: var(--text-2); margin-top: 6px; text-align: center; }
+  .head-badge { display:inline-block; font-size:12px; color:var(--text-2); border:1px solid var(--stroke-2); border-radius:999px; padding:2px 10px; }
+  .ba { display:grid; grid-template-columns: 1fr 1fr; }
+  .ba > div { padding: 14px 16px; }
+  .ba .antes { background: var(--danger-soft); border-right: 1px solid var(--stroke); }
+  .ba .depois { background: var(--success-soft); }
+  .ba .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; margin-bottom: 6px; }
+  .ba .antes .lbl { color: var(--danger); }
+  .ba .depois .lbl { color: var(--success); }
+  .links a { color: var(--accent); text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap stack gap24">
+
+  <!-- Cabeçalho -->
+  <div class="stack gap6">
+    <div class="row">
+      <span class="head-badge">Documento de negócio</span>
+      <span class="pill info">vendas + manutenção</span>
+      <span class="pill neutral">proposta de mudança de mentalidade</span>
+    </div>
+    <h1>Repensar como o negócio arquiteta preços</h1>
+    <p class="sub">
+      A tese: trocar a forma como pensamos preço — de uma <b>tabela monolítica cheia de fatores e regras
+      em código</b> para <b>valores absolutos indexados por uma chave clara, em configuração versionada</b>
+      — destrava velocidade de venda e reduz o custo/risco de manutenção. Este documento reúne os
+      argumentos <b>e</b> o que isso custa, para uma decisão informada.
+    </p>
+  </div>
+
+  <div class="grid4">
+    <div class="stat success"><div class="v">~0,85 s</div><div class="l">Latência estável de 5k → 154k linhas (30× volume)</div></div>
+    <div class="stat danger"><div class="v">19%</div><div class="l">Das chaves de preço hoje são ambíguas (desempate implícito)</div></div>
+    <div class="stat warning"><div class="v">0%</div><div class="l">Dos preços usam fator/percentual — a complexidade era fictícia</div></div>
+    <div class="stat success"><div class="v">100%</div><div class="l">Equivalência validada do modelo novo vs. o atual</div></div>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">A decisão que está em jogo</div>
+    <div>Não é "trocar de ferramenta". É aceitar uma <b>mudança de mentalidade</b> sobre o que é "preço":
+    deixar de ser uma fórmula com fatores embutidos numa tabela gigante mantida por TI, e passar a ser um
+    <b>valor de tabela escolhido por uma chave de negócio</b>, que a área de produto/pricing edita e versiona
+    sem depender de deploy de código.</div>
+  </div>
+
+  <!-- 1. O custo invisível de hoje -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>1 · O custo invisível do modelo atual</h2>
+    <p class="sub">Achados reais da análise do motor Apex (<code>Solar_PricingPlan*</code>) e dos dados
+      (<code>Pricing_Matrix__c</code>, 4.877 linhas (sandbox)). Cada item é um custo que o negócio paga hoje — sem ver.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>O que existe hoje</th><th>Custo para o negócio</th><th>Evidência</th></tr></thead>
+        <tbody>
+          <tr class="danger"><td>Preço promocional cravado por data na própria tabela</td>
+            <td>Promoção vira manutenção de dado e empilha versões; difícil saber "qual preço vale"</td>
+            <td>Mesma combinação com 199,90 / 194,90 / 294,90… todas <code>Active=true</code></td></tr>
+          <tr class="danger"><td>19% das chaves de preço são ambíguas</td>
+            <td>Risco de cobrar valor errado; o "desempate" mora no código, não na regra</td>
+            <td>300 de 1.570 chaves com mais de um preço para a mesma data/canal</td></tr>
+          <tr><td>Canal em campo multi-select ("Perfil Vendas")</td>
+            <td>Consulta varre a tabela inteira (sem índice); regra ilegível</td>
+            <td><code>Promotion_Channel__c</code> exige <code>INCLUDES()</code> → full scan</td></tr>
+          <tr><td>Redundância combinatória</td>
+            <td>A mesma decisão repetida em dezenas de linhas; manutenção multiplica o esforço</td>
+            <td>Só 4 produtos reais; o resto é explosão de combinações multi-select</td></tr>
+          <tr class="danger"><td>Regras de preço vivem em Apex (~16 passos)</td>
+            <td>Toda mudança de regra é projeto de TI: código, QA, deploy, janela</td>
+            <td>Waterfall <code>Solar_PricingPlan*</code> é quem encadeia e decide o preço final</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout warning">
+      <div class="ct">O paradoxo do fator</div>
+      <div>O modelo mental atual carrega a ideia de "fatores" (canal aplica tal multiplicador). Mas
+      <b>0% dos dados usam fator ou percentual</b> (<code>IsPercentDiscount__c=false</code> em 100%). Ou seja:
+      paga-se o custo de uma máquina de cálculo que <b>os dados nunca pediram</b>. O preço sempre foi um
+      <b>valor absoluto</b> escolhido por uma chave.</div>
+    </div>
+
+    <h3 style="margin-top:6px">Duas explosões independentes — e cada uma tem um antídoto</h3>
+    <p class="sub">A tabela monolítica cresce em <b>dois</b> eixos ao mesmo tempo, e por motivos diferentes.
+      Entender que são problemas separados é o que permite atacar os dois.</p>
+    <div class="grid2">
+      <div class="card"><div class="hd" style="color:var(--danger)">Explosão de LINHAS (redundância)</div>
+        <div class="bd stack gap8">
+          <div class="grid2">
+            <div class="stat danger"><div class="v">2.927</div><div class="l">Linhas de preço (RecordType Pricing)</div></div>
+            <div class="stat success"><div class="v">97</div><div class="l">Decisões de negócio reais</div></div>
+          </div>
+          <p class="small sub">Só <b>5 produtos</b> e <b>97 decisões</b> (produto × modalidade × duração) viram
+            2.927 linhas — inflação de <b>~30×</b>. O que multiplica: <b>canal em multi-select</b> (a mesma
+            decisão repetida por combinação) e <b>promoção cravada por data</b>.</p>
+          <p class="small"><b>Antídoto:</b> valor único por linha + uma linha "curinga" que vale como
+            <b>padrão</b> (e só registrar a exceção). Promoção sai para outro módulo.</p>
+        </div></div>
+      <div class="card"><div class="hd" style="color:var(--danger)">Explosão de COLUNAS (esparsidade)</div>
+        <div class="bd stack gap8">
+          <div class="grid2">
+            <div class="stat danger"><div class="v">29</div><div class="l">Colunas na tabela</div></div>
+            <div class="stat danger"><div class="v">~45%</div><div class="l">Quase vazias (&lt;10% preenchidas)</div></div>
+          </div>
+          <p class="small sub">Das 29 colunas, <b>13 estão abaixo de 10% de preenchimento</b> e <b>5 estão
+            100% vazias</b>. Como a tabela "faz tudo", toda linha carrega todas as colunas — mesmo as que não
+            usa. São ~141 mil células, quase metade morta.</p>
+          <p class="small"><b>Antídoto:</b> uma <b>responsabilidade por matriz</b> (preço-base, pagamento,
+            adesão…), cada uma só com as colunas que realmente mudam o seu valor.</p>
+        </div></div>
+    </div>
+    <div class="callout info">
+      <div class="ct">Por que isso importa para o negócio</div>
+      <div>Cada linha e cada coluna a mais é manutenção, risco de inconsistência e consulta mais lenta. Atacar
+      <b>os dois eixos</b> — guardar só a decisão única (linhas) e separar responsabilidades (colunas) —
+      transforma um tabelão de milhares de linhas e dezenas de colunas em poucas matrizes enxutas, sem perder
+      nenhuma regra de preço.</div>
+    </div>
+  </section>
+
+  <!-- 2. A mudança de mentalidade -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>2 · A mudança de mentalidade (4 viradas)</h2>
+    <p class="sub">O que o negócio precisa passar a pensar diferente — e o ganho de cada virada.</p>
+
+    <div class="stack gap14">
+      <div class="card"><div class="ba">
+        <div class="antes"><div class="lbl">Antes</div>Preço = fórmula de fatores (base × canal × fidelidade − desconto)</div>
+        <div class="depois"><div class="lbl">Depois</div>Preço = valor absoluto indexado por uma chave de negócio (produto × modalidade × duração × operação × …)</div>
+      </div></div>
+      <div class="card"><div class="ba">
+        <div class="antes"><div class="lbl">Antes</div>Uma tabela gigante faz tudo (base, política, promoção, desconto) misturado</div>
+        <div class="depois"><div class="lbl">Depois</div>Uma responsabilidade por matriz; promoção no módulo nativo de Promotions, não no preço-base</div>
+      </div></div>
+      <div class="card"><div class="ba">
+        <div class="antes"><div class="lbl">Antes</div>Regras moram no código; mudar preço é projeto de TI</div>
+        <div class="depois"><div class="lbl">Depois</div>Regras são configuração versionada que a área de pricing edita; TI fica só na borda (integração)</div>
+      </div></div>
+      <div class="card"><div class="ba">
+        <div class="antes"><div class="lbl">Antes</div>"Mais combinações = sistema mais lento" (full scan que piora com o tempo)</div>
+        <div class="depois"><div class="lbl">Depois</div>Lookup indexado: latência plana, não degrada com volume</div>
+      </div></div>
+    </div>
+
+    <h3 style="margin-top:6px">O que fica no BRE × o que vai para Promotions nativas</h3>
+    <p class="sub">Uma dúvida natural: "se promoção sai do BRE, por que a POC avançada modela desconto, bundle e bônus?"
+      Porque a POC absorve <b>todos</b> os mecanismos do motor antigo para <b>provar viabilidade</b> e <b>decidir</b>
+      onde cada um deve viver. A régua não é o nome — é a <b>natureza</b>.</p>
+    <div class="grid2">
+      <div class="card"><div class="hd" style="color:var(--success)">Fica no BRE — preço e estrutura permanente</div>
+        <div class="bd stack gap6 small">
+          <p><b>Preço-base + "de/por"</b> — a tabela vigente (ex.: de R$319,90 por R$269,90).</p>
+          <p><b>Instalação (taxa única) por região.</b></p>
+          <p><b>Multa de fidelização</b> — termo contratual exposto, não é campanha.</p>
+          <p><b>Política comercial estrutural</b> — diferença permanente por canal/segmento, sem data de fim.</p>
+        </div></div>
+      <div class="card"><div class="hd" style="color:var(--text-2)">Vai para Promotions nativas — campanha com vigência</div>
+        <div class="bd stack gap6 small">
+          <p><b>Promoção/desconto temporal</b> — tem data de início/fim e código de campanha.</p>
+          <p><b>Bundle promocional</b> — oferta de combo por tempo limitado.</p>
+          <p><b>Incentivo de campanha</b> (ex.: bônus pontual de aquisição).</p>
+          <p class="tertiary">Versionável, com vigência própria — sem empilhar versões na tabela de preço.</p>
+        </div></div>
+    </div>
+    <div class="callout info">
+      <div class="ct">O ponto que reconcilia tudo</div>
+      <div>Mesmo o que vai para Promotions nativas <b>não dispensa o BRE</b>: a promoção incide <b>sobre o preço que o
+      BRE calcula</b>. As matrizes de preço-base seguem sendo a <b>fonte da verdade</b>; a promoção é uma camada por
+      cima, com regras e vigência próprias. Por isso nada da POC é desperdício — no limite, o desconto promocional é o
+      que <b>muda de camada</b>, não de existência.
+      <span class="tertiary">Detalhe mecanismo a mecanismo em <b>poc-bre-avancado.html</b> (coluna "Destino no alvo").</span></div>
+    </div>
+  </section>
+
+  <!-- 3. O retorno -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>3 · O retorno — em vendas, manutenção, risco e performance</h2>
+    <div class="grid2">
+      <div class="card"><div class="hd">🛒 Vendas</div><div class="bd stack gap6">
+        <p><b>Time-to-market de preço.</b> Lançar preço por segmento/região/campanha deixa de esperar uma
+        release de código — vira edição de dado versionada.</p>
+        <p class="small sub">Menos cotação errada no PDV (sem desempate implícito), e capacidade de reagir a
+        concorrente/retention com mais rapidez.</p>
+      </div></div>
+      <div class="card"><div class="hd">🔧 Manutenção</div><div class="bd stack gap6">
+        <p><b>Mudar preço sem mexer em código.</b> A regra é dado + configuração; cada alteração é versionada
+        (auditoria e rollback nativos).</p>
+        <p class="small sub">Menos acoplamento: trocar a regra de pagamento não toca preço-base nem adesão.</p>
+      </div></div>
+      <div class="card"><div class="hd">🛡️ Risco / governança</div><div class="bd stack gap6">
+        <p><b>Regra explícita e auditável.</b> O desempate que hoje é código vira dado legível; ambiguidades
+        ficam visíveis (e corrigíveis) em vez de escondidas.</p>
+        <p class="small sub">Trilha de execução nativa: dá para ver o preço em cada etapa.</p>
+      </div></div>
+      <div class="card"><div class="hd">⚡ Performance</div><div class="bd stack gap6">
+        <p><b>Latência plana.</b> Medido: ~0,85 s estável de 5k a 154k linhas (30× volume), ~6 ms por avaliação
+        em chamada bulk.</p>
+        <p class="small sub">Escala por lookup indexado, não por varredura — o oposto do full scan atual.</p>
+      </div></div>
+    </div>
+
+    <h3>Performance: o volume não derruba o tempo de resposta</h3>
+    <div class="card"><div class="bd"><div class="chart" id="lat-chart"></div></div></div>
+    <p class="small tertiary">Latência single (p50) por volume de linhas na matriz — benchmark real na org
+      <code>org-demo</code>. A linha fica plana: o lookup é indexado por hash da chave.</p>
+  </section>
+
+  <!-- 4. Ciclo de mudança de preço -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>4 · O ciclo de uma mudança de preço</h2>
+    <p class="sub">Onde a mudança de mentalidade aparece no dia a dia. (O lado "depois" é o fluxo do BRE; os
+      tempos são <b>qualitativos/projetados</b>, para ilustrar a natureza da mudança — não medições.)</p>
+    <div class="grid2">
+      <div class="card"><div class="hd" style="color:var(--danger)">Hoje — mudança via código</div>
+        <div class="bd"><pre>1. Pedido de negócio
+2. Dev altera Apex / RecordType / dados
+3. Code review + QA
+4. Deploy em janela
+5. Validação pós-deploy
+→ ciclo em dias/semanas, fila de TI</pre></div>
+      </div>
+      <div class="card"><div class="hd" style="color:var(--success)">Proposto — mudança via configuração</div>
+        <div class="bd"><pre>1. Pricing edita as linhas da matriz
+2. Nova versão (auditável, com rollback)
+3. Carga + reativação (janela curta)
+→ ciclo em horas, sem deploy de código</pre></div>
+      </div>
+    </div>
+    <div class="callout info">
+      <div class="ct">Nuance operacional honesta</div>
+      <div>Editar linhas em volume exige uma <b>janela controlada</b> (desabilitar versão → carregar → reabilitar).
+      Não é um "update no banco" instantâneo — mas é um processo de dado/configuração, não um ciclo de
+      desenvolvimento.</div>
+    </div>
+  </section>
+
+  <!-- 5. O que custa -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>5 · O que isso custa (pré-condições e trade-offs)</h2>
+    <p class="sub">Para a decisão ser honesta, os custos precisam estar na mesa.</p>
+    <div class="grid2">
+      <div class="callout warning">
+        <div class="ct">1 · Higiene de dados primeiro</div>
+        <div>Os 19% de chaves ambíguas e o empilhamento por data não migram "limpos". O modelo novo
+        <b>expõe</b> essas inconsistências — o que é bom, mas exige um esforço de saneamento e definição de
+        regra de desempate explícita antes.</div>
+      </div>
+      <div class="callout warning">
+        <div class="ct">2 · Promoção depende de outro módulo</div>
+        <div>Tirar promoção do preço-base pressupõe usar Promotions nativas. Hoje isso está bloqueado por um
+        template de pedido customizado que não usa relacionamento de produto — é uma dependência de roadmap,
+        não um liga/desliga.</div>
+      </div>
+      <div class="callout warning">
+        <div class="ct">3 · Mudança de processo e papéis</div>
+        <div>Pricing passa a "donar" a configuração (com governança/versionamento). Exige treinamento e um
+        processo de aprovação — a régua de qualidade sai do code review e vai para o controle de versões da regra.</div>
+      </div>
+      <div class="callout warning">
+        <div class="ct">4 · Esforço de re-plataforma</div>
+        <div>Decompor o monólito, modelar as chaves e migrar dados é um projeto. O ganho é estrutural e de
+        médio prazo, não um quick win de uma sprint.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Caminho incremental -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>6 · Caminho incremental (não é big-bang)</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th class="center">Fase</th><th>Foco</th><th>Entrega de valor</th></tr></thead>
+        <tbody>
+          <tr><td class="center"><span class="pill info">1</span></td>
+            <td>Preço-base + ajustes (POC Composto, já validada)</td>
+            <td>Prova a equivalência e o modelo aditivo com valores absolutos</td></tr>
+          <tr><td class="center"><span class="pill info">2</span></td>
+            <td>Saneamento das chaves ambíguas + definição do desempate</td>
+            <td>Reduz risco de cobrança incorreta já no modelo atual</td></tr>
+          <tr><td class="center"><span class="pill info">3</span></td>
+            <td>Migrar promoção para Promotions nativas (desbloquear template de pedido)</td>
+            <td>Tira a promoção do preço-base; campanhas sem mexer na tabela</td></tr>
+          <tr class="success"><td class="center"><span class="pill success">4</span></td>
+            <td>Dimensões adicionais conforme a necessidade real (ex.: geografia por wildcard)</td>
+            <td>Preço regional/segmentado sob demanda, sem re-monolitizar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7. A pergunta de decisão -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>7 · Vale a pena? — o enquadramento honesto</h2>
+    <div class="grid2">
+      <div class="callout success">
+        <div class="ct">Vale a pena SE…</div>
+        <div>… preço é alavanca competitiva (campanhas/segmentação/região frequentes), a fila de TI para mudar
+        preço incomoda, e o risco das chaves ambíguas preocupa. Aí o ganho de velocidade + governança paga o
+        esforço.</div>
+      </div>
+      <div class="callout warning">
+        <div class="ct">Pode não compensar agora SE…</div>
+        <div>… o preço é estável e raramente muda, não há apetite para saneamento de dados, ou a dependência do
+        template de pedido (promoções) não entra no roadmap. Nesse caso, faça só a Fase 2 (saneamento) e reavalie.</div>
+      </div>
+    </div>
+    <div class="callout info">
+      <div class="ct">Resumo em uma linha</div>
+      <div>A proposta troca <b>complexidade em código</b> (fatores, full scan, regras em Apex) por
+      <b>clareza em configuração</b> (valor absoluto por chave, versionado, owned por negócio). O preço dessa
+      troca é <b>higiene de dados + mudança de processo</b>; o retorno é <b>velocidade de venda e manutenção
+      barata</b>. A POC já provou que o modelo reproduz 100% da precificação atual — o que falta é a decisão de
+      mentalidade.</div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+  <p class="small tertiary links">Páginas relacionadas:
+    <a href="poc-bre-claro.html">POC inicial (cascata de fatores — superada)</a> ·
+    <a href="poc-bre-composto.html">POC Composto (base × ajustes, valores absolutos)</a> ·
+    <a href="poc-bre-avancado.html">POC Avançado (6 mecanismos, dado real)</a>.
+    Evidências: benchmark e validação na org <code>org-demo</code>; análise do <code>Pricing_Matrix__c</code> e do motor <code>Solar_PricingPlan*</code>.</p>
+
+</div>
+
+<script>
+function renderBars(elId, cats, data, tone, fmt, maxOverride) {
+  const max = (maxOverride || Math.max(...data) * 1.15) || 1;
+  let h = "";
+  data.forEach((v,i)=>{
+    const pct = max ? (v/max*100) : 0;
+    h += `<div class="bar-col"><div class="bar-val">${fmt(v)}</div>`+
+         `<div class="bar ${tone}" style="height:${Math.max(pct,2)}%"></div>`+
+         `<div class="bar-cat">${cats[i]}</div></div>`;
+  });
+  document.getElementById(elId).innerHTML = h;
+}
+// p50 single (s) por volume — benchmark real; eixo até 1,5s para evidenciar que é plano
+renderBars("lat-chart", ["5k","50k","100k","154k"], [0.93,0.87,0.85,0.86], "success", (v)=>v.toFixed(2)+"s", 1.5);
+</script>
+<!-- sidebar global -->
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = "..";</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

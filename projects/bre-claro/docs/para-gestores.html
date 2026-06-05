@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visão Executiva — BRE · Claro BR</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F6F9; color: #1A1A1A; line-height: 1.65;
+  }
+  .page { max-width: 920px; margin: 0 auto; padding: 40px 28px 100px; }
+  h1 { font-size: 28px; font-weight: 800; color: #032D60; line-height: 1.2; margin-bottom: 8px; }
+  h2 { font-size: 20px; font-weight: 700; color: #032D60; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #E0E6EF; }
+  h3 { font-size: 15px; font-weight: 700; color: #032D60; margin: 20px 0 8px; }
+  p  { margin-bottom: 14px; font-size: 14px; }
+  strong { font-weight: 700; }
+  code { background: #E8EDF2; padding: 1px 5px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+  a { color: #0176D3; }
+
+  /* Hero */
+  .hero {
+    background: #032D60; color: #fff; border-radius: 12px;
+    padding: 40px 36px; margin-bottom: 36px; position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; right: -30px; bottom: -30px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(1,118,211,0.18);
+  }
+  .hero-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+  .hero p { color: rgba(255,255,255,0.82); font-size: 15px; max-width: 640px; line-height: 1.65; margin-bottom: 0; }
+
+  /* KPIs */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; }
+  .kpi { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; padding: 18px 16px; text-align: center; }
+  .kpi-val { font-size: 28px; font-weight: 800; }
+  .kpi-lbl { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.4; }
+
+  /* Problema/Solução */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .compare-col { border-radius: 8px; overflow: hidden; }
+  .compare-header { padding: 12px 18px; font-size: 14px; font-weight: 700; color: #fff; }
+  .compare-body { background: #fff; border: 1px solid #E0E0E0; border-top: none; padding: 16px 18px; border-radius: 0 0 8px 8px; }
+  .compare-body ul { padding-left: 18px; font-size: 13px; }
+  .compare-body li { margin-bottom: 8px; line-height: 1.5; }
+  .compare-body li::marker { color: inherit; }
+
+  /* Cards de POC */
+  .poc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0; }
+  .poc-card { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; overflow: hidden; }
+  .poc-card-top { padding: 14px 16px 10px; border-bottom: 1px solid #F0F0F0; }
+  .poc-card-title { font-size: 14px; font-weight: 700; color: #032D60; margin-bottom: 3px; }
+  .poc-card-sub { font-size: 12px; color: #888; }
+  .poc-card-body { padding: 12px 16px; }
+  .poc-card-body ul { padding-left: 0; list-style: none; font-size: 13px; }
+  .poc-card-body li { padding: 4px 0; border-bottom: 1px solid #F8F8F8; display: flex; gap: 8px; }
+  .poc-card-body li:last-child { border-bottom: none; }
+  .poc-card-badge { margin-top: 10px; display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .badge-ok   { background: #E8F5E9; color: #2E7D32; }
+  .badge-warn { background: #FFF3E0; color: #E65C00; }
+
+  /* Callouts */
+  .callout {
+    border-radius: 8px; padding: 16px 20px; margin: 18px 0;
+    display: flex; gap: 14px; font-size: 14px; line-height: 1.6;
+  }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-ok   { background: #E8F5E9; border-left: 3px solid #2E7D32; }
+  .callout-warn { background: #FFF3E0; border-left: 3px solid #E65C00; }
+  .callout-info { background: #E3F2FD; border-left: 3px solid #0176D3; }
+  .callout-red  { background: #FFEBEE; border-left: 3px solid #C62828; }
+
+  /* Decisão CTA */
+  .decision-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .decision-card { background: #fff; border-radius: 8px; border: 2px solid transparent; padding: 20px; }
+  .decision-card.decision-a { border-color: #0176D3; }
+  .decision-card.decision-b { border-color: #2E7D32; }
+  .decision-letter { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+  .decision-card h3 { font-size: 15px; margin-top: 0; }
+  .decision-card ul { padding-left: 16px; font-size: 13px; color: #444; }
+  .decision-card li { margin-bottom: 6px; }
+
+  /* Roadmap visual */
+  .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 20px 0; position: relative; }
+  .roadmap::before { content: ''; position: absolute; top: 22px; left: 8%; right: 8%; height: 2px; background: #D0D0D0; z-index: 0; }
+  .rm-step { text-align: center; position: relative; z-index: 1; padding: 0 8px; }
+  .rm-circle { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; border: 3px solid; background: #fff; margin-bottom: 8px; }
+  .rm-done   .rm-circle { border-color: #2E7D32; background: #E8F5E9; }
+  .rm-doing  .rm-circle { border-color: #E65C00; background: #FFF3E0; }
+  .rm-next   .rm-circle { border-color: #0176D3; background: #E3F2FD; }
+  .rm-future .rm-circle { border-color: #BDBDBD; background: #F5F5F5; }
+  .rm-label  { font-size: 12px; font-weight: 700; color: #032D60; line-height: 1.35; }
+  .rm-tag    { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+  .rm-done .rm-tag   { color: #2E7D32; }
+  .rm-doing .rm-tag  { color: #E65C00; }
+  .rm-next .rm-tag   { color: #0176D3; }
+  .rm-future .rm-tag { color: #9E9E9E; }
+
+  /* Risco */
+  .risk-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 16px 0; }
+  .risk-item { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; padding: 14px 18px; display: flex; gap: 16px; align-items: flex-start; }
+  .risk-level { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; width: 70px; flex-shrink: 0; padding: 3px 8px; border-radius: 10px; text-align: center; margin-top: 2px; }
+  .risk-alto  { background: #FFEBEE; color: #C62828; }
+  .risk-medio { background: #FFF3E0; color: #E65C00; }
+  .risk-baixo { background: #E8F5E9; color: #2E7D32; }
+  .risk-text h4 { font-size: 13px; font-weight: 700; color: #032D60; margin-bottom: 3px; }
+  .risk-text p  { font-size: 12px; color: #555; margin-bottom: 0; line-height: 1.5; }
+
+  .divider { height: 1px; background: #E0E0E0; margin: 32px 0; }
+
+  @media (max-width: 700px) {
+    .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .compare, .decision-row { grid-template-columns: 1fr; }
+    .poc-grid { grid-template-columns: 1fr; }
+    .roadmap { grid-template-columns: 1fr 1fr; }
+    .roadmap::before { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Visão executiva · Para gestores e tomadores de decisão</div>
+    <h1 style="color:#fff;margin-bottom:14px">BRE · Motor de Precificação Nativa<br><span style="color:rgba(255,255,255,0.7);font-size:22px;font-weight:400">O que foi construído, o que foi provado e o que decidimos a seguir</span></h1>
+    <p>Este documento apresenta os resultados das 4 Provas de Conceito (POCs) de precificação
+    declarativa para a Claro BR usando o Business Rules Engine nativo do Salesforce Industries —
+    sem código Apex, com regras gerenciáveis por equipes de negócio.</p>
+  </div>
+
+  <!-- KPIs executivos -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-val" style="color:#2E7D32">4 / 4</div>
+      <div class="kpi-lbl">POCs aprovadas<br>100% dos cenários</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#0176D3">0</div>
+      <div class="kpi-lbl">Linhas de Apex<br>nas regras de preço</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#032D60">30×</div>
+      <div class="kpi-lbl">Menos linhas de dados<br>vs. matriz atual</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val" style="color:#E65C00">1</div>
+      <div class="kpi-lbl">Decisão bloqueante<br>para iniciar o Sprint 0</div>
+    </div>
+  </div>
+
+  <!-- Problema -->
+  <h2>O problema — por que a Pricing Matrix atual trava a Claro</h2>
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-header" style="background:#C62828">Hoje — Pricing Matrix monolítica</div>
+      <div class="compare-body" style="border-color:#FFCDD2">
+        <ul style="color:#C62828">
+          <li>Regras de preço <strong>enterradas em Apex</strong> — nenhum sistema de gestão de regras</li>
+          <li><strong>4.877 linhas (sandbox)</strong> numa única tabela com 29 colunas — 45% delas raramente preenchidas</li>
+          <li>Qualquer mudança de preço exige <strong>deploy de código</strong> (ciclo de releases)</li>
+          <li><strong>62% das chaves ambíguas</strong>: mesma combinação retorna preços diferentes</li>
+          <li>Risco de <strong>limite de governador</strong> Salesforce em cenários de carrinho com múltiplos produtos</li>
+          <li>Auditoria de preço: impossível sem debug de Apex</li>
+        </ul>
+      </div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-header" style="background:#2E7D32">Com BRE — Motor declarativo nativo</div>
+      <div class="compare-body" style="border-color:#C8E6C9">
+        <ul style="color:#2E7D32">
+          <li>Regras em <strong>tabelas versionadas</strong> — visíveis e alteráveis sem código</li>
+          <li>Uma tabela por responsabilidade — <strong>30× menos linhas</strong>, cada uma com significado claro</li>
+          <li>Mudança de preço = <strong>editar uma linha e ativar</strong> — sem deploy, sem engenharia</li>
+          <li>Uma chave sempre retorna <strong>um único preço determinístico</strong></li>
+          <li>Bulk nativo — <strong>0 risco de governador</strong> em waterfall de produtos</li>
+          <li>Auditoria nativa: cada step do cálculo <strong>exposto e rastreável</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- O que a POC provou -->
+  <h2>O que as POCs provaram — em linguagem de negócio</h2>
+  <p>Foram executadas <strong>4 Provas de Conceito independentes</strong> em ambiente sandbox (<code>org-demo</code>),
+  cada uma validando um grupo de mecanismos de precificação. Todas invocadas ponta a ponta via API REST — mesmo caminho que o sistema de vendas usará em produção.</p>
+
+  <div class="poc-grid" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="poc-card">
+      <div class="poc-card-top">
+        <div class="poc-card-title">POC 1 · Motor Pipeline</div>
+        <div class="poc-card-sub">Fundação: o preço percorre um pipeline</div>
+      </div>
+      <div class="poc-card-body">
+        <ul>
+          <li>✓ Preço base por produto, modalidade e prazo</li>
+          <li>✓ Política comercial aplicada automaticamente</li>
+          <li>✓ Fidelização calculada como informação contratual</li>
+          <li>✓ 12 de 12 cenários aprovados via API</li>
+        </ul>
+        <span class="poc-card-badge badge-ok">Provada · 12/12</span>
+      </div>
+    </div>
+    <div class="poc-card">
+      <div class="poc-card-top">
+        <div class="poc-card-title">POC 2 · Preço Composto</div>
+        <div class="poc-card-sub">Precificação regional e forma de pagamento</div>
+      </div>
+      <div class="poc-card-body">
+        <ul>
+          <li>✓ Preço diferente por cidade, UF ou nacional</li>
+          <li>✓ Fallback automático: sem preço local → usa regional</li>
+          <li>✓ Ajuste por forma de pagamento (boleto, digital)</li>
+          <li>✓ OTC de adesão por produto e prazo</li>
+          <li>✓ 12 de 12 cenários aprovados via API</li>
+        </ul>
+        <span class="poc-card-badge badge-ok">Provada · 12/12</span>
+      </div>
+    </div>
+    <div class="poc-card">
+      <div class="poc-card-top">
+        <div class="poc-card-title">POC 3 · Preço Avançado</div>
+        <div class="poc-card-sub">Bundle, bônus e fidelização</div>
+      </div>
+      <div class="poc-card-body">
+        <ul>
+          <li>✓ Preço de portfólio fechado (TV + Net + Fone + Móvel)</li>
+          <li>✓ Jornada base vs. novo cliente (de/por automático)</li>
+          <li>✓ Bônus condicionado ao perfil de crédito</li>
+          <li>✓ Desconto estrutural por política comercial</li>
+          <li>✓ 11 de 11 cenários aprovados via API</li>
+        </ul>
+        <span class="poc-card-badge badge-ok">Provada · 11/11</span>
+      </div>
+    </div>
+    <div class="poc-card" style="border-top: 3px solid #2E7D32">
+      <div class="poc-card-top">
+        <div class="poc-card-title">POC 4 · Preço Completo — Motor Unificado</div>
+        <div class="poc-card-sub">12 matrizes · todos os mecanismos em 1 ES</div>
+      </div>
+      <div class="poc-card-body">
+        <ul>
+          <li>✓ Todos os mecanismos das POCs 1–3 integrados em um único ES</li>
+          <li>✓ COALESCE geo de 5 níveis: Node · Cidade · DDD · UF · Nacional</li>
+          <li>✓ 200 itens no carrinho · <strong>0 SOQL · 7,48 ms/avaliação</strong></li>
+          <li>✓ Monólito naïve estoura a 15 itens — BRE não tem teto</li>
+          <li>✓ 18 de 18 cenários aprovados via API</li>
+        </ul>
+        <span class="poc-card-badge badge-ok">Provada · 18/18 · 0 SOQL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-ok">
+    <span class="callout-icon">✅</span>
+    <div><strong>Conclusão das POCs:</strong> todos os mecanismos de precificação testados funcionam
+    100% declarativamente no BRE nativo. <strong>4 POCs, zero linhas de Apex</strong> — e a POC
+    Completa prova que o BRE processa <strong>200 itens no carrinho com 0 SOQL</strong>, eliminando
+    o risco de governador que o monólito atual enfrenta a partir de 15 itens.</div>
+  </div>
+
+  <!-- Performance -->
+  <h2>Performance — o que os números significam para o negócio</h2>
+  <p>Testes de carga realizados em ambiente real com volumes equivalentes à produção da Claro.</p>
+
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-header" style="background:#032D60">O que importa para o negócio</div>
+      <div class="compare-body">
+        <ul style="color:#032D60">
+          <li style="border-bottom:1px solid #F0F0F0;padding-bottom:8px;margin-bottom:8px">
+            <strong>60 avaliações de preço por segundo</strong> — suficiente para pico de vendas simultâneas
+          </li>
+          <li style="border-bottom:1px solid #F0F0F0;padding-bottom:8px;margin-bottom:8px">
+            <strong>7 ms por produto em lote</strong> — um carrinho de 10 produtos é calculado em ~100 ms de overhead BRE
+          </li>
+          <li style="border-bottom:1px solid #F0F0F0;padding-bottom:8px;margin-bottom:8px">
+            <strong>O BRE não degrada com o crescimento do catálogo</strong> — testado com 5 mil a 300 mil linhas, comportamento estável
+          </li>
+          <li>
+            <strong>O motor atual (Apex scan)</strong> degrada com volume — 218 ms com 5k linhas, 464 ms com 300k
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-header" style="background:#5A5A5A">O que NÃO é vantagem do BRE</div>
+      <div class="compare-body">
+        <ul style="color:#555">
+          <li>Uma consulta única por chave indexada no Apex é <strong>mais rápida</strong> do que uma chamada unitária ao BRE — o motor tem overhead fixo de ~400–1000 ms por chamada</li>
+          <li>O ganho do BRE <strong>não é latência isolada</strong>: é governança, manutenibilidade, escalabilidade e eliminação de risco de limite do Salesforce em cascatas</li>
+          <li>Comparação justa é no <strong>fluxo completo</strong> de carrinho, não em consulta única</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">📊</span>
+    <div>Dados completos de performance disponíveis no
+    <a href="performance.html">dashboard interativo</a> — com gráficos de escala, throughput,
+    latência sob carga e comparativo BRE vs. motor atual.</div>
+  </div>
+
+  <!-- Riscos -->
+  <h2>Riscos identificados</h2>
+  <div class="risk-row">
+    <div class="risk-item">
+      <span class="risk-level risk-alto">Alto</span>
+      <div class="risk-text">
+        <h4>Order Template ativo bloqueia a adição de produtos ao carrinho</h4>
+        <p>A Claro usa Order Template, que desabilita o <code>addToCart</code> nativo do Salesforce Industries.
+        Isso bloqueia a integração do BRE com o fluxo de venda. <strong>É o pré-requisito #1</strong> antes de qualquer implementação.</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <span class="risk-level risk-alto">Alto</span>
+      <div class="risk-text">
+        <h4>Pricing Matrix atual é não-determinística</h4>
+        <p>62% das chaves de precificação têm mais de um preço válido (sobreposições de promoções e janelas de vigência).
+        A migração exigirá uma <strong>regra de canonização</strong> e validação com o time de negócio.</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <span class="risk-level risk-medio">Médio</span>
+      <div class="risk-text">
+        <h4>Promoção com vigência fora do escopo atual</h4>
+        <p>Promoções com data de início e fim não foram cobertas nas POCs — o Salesforce tem um módulo nativo (Promotions)
+        que pode tratar isso, mas exige análise separada.</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <span class="risk-level risk-medio">Médio</span>
+      <div class="risk-text">
+        <h4>Migração é trabalhosa, não tecnicamente complexa</h4>
+        <p>Mapear 4.877 linhas (sandbox) da Pricing Matrix para as novas Decision Matrices é um trabalho de curadoria
+        de dados — não de desenvolvimento. Exige envolvimento do time de pricing.</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <span class="risk-level risk-baixo">Baixo</span>
+      <div class="risk-text">
+        <h4>Limite de 200 steps por Expression Set</h4>
+        <p>A POC Completa usa 22 steps. O limite de 200 dá espaço para expandir muito — mas precisa de
+        governança para não crescer sem controle ao longo do tempo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roadmap -->
+  <h2>Roadmap — o caminho para produção</h2>
+  <div class="roadmap">
+    <div class="rm-step rm-done">
+      <div class="rm-circle">✓</div>
+      <div class="rm-label">POC 1/2/3<br>Validadas</div>
+      <div class="rm-tag">Concluído</div>
+    </div>
+    <div class="rm-step rm-done">
+      <div class="rm-circle">✓</div>
+      <div class="rm-label">POC Completa<br>18/18 PASS</div>
+      <div class="rm-tag">Concluído</div>
+    </div>
+    <div class="rm-step rm-next">
+      <div class="rm-circle">→</div>
+      <div class="rm-label">Workshop de<br>Arquitetura</div>
+      <div class="rm-tag">Próxima decisão</div>
+    </div>
+    <div class="rm-step rm-future">
+      <div class="rm-circle">●</div>
+      <div class="rm-label">Sprint 0<br>Piloto real</div>
+      <div class="rm-tag">4–6 semanas</div>
+    </div>
+  </div>
+
+  <!-- Decisão -->
+  <h2>A decisão necessária</h2>
+  <p>A viabilidade técnica foi provada. O que falta agora é uma decisão de negócio:</p>
+
+  <div class="decision-row">
+    <div class="decision-card decision-a">
+      <div class="decision-letter" style="background:#0176D3">A</div>
+      <h3 style="color:#0176D3">Workshop de Arquitetura (2–3 semanas)</h3>
+      <ul>
+        <li>Mapear as colunas da Pricing Matrix atual para Decision Matrices</li>
+        <li>Definir estratégia de convivência com o legado durante transição</li>
+        <li>Estimar esforço real de migração com o time de pricing</li>
+        <li>Validar o pré-requisito de remoção do Order Template</li>
+      </ul>
+      <p style="margin-top:12px;font-size:12px;color:#666">
+        <strong>Quando escolher:</strong> há dúvidas sobre o escopo ou o time de pricing precisa validar o mapeamento antes de comprometer com datas.
+      </p>
+    </div>
+    <div class="decision-card decision-b">
+      <div class="decision-letter" style="background:#2E7D32">B</div>
+      <h3 style="color:#2E7D32">Sprint 0 de Implementação (4–6 semanas)</h3>
+      <ul>
+        <li>Iniciar com 1 domínio piloto (ex.: preço base Internet Fixa)</li>
+        <li>Construir pipeline real com dados reais da Claro</li>
+        <li>Entregar resultado mensurável em produção ou staging</li>
+        <li>Workshop de arquitetura acontece como parte do Sprint, não antes</li>
+      </ul>
+      <p style="margin-top:12px;font-size:12px;color:#666">
+        <strong>Quando escolher:</strong> o pré-requisito (Order Template) tem responsável identificado e
+        a viabilidade técnica já é suficiente para comprometer com entrega.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">❓</span>
+    <div><strong>Pergunta de fechamento:</strong>
+    Quem na Claro tem autoridade para validar e cronogramar a remoção do Order Template (pré-requisito #1)?
+    Identificar esse responsável é o único desbloqueador imediato para avançar com qualquer uma das opções acima.</div>
+  </div>
+
+  <!-- Links -->
+  <div class="divider"></div>
+  <h3>Para aprofundar</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+    <a href="poc-bre-claro.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Técnico</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Documentação técnica das POCs</div>
+    </a>
+    <a href="performance.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Performance</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Dashboard de carga e latência</div>
+    </a>
+    <a href="para-funcionais.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Funcional</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Como o BRE funciona na prática</div>
+    </a>
+  </div>
+
+</div><!-- /.page -->
+
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = '..';</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

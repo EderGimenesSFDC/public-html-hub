@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Como o BRE Funciona — Para Times Funcionais · Claro BR</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F6F9; color: #1A1A1A; line-height: 1.65;
+  }
+  .page { max-width: 920px; margin: 0 auto; padding: 40px 28px 100px; }
+  h1 { font-size: 28px; font-weight: 800; color: #032D60; line-height: 1.2; margin-bottom: 8px; }
+  h2 { font-size: 20px; font-weight: 700; color: #032D60; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #E0E6EF; }
+  h3 { font-size: 16px; font-weight: 700; color: #032D60; margin: 22px 0 10px; }
+  p  { margin-bottom: 14px; font-size: 14px; }
+  strong { font-weight: 700; }
+  code { background: #E8EDF2; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+  a { color: #0176D3; }
+  ul, ol { padding-left: 20px; margin-bottom: 14px; font-size: 14px; }
+  li { margin-bottom: 6px; }
+
+  /* Hero */
+  .hero { background: #032D60; color: #fff; border-radius: 12px; padding: 40px 36px; margin-bottom: 36px; }
+  .hero-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+  .hero p { color: rgba(255,255,255,0.82); font-size: 15px; max-width: 640px; line-height: 1.65; margin-bottom: 0; }
+
+  /* Analogia visual */
+  .analogy { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .analogy-box { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; overflow: hidden; }
+  .analogy-header { padding: 14px 18px; font-size: 14px; font-weight: 700; }
+  .analogy-body { padding: 16px 18px; font-size: 13px; color: #444; border-top: 1px solid #F0F0F0; }
+  .analogy-body ul { color: #444; }
+
+  /* Callouts */
+  .callout { border-radius: 8px; padding: 16px 20px; margin: 18px 0; display: flex; gap: 14px; font-size: 14px; line-height: 1.6; }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-ok   { background: #E8F5E9; border-left: 3px solid #2E7D32; }
+  .callout-info { background: #E3F2FD; border-left: 3px solid #0176D3; }
+  .callout-warn { background: #FFF3E0; border-left: 3px solid #E65C00; }
+
+  /* Fluxo pipeline */
+  .pipeline { display: flex; align-items: stretch; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .pipe-step { flex: 1; min-width: 130px; background: #fff; border: 1px solid #E0E0E0; padding: 16px 12px; text-align: center; position: relative; }
+  .pipe-step:first-child { border-radius: 8px 0 0 8px; }
+  .pipe-step:last-child  { border-radius: 0 8px 8px 0; }
+  .pipe-step + .pipe-step::before {
+    content: '→'; position: absolute; left: -13px; top: 50%; transform: translateY(-50%);
+    font-size: 16px; color: #999; font-weight: 700; z-index: 1;
+  }
+  .pipe-icon { font-size: 24px; margin-bottom: 6px; }
+  .pipe-name { font-size: 12px; font-weight: 700; color: #032D60; line-height: 1.4; }
+  .pipe-what { font-size: 11px; color: #777; margin-top: 4px; line-height: 1.4; }
+
+  /* Tabela de Decision Matrix visual */
+  .dm-table-wrap { overflow-x: auto; margin: 16px 0; }
+  .dm-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #E0E0E0; }
+  .dm-table th { background: #032D60; color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; }
+  .dm-table td { padding: 9px 14px; border-bottom: 1px solid #F0F0F0; }
+  .dm-table tr:last-child td { border-bottom: none; }
+  .dm-table tr:nth-child(even) td { background: #F9FBFC; }
+  .dm-table td.match { background: #E8F5E9; font-weight: 700; color: #2E7D32; }
+  .dm-table td.result { background: #E3F2FD; font-weight: 700; color: #0176D3; }
+  .tag-in  { font-size: 10px; font-weight: 700; text-transform: uppercase; background: #E3F2FD; color: #0176D3; padding: 2px 6px; border-radius: 8px; margin-left: 4px; }
+  .tag-out { font-size: 10px; font-weight: 700; text-transform: uppercase; background: #E8F5E9; color: #2E7D32; padding: 2px 6px; border-radius: 8px; margin-left: 4px; }
+
+  /* Comparação Pricing Matrix → BRE */
+  .mapping { margin: 20px 0; }
+  .mapping-item { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; padding: 14px 18px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; }
+  .mapping-before { font-size: 13px; }
+  .mapping-arrow  { font-size: 20px; color: #2E7D32; font-weight: 700; }
+  .mapping-after  { font-size: 13px; }
+  .mapping-label  { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #999; margin-bottom: 3px; }
+  .mapping-val    { font-weight: 700; color: #032D60; }
+
+  /* Governança */
+  .gov-steps { counter-reset: gov; margin: 20px 0; }
+  .gov-step  { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
+  .gov-num   {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+    background: #032D60; color: #fff; font-size: 16px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gov-body h4 { font-size: 14px; font-weight: 700; color: #032D60; margin-bottom: 4px; }
+  .gov-body p  { font-size: 13px; color: #444; margin-bottom: 0; }
+
+  /* Quadro auditoria */
+  .audit-box { background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; margin: 16px 0; }
+  .audit-header { background: #032D60; color: #fff; padding: 10px 18px; font-size: 13px; font-weight: 700; }
+  .audit-row { display: grid; grid-template-columns: 30px 1fr 1fr 80px; border-bottom: 1px solid #F0F0F0; font-size: 12px; }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-row.header-row { background: #F4F6F9; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #777; }
+  .audit-cell { padding: 9px 12px; }
+  .audit-step { background: #E3F2FD; color: #0176D3; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .audit-ok   { color: #2E7D32; font-weight: 700; }
+
+  /* Pergunta frequente */
+  .faq { margin: 20px 0; }
+  .faq-item { background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; margin-bottom: 10px; }
+  .faq-q { padding: 14px 18px; font-size: 14px; font-weight: 700; color: #032D60; cursor: default; display: flex; gap: 10px; }
+  .faq-a { padding: 0 18px 14px; font-size: 13px; color: #444; line-height: 1.6; }
+
+  .divider { height: 1px; background: #E0E0E0; margin: 32px 0; }
+
+  @media (max-width: 700px) {
+    .analogy { grid-template-columns: 1fr; }
+    .pipeline { flex-direction: column; }
+    .pipe-step + .pipe-step::before { content: '↓'; top: -12px; left: 50%; transform: translateX(-50%); }
+    .pipe-step { border-radius: 0; }
+    .mapping-item { grid-template-columns: 1fr; gap: 4px; }
+    .audit-row { grid-template-columns: 30px 1fr 1fr; }
+    .audit-row > .audit-cell:last-child { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Guia funcional · Para times de negócio, produto e pricing</div>
+    <h1 style="color:#fff;margin-bottom:14px">Como o BRE Funciona<br><span style="color:rgba(255,255,255,0.7);font-size:22px;font-weight:400">Sem código, sem jargão técnico — entendendo o Motor de Regras de Negócio</span></h1>
+    <p>Este guia explica como o Business Rules Engine (BRE) calcula preços, como você pode
+    ler e solicitar alterações nas regras, e como o sistema garante auditabilidade
+    de cada cálculo. Se você trabalha com pricing, produto ou vendas, este é seu documento.
+    A <strong>POC Completa</strong> (4ª e última POC) validou os 12 mecanismos de precificação
+    em 18 cenários — incluindo carrinhos de 200 itens com <strong>0 SOQL</strong>.</p>
+  </div>
+
+  <!-- Analogia -->
+  <h2>O que é o BRE — em linguagem simples</h2>
+  <p>O BRE é como uma <strong>planilha inteligente que vive dentro do Salesforce</strong>:
+  você define as regras em tabelas com colunas e linhas, e o sistema automaticamente
+  aplica a regra certa quando um vendedor coloca um produto no carrinho.</p>
+
+  <div class="analogy">
+    <div class="analogy-box">
+      <div class="analogy-header" style="background:#FFEBEE;color:#C62828">
+        🗂 Como era — Apex (código)
+      </div>
+      <div class="analogy-body">
+        <ul>
+          <li>Regras escritas em código — só desenvolvedor lê e altera</li>
+          <li>Para mudar um preço: abrir chamado → sprint de desenvolvimento → deploy → release</li>
+          <li>Não tem "versão anterior" — rollback exige novo deploy</li>
+          <li>Auditoria: "preciso olhar no log do Salesforce" — nenhum negócio consegue fazer isso</li>
+          <li>A Pricing Matrix tem 4.877 linhas (sandbox) sem contexto — ninguém sabe o que 62% delas faz</li>
+        </ul>
+      </div>
+    </div>
+    <div class="analogy-box">
+      <div class="analogy-header" style="background:#E8F5E9;color:#2E7D32">
+        ✅ Como fica — BRE (declarativo)
+      </div>
+      <div class="analogy-body">
+        <ul>
+          <li>Regras em tabelas — qualquer pessoa treinada lê e entende</li>
+          <li>Para mudar um preço: abrir a tabela → editar a linha → publicar nova versão (sem deploy)</li>
+          <li>Versionamento automático — a versão anterior fica arquivada, rollback em 1 clique</li>
+          <li>Auditoria nativa: cada step do cálculo exibe valor de entrada, regra aplicada e resultado</li>
+          <li>Tabelas menores e com propósito claro — fácil de entender e manter</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline -->
+  <h2>Como o preço é calculado — o pipeline</h2>
+  <p>Quando o vendedor adiciona um produto ao carrinho, o BRE executa uma sequência de steps
+  em ordem. Cada step transforma ou enriquece o preço. Pense como uma linha de montagem:</p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-icon">🛒</div>
+      <div class="pipe-name">Produto no Carrinho</div>
+      <div class="pipe-what">Entrada: produto, UF, canal, forma de pgto</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">📋</div>
+      <div class="pipe-name">Preço Base</div>
+      <div class="pipe-what">Decision Matrix devolve preço tabelado por produto</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">🗺️</div>
+      <div class="pipe-name">Ajuste Regional</div>
+      <div class="pipe-what">Se existe preço para a cidade, aplica; senão, fallback para UF/nacional</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">💳</div>
+      <div class="pipe-name">Forma de Pagamento</div>
+      <div class="pipe-what">Ajusta preço para boleto, digital, etc.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">🎁</div>
+      <div class="pipe-name">Desconto / Bônus</div>
+      <div class="pipe-what">Aplica promoções e bônus condicionados ao perfil</div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-icon">✅</div>
+      <div class="pipe-name">Preço Final</div>
+      <div class="pipe-what">Retorna ao carrinho com breakdown completo</div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div>Cada bloco acima é chamado de <strong>Step</strong> dentro de um <strong>Expression Set</strong>.
+    O conjunto de todos os steps é o pipeline de precificação. Você não precisa saber programar para
+    ler, entender ou propor mudanças em cada step.</div>
+  </div>
+
+  <!-- Decision Matrix -->
+  <h2>A Decision Matrix — a tabela de regras</h2>
+  <p>Uma <strong>Decision Matrix</strong> é como uma tabela de Excel com entradas e saídas.
+  O BRE recebe alguns valores (ex.: produto + modalidade), consulta a tabela
+  e retorna o resultado correto. Veja um exemplo simplificado:</p>
+
+  <div class="dm-table-wrap">
+    <table class="dm-table">
+      <thead>
+        <tr>
+          <th>Produto <span class="tag-in">ENTRADA</span></th>
+          <th>Modalidade <span class="tag-in">ENTRADA</span></th>
+          <th>Prazo (meses) <span class="tag-in">ENTRADA</span></th>
+          <th>Canal <span class="tag-in">ENTRADA</span></th>
+          <th>Preço Base (R$) <span class="tag-out">SAÍDA</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Internet Fixa 200MB</td>
+          <td>Mensal</td>
+          <td>*</td>
+          <td>*</td>
+          <td class="result">79,90</td>
+        </tr>
+        <tr>
+          <td>Internet Fixa 200MB</td>
+          <td>Anual</td>
+          <td>12</td>
+          <td>*</td>
+          <td class="result">69,90</td>
+        </tr>
+        <tr>
+          <td>Internet Fixa 500MB</td>
+          <td>Mensal</td>
+          <td>*</td>
+          <td>Loja</td>
+          <td class="result">99,90</td>
+        </tr>
+        <tr>
+          <td class="match">Internet Fixa 500MB</td>
+          <td class="match">Mensal</td>
+          <td class="match">*</td>
+          <td class="match">Digital</td>
+          <td class="result" style="background:#C8E6C9">89,90 ← match!</td>
+        </tr>
+        <tr>
+          <td>Internet Fixa 1GB</td>
+          <td>*</td>
+          <td>*</td>
+          <td>*</td>
+          <td class="result">139,90</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:#888;margin-top:-8px">
+    O asterisco <code>*</code> significa "qualquer valor" — é uma regra wildcard.
+    A linha em verde mostra o match para o produto "Internet Fixa 500MB" comprado no canal Digital.
+  </p>
+
+  <div class="callout callout-ok">
+    <span class="callout-icon">📌</span>
+    <div><strong>O que muda em relação à Pricing Matrix atual:</strong>
+    em vez de uma tabela gigante com 4.877 linhas (sandbox) e 29 colunas misturando tudo,
+    o BRE usa <strong>tabelas menores e focadas</strong> — uma por responsabilidade.
+    A tabela de preço base não mistura informações de promoção ou vigência.
+    A <strong>POC Completa</strong> provou que 12 mecanismos cabem em 12 matrizes declarativas
+    — e que um carrinho de <strong>200 itens roda com 0 SOQL</strong>, eliminando o risco de
+    governador que o motor Apex atual enfrenta a partir de 15 itens.</div>
+  </div>
+
+  <!-- Mapeamento -->
+  <h2>O que muda na sua rotina — Pricing Matrix → BRE</h2>
+  <div class="mapping">
+    <div class="mapping-item">
+      <div>
+        <div class="mapping-label">Hoje</div>
+        <div class="mapping-val">Uma Pricing Matrix com 4.877 linhas (sandbox) e 29 colunas</div>
+      </div>
+      <div class="mapping-arrow">→</div>
+      <div>
+        <div class="mapping-label">Com BRE</div>
+        <div class="mapping-val">~8 Decision Matrices com ~150 linhas cada, bem nomeadas</div>
+      </div>
+    </div>
+    <div class="mapping-item">
+      <div>
+        <div class="mapping-label">Hoje</div>
+        <div class="mapping-val">Mudança de preço = ticket de engenharia + sprint + deploy</div>
+      </div>
+      <div class="mapping-arrow">→</div>
+      <div>
+        <div class="mapping-label">Com BRE</div>
+        <div class="mapping-val">Editar linha na Decision Matrix + publicar versão (minutos)</div>
+      </div>
+    </div>
+    <div class="mapping-item">
+      <div>
+        <div class="mapping-label">Hoje</div>
+        <div class="mapping-val">Vigência de promoção gerenciada no Apex (código)</div>
+      </div>
+      <div class="mapping-arrow">→</div>
+      <div>
+        <div class="mapping-label">Com BRE</div>
+        <div class="mapping-val">Versão da Decision Matrix com data de ativação/expiração</div>
+      </div>
+    </div>
+    <div class="mapping-item">
+      <div>
+        <div class="mapping-label">Hoje</div>
+        <div class="mapping-val">Hierarquia de preço regional hardcoded em Apex</div>
+      </div>
+      <div class="mapping-arrow">→</div>
+      <div>
+        <div class="mapping-label">Com BRE</div>
+        <div class="mapping-val">Regra COALESCE declarativa: Node → Cidade → DDD → UF → Nacional (5 níveis, provado na POC Completa)</div>
+      </div>
+    </div>
+    <div class="mapping-item">
+      <div>
+        <div class="mapping-label">Hoje</div>
+        <div class="mapping-val">Carrinho com 15+ itens estoura limite de 100 SOQL/transação (7 SOQL/item × 15 = 105)</div>
+      </div>
+      <div class="mapping-arrow">→</div>
+      <div>
+        <div class="mapping-label">Com BRE (POC Completa)</div>
+        <div class="mapping-val"><strong>0 SOQL</strong> por avaliação — 200 itens no carrinho a 7,48 ms/item, sem risco de governador</div>
+      </div>
+    </div>
+    <div class="mapping-item">
+      <div>
+        <div class="mapping-label">Hoje</div>
+        <div class="mapping-val">Auditoria de preço: "precisa puxar log do desenvolvedor"</div>
+      </div>
+      <div class="mapping-arrow">→</div>
+      <div>
+        <div class="mapping-label">Com BRE</div>
+        <div class="mapping-val">Response da API inclui breakdown de cada step com valor</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auditoria -->
+  <h2>Como ler a auditoria de preço</h2>
+  <p>Toda chamada ao BRE retorna um breakdown do cálculo. Veja o que você veria para
+  um carrinho com Internet Fixa 500MB, canal Digital, SP, boleto:</p>
+
+  <div class="audit-box">
+    <div class="audit-header">🔍 Breakdown de Preço — Internet Fixa 500MB / Digital / SP / Boleto</div>
+    <div class="audit-row header-row">
+      <div class="audit-cell">#</div>
+      <div class="audit-cell">Step</div>
+      <div class="audit-cell">O que aconteceu</div>
+      <div class="audit-cell" style="text-align:right">Valor (R$)</div>
+    </div>
+    <div class="audit-row">
+      <div class="audit-cell audit-step">1</div>
+      <div class="audit-cell"><strong>Preço Base</strong></div>
+      <div class="audit-cell">Matrix <code>PrecoBase_Internet</code> → linha Digital/Mensal encontrada</div>
+      <div class="audit-cell" style="text-align:right">89,90</div>
+    </div>
+    <div class="audit-row">
+      <div class="audit-cell audit-step">2</div>
+      <div class="audit-cell"><strong>Preço Regional</strong></div>
+      <div class="audit-cell">Node SP-001 sem preço → City São Paulo sem preço → UF SP → match</div>
+      <div class="audit-cell" style="text-align:right">87,90</div>
+    </div>
+    <div class="audit-row">
+      <div class="audit-cell audit-step">3</div>
+      <div class="audit-cell"><strong>Forma de Pagamento</strong></div>
+      <div class="audit-cell">Canal Digital / Boleto → acréscimo de +R$2,00</div>
+      <div class="audit-cell" style="text-align:right">89,90</div>
+    </div>
+    <div class="audit-row">
+      <div class="audit-cell audit-step">4</div>
+      <div class="audit-cell"><strong>Desconto Comercial</strong></div>
+      <div class="audit-cell">Política comercial SUMMER_25 → 10% → −R$8,99</div>
+      <div class="audit-cell" style="text-align:right">80,91</div>
+    </div>
+    <div class="audit-row">
+      <div class="audit-cell audit-step">5</div>
+      <div class="audit-cell"><strong>Bônus</strong></div>
+      <div class="audit-cell">Perfil crédito: Bom → bônus Dados 2GB aplicado</div>
+      <div class="audit-cell" style="text-align:right; color: #2E7D32">+ Bônus 2GB</div>
+    </div>
+    <div class="audit-row" style="background:#E8F5E9">
+      <div class="audit-cell audit-step" style="background:#2E7D32;color:#fff">✓</div>
+      <div class="audit-cell"><strong>Preço Final</strong></div>
+      <div class="audit-cell audit-ok">Todos os steps executados com sucesso</div>
+      <div class="audit-cell" style="text-align:right;font-weight:800;color:#2E7D32">R$ 80,91</div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">🔑</span>
+    <div>Cada linha do breakdown mostra exatamente qual tabela foi consultada, qual linha deu match,
+    e qual valor foi calculado. Com isso, <strong>o time de pricing consegue auditar qualquer preço
+    sem precisar de um desenvolvedor</strong>.</div>
+  </div>
+
+  <!-- Governança -->
+  <h2>Como solicitar uma mudança nas regras de preço</h2>
+  <p>Com o BRE em produção, o fluxo de mudança de precificação será assim:</p>
+
+  <div class="gov-steps">
+    <div class="gov-step">
+      <div class="gov-num">1</div>
+      <div class="gov-body">
+        <h4>Identificar o que mudar</h4>
+        <p>Qual produto? Qual região? Qual condição (canal, modalidade, forma de pagamento)?
+        O time de pricing identifica a Decision Matrix responsável abrindo o catálogo BRE no Salesforce.</p>
+      </div>
+    </div>
+    <div class="gov-step">
+      <div class="gov-num">2</div>
+      <div class="gov-body">
+        <h4>Criar ou editar a versão</h4>
+        <p>O BRE permite criar uma <strong>versão rascunho</strong> da Decision Matrix —
+        sem afetar o preço atual em produção. Você edita a tabela diretamente na interface do Salesforce,
+        como uma planilha. Defina a data de início da nova versão.</p>
+      </div>
+    </div>
+    <div class="gov-step">
+      <div class="gov-num">3</div>
+      <div class="gov-body">
+        <h4>Testar antes de publicar</h4>
+        <p>Com a versão rascunho, é possível simular o cálculo com entradas reais antes de ativar.
+        O resultado mostra o breakdown completo para você conferir se o preço calculado é o esperado.</p>
+      </div>
+    </div>
+    <div class="gov-step">
+      <div class="gov-num">4</div>
+      <div class="gov-body">
+        <h4>Publicar a nova versão</h4>
+        <p>Após validação, você <strong>ativa a nova versão</strong> — o sistema passa a usar as novas
+        regras imediatamente. A versão anterior fica arquivada para consulta ou rollback rápido.</p>
+      </div>
+    </div>
+    <div class="gov-step">
+      <div class="gov-num">5</div>
+      <div class="gov-body">
+        <h4>Monitorar após a publicação</h4>
+        <p>Verifique nos primeiros pedidos após a mudança se o preço calculado está correto.
+        O breakdown de auditoria facilita essa validação sem precisar de suporte técnico.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-ok">
+    <span class="callout-icon">✅</span>
+    <div><strong>POC Completa concluída — 18/18 cenários PASS.</strong> Os 12 mecanismos de
+    precificação da Claro foram mapeados e validados em matrizes BRE. O próximo passo é o
+    Workshop de Arquitetura para definir a estratégia de migração da Pricing Matrix atual.
+    Enquanto a transição não ocorre, o time de tecnologia coordenará qual motor está ativo.</div>
+  </div>
+
+  <!-- Termos -->
+  <h2>Glossário — termos que você vai ouvir</h2>
+  <div class="faq">
+    <div class="faq-item">
+      <div class="faq-q">📐 Expression Set — o que é?</div>
+      <div class="faq-a">É o "pipeline completo" de precificação — a sequência ordenada de todos os steps
+      que transformam o produto em preço final. Pense como uma receita: cada step é um ingrediente aplicado em ordem.
+      Pode existir um Expression Set diferente por tipo de produto, canal ou fluxo de venda.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">📊 Decision Matrix — o que é?</div>
+      <div class="faq-a">Uma tabela de regras com colunas de entrada e colunas de saída. Dado um conjunto de
+      condições (produto, canal, UF...), a matriz retorna o valor correspondente. É o "mapa de regras" do BRE.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">🔄 Versão / Versionamento — por que importa?</div>
+      <div class="faq-a">Toda Decision Matrix e todo Expression Set tem um histórico de versões.
+      Se uma promoção vence ou um preço muda, você cria uma nova versão com data de início — sem deletar o histórico.
+      Isso permite auditoria retroativa: "qual era o preço no dia X?" é respondível.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">🌎 COALESCE geográfico — o que é?</div>
+      <div class="faq-a">É a lógica de fallback de preço regional. O BRE tenta encontrar um preço nessa ordem:
+      Node específico → Cidade → DDD → UF → Nacional. Se não existe preço para a cidade, ele usa o da UF.
+      Se não existe preço para a UF, usa o nacional. Isso evita que o vendedor receba erro porque uma
+      localidade não foi cadastrada.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">🎁 OTC — o que é?</div>
+      <div class="faq-a">One-Time Charge — taxa cobrada uma única vez na adesão do produto (ex.: taxa de instalação
+      ou equipamento). É calculada separadamente do preço recorrente mensal e aparece no breakdown do carrinho.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">📦 Bundle — o que é no contexto de preço?</div>
+      <div class="faq-a">Um Bundle é um pacote de produtos (ex.: Internet + TV + Celular) onde o preço final
+      pode depender da combinação. O BRE calcula o preço de cada produto individualmente e pode aplicar
+      um desconto de portfólio por cima — tudo declarativo, sem código.</div>
+    </div>
+  </div>
+
+  <!-- Links -->
+  <div class="divider"></div>
+  <h3>Explore mais</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+    <a href="para-gestores.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Gestores</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">O que foi provado e próximas decisões</div>
+    </a>
+    <a href="poc-bre-claro.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">POC 1</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Motor Pipeline — documentação técnica</div>
+    </a>
+    <a href="guia-bre.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Técnico</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Guia de criar e alterar BREs</div>
+    </a>
+  </div>
+
+</div><!-- /.page -->
+
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = '..';</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

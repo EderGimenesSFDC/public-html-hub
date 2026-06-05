@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>POC · Motor de Precificação em Pipeline (Salesforce Industries BRE)</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #f1f3f5;
+    --surface-3: #eaedf0;
+    --text: #1c2024;
+    --text-2: #5b6470;
+    --text-3: #8a929c;
+    --stroke: #e2e6ea;
+    --stroke-2: #d4d9de;
+    --accent: #2b6cb0;
+    --accent-soft: #e8f0f9;
+    --success: #2f8a57;
+    --success-soft: #e6f4ec;
+    --warning: #b7791f;
+    --warning-soft: #fbf2e0;
+    --danger: #c0392b;
+    --danger-soft: #fbeae8;
+    --info: #2b6cb0;
+    --info-soft: #e8f0f9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  p { margin: 0; }
+  .sub { color: var(--text-2); }
+  .small { font-size: 13px; }
+  .tertiary { color: var(--text-3); }
+  code, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+  }
+  code {
+    background: var(--surface-3);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+  .divider { height: 1px; background: var(--stroke); margin: 28px 0; border: none; }
+  section { margin-top: 6px; }
+  .stack { display: flex; flex-direction: column; }
+  .gap6 > * + * { margin-top: 6px; }
+  .gap8 > * + * { margin-top: 8px; }
+  .gap10 > * + * { margin-top: 10px; }
+  .gap14 > * + * { margin-top: 14px; }
+  .gap24 > * + * { margin-top: 24px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid4, .grid2 { grid-template-columns: 1fr; } }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat .l { font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+  .stat.danger .v { color: var(--danger); }
+  .stat.warning .v { color: var(--warning); }
+  .stat.success .v { color: var(--success); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card .hd {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--stroke);
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .card .bd { padding: 16px; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--stroke-2);
+  }
+  .callout .ct { font-weight: 600; margin-bottom: 4px; }
+  .callout.info { background: var(--info-soft); border-color: #cfe0f2; }
+  .callout.success { background: var(--success-soft); border-color: #c6e6d4; }
+  .callout.warning { background: var(--warning-soft); border-color: #ecd9ad; }
+  .callout.danger { background: var(--danger-soft); border-color: #f0c8c2; }
+  .callout.info .ct { color: var(--info); }
+  .callout.success .ct { color: var(--success); }
+  .callout.warning .ct { color: var(--warning); }
+  .callout.danger .ct { color: var(--danger); }
+
+  .pill {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px;
+    border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill.neutral { background: var(--surface-3); color: var(--text-2); }
+  .pill.info { background: var(--info-soft); color: var(--info); }
+  .pill.success { background: var(--success-soft); color: var(--success); }
+  .pill.warning { background: var(--warning-soft); color: var(--warning); }
+  .pill.clickable { cursor: pointer; border-color: var(--stroke-2); }
+  .pill.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); font-weight: 600; }
+  tr.danger td { background: var(--danger-soft); }
+  tr.warning td { background: var(--warning-soft); }
+  tr.info td { background: var(--info-soft); }
+  tr.success td { background: var(--success-soft); }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; }
+  td.center, th.center { text-align: center; }
+
+  pre {
+    background: var(--surface-3);
+    border: 1px solid var(--stroke-2);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  /* bar chart */
+  .chart { display: flex; align-items: flex-end; gap: 14px; height: 200px; padding: 8px 4px 0; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; max-width: 64px; border-radius: 4px 4px 0 0; }
+  .bar.info { background: var(--accent); }
+  .bar.success { background: var(--success); }
+  .bar-val { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .bar-cat { font-size: 12px; color: var(--text-2); margin-top: 6px; text-align: center; }
+
+  .head-badge { display:inline-block; font-size:12px; color:var(--text-2); border:1px solid var(--stroke-2); border-radius:999px; padding:2px 10px; }
+
+  /* query cards */
+  .group-label { font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-3); font-weight:600; margin-top:10px; }
+  .qcard { border:1px solid var(--stroke); border-radius:10px; background:var(--surface); overflow:hidden; }
+  .qcard .qhd { padding:10px 14px; border-bottom:1px solid var(--stroke); display:flex; align-items:center; gap:8px; justify-content:space-between; }
+  .qcard .qhd .left { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .qcard .qdesc { padding:10px 14px 0; color:var(--text-2); font-size:13px; }
+  .qcard pre { margin:12px 14px 14px; }
+  .copy-btn { cursor:pointer; font-size:12px; font-weight:600; border:1px solid var(--stroke-2); background:var(--surface-2); color:var(--text-2); border-radius:6px; padding:4px 12px; white-space:nowrap; }
+  .copy-btn:hover { background:var(--surface-3); }
+  .copy-btn.ok { color:var(--success); border-color:#c6e6d4; background:var(--success-soft); }
+</style>
+</head>
+<body>
+<div class="wrap stack gap24">
+
+  <!-- Cabeçalho -->
+  <div class="stack gap6">
+    <h1>POC · Motor de Precificação em Pipeline (Salesforce Industries BRE)</h1>
+    <p class="sub">
+      Um Expression Set orquestra 4 domínios de decisão independentes (preço base → política →
+      fidelidade → bundle) e calcula o preço final encadeando a saída de cada etapa. Construída e
+      validada na org <code>org-demo</code> (BRE nativo).
+    </p>
+  </div>
+
+  <div class="grid4">
+    <div class="stat"><div class="v">1</div><div class="l">Expression Set orquestrador</div></div>
+    <div class="stat"><div class="v">4</div><div class="l">Decision Matrices (1 por domínio)</div></div>
+    <div class="stat"><div class="v">7</div><div class="l">Steps (4 lookups + 3 cálculos)</div></div>
+    <div class="stat success"><div class="v">2/2</div><div class="l">Cenários validados via REST</div></div>
+  </div>
+
+  <div class="callout success">
+    <div class="ct">Status: validada ponta a ponta</div>
+    <div>Os 7 steps rodam numa única transação declarativa, sem Apex. O JSON de resposta expõe o preço
+    em cada estágio — é a trilha de auditoria nativa do BRE.</div>
+  </div>
+
+  <!-- 1. Solução visual -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>1 · Solução visual</h2>
+    <p class="sub">As 4 matrizes resolvem lookups independentes; o nó de cálculo encadeia os resultados
+      (a saída de um step vira entrada do próximo) até o preço final.</p>
+
+    <div class="card">
+      <div class="hd">Arquitetura do pipeline <span class="head-badge">Expression Set: PrecoFinalPOC</span></div>
+      <div class="bd" id="diagram"></div>
+    </div>
+
+    <h3>Os 7 steps em ordem de execução</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th class="center">#</th><th>Tipo</th><th>Etapa</th><th>Artefato / Ação</th><th>Entrada → Saída</th>
+        </tr></thead>
+        <tbody id="steps-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2. Como foi pensada -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>2 · Como a POC foi pensada</h2>
+    <div class="grid2">
+      <div class="card"><div class="hd">Princípio: 1 domínio = 1 matriz</div>
+        <div class="bd"><p>A matriz monolítica atual (~90 colunas, multi-select) foi decomposta em 4 matrizes
+        pequenas, cada uma com responsabilidade única. Trocar a regra de fidelidade não toca em preço
+        base nem em bundle.</p></div>
+      </div>
+      <div class="card"><div class="hd">Matriz só faz lookup; cálculo é separado</div>
+        <div class="bd"><p>Decision Matrix não faz aritmética — ela devolve um valor armazenado. Por isso as
+        matrizes retornam <code>FATOR</code> ou <code>DESCONTO</code>, e os steps de cálculo
+        (<code>AssignParameterValues</code>) combinam tudo.</p></div>
+      </div>
+    </div>
+
+    <h3>O encadeamento (o ponto central)</h3>
+    <p class="sub">A sintaxe foi extraída de um Expression Set padrão da própria org. Cada step de cálculo
+      atribui um parâmetro a partir de uma expressão que referencia saídas anteriores:</p>
+    <pre>step 5  PRECO_POS_POLITICA   = PrecoBasePOCMatrix__PRECO_BASE * PoliticaComercialPOCMatrix__FATOR_POLITICA
+step 6  PRECO_POS_FIDELIDADE = PRECO_POS_POLITICA * FidelidadePOCMatrix__FATOR_FIDELIDADE   ← usa a saída do step 5
+step 7  PRECO_FINAL          = PRECO_POS_FIDELIDADE - BundlePOCMatrix__DESC_BUNDLE          ← usa a saída do step 6</pre>
+
+    <div class="callout info">
+      <div class="ct">Anti-pattern corrigido</div>
+      <div>A matriz de preço base ficou <b>limpa</b>: sem promoção embutida. Descontos viraram camadas
+      independentes — o oposto do objeto custom monolítico de hoje, onde preços promocionais estão
+      cravados na própria matriz.</div>
+    </div>
+  </section>
+
+  <!-- 3. Cenários -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>3 · Cenários de teste</h2>
+    <p class="sub">Selecione um cenário para ver as entradas, a saída real, o preço em cada etapa e o comando para reproduzir.</p>
+
+    <div class="row" id="scenario-pills"></div>
+    <p class="sub" id="scenario-resumo" style="margin-top:6px;"></p>
+
+    <div class="grid2">
+      <div class="stack gap8">
+        <h3>Entradas enviadas</h3>
+        <div class="tbl-wrap"><table><thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+          <tbody id="inputs-body"></tbody></table></div>
+      </div>
+      <div class="stack gap8">
+        <h3>Saída retornada (outputValues)</h3>
+        <div class="tbl-wrap"><table><thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+          <tbody id="outputs-body"></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="stack gap8">
+      <h3>Preço a cada etapa do pipeline (rastreabilidade)</h3>
+      <div class="card"><div class="bd"><div class="chart" id="stage-chart"></div></div></div>
+      <p class="small tertiary">Fonte: execução real do Expression Set PrecoFinalPOC via REST · org org-demo</p>
+    </div>
+
+    <div class="stack gap8">
+      <h3>Como executar este cenário (POST)</h3>
+      <pre id="curl-block"></pre>
+    </div>
+  </section>
+
+  <!-- 4. Passo a passo -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>4 · Passo a passo para reproduzir do zero</h2>
+    <div class="stack gap14">
+      <div class="stack gap6">
+        <div class="row"><span class="pill neutral">Pré-requisito</span><b>Org com Business Rules Engine (Industries) ativo</b></div>
+        <p class="small sub">Confirme que os objetos nativos existem: <code>SELECT QualifiedApiName FROM EntityDefinition WHERE QualifiedApiName LIKE 'ExpressionSet%'</code> deve retornar ~12 entidades.</p>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 1</span><b>Deploy das 4 Decision Matrices</b></div>
+        <pre>sf project deploy start -o org-demo \
+  -d force-app/main/default/decisionMatrixDefinition/PrecoBasePOCMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/PoliticaComercialPOCMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/FidelidadePOCMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/BundlePOCMatrix.decisionMatrixDefinition-meta.xml</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 2</span><b>Carregar as linhas de dado (8 linhas)</b></div>
+        <p class="small sub">As matrizes nascem vazias; as linhas (<code>CalculationMatrixRow</code>) entram via Apex.
+        Faça isso <b>antes</b> de ativar o ES, para evitar o bloqueio "matriz referenciada por ES ativo".</p>
+        <pre># Insere as linhas de dado em cada matriz (CalculationMatrixRow)
+sf apex run -o org-demo -f /tmp/load_pipeline.apex</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 3</span><b>Deploy do Expression Set orquestrador</b></div>
+        <pre>sf project deploy start -o org-demo \
+  -d force-app/main/default/expressionSetDefinition/PrecoFinalPOC.expressionSetDefinition-meta.xml</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 4</span><b>Obter o token de acesso</b></div>
+        <pre>sf org display -o org-demo --json \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['accessToken'])" > /tmp/tok.txt</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill success">Passo 5</span><b>Invocar o pipeline (ver seção 3 para o comando completo)</b></div>
+        <p class="small sub">Endpoint: <code>POST /services/data/v60.0/actions/custom/runExpressionSet/PrecoFinalPOC</code>.
+        Corpo: <code>{ "inputs": [ { ...variáveis... } ] }</code>. A resposta traz <code>outputValues</code> com o preço de cada etapa.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="ct">Atenção na ordem</div>
+      <div>Se inverter a ordem (ativar o ES antes de carregar as linhas), a inserção de linhas é bloqueada
+      com <code>INVALID_INPUT</code>. Carregue dados primeiro; ative o orquestrador por último.</div>
+    </div>
+  </section>
+
+  <!-- 5. Limites -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>5 · Limites do BRE (testados) e impacto na volumetria da Claro</h2>
+    <p class="sub">Medidos empiricamente na org <code>org-demo</code> em 01/06/2026: 3 matrizes de teste
+      (1k / 5k / 10k linhas) e Expression Sets encadeando até 201 steps. Todos os artefatos e linhas de
+      teste foram <b>removidos da org após a medição</b>.</p>
+
+    <div class="callout danger">
+      <div class="ct">Achado principal: teto rígido de 200 steps por versão de ES</div>
+      <div>Confirmado na fronteira: 200 steps deploya e executa; 201 é rejeitado no deploy. Como cada
+      consulta de matriz e cada cálculo conta como 1 step, o orçamento de lookups + cálculos de um único
+      ES é <b>200</b>. O motor atual da Claro (~16 steps Solar + ajustes) cabe folgado — então o teto de
+      steps <b>não</b> é o risco; o risco real está na manutenção de linhas em alto volume e no padrão de
+      invocação.</div>
+    </div>
+
+    <div class="grid4">
+      <div class="stat danger"><div class="v">200</div><div class="l">Steps máx. por versão de ES</div></div>
+      <div class="stat warning"><div class="v">~5k</div><div class="l">Linhas por transação de carga</div></div>
+      <div class="stat"><div class="v">~1 s</div><div class="l">Latência fixa por chamada single</div></div>
+      <div class="stat success"><div class="v">500→2s</div><div class="l">Avaliações em 1 chamada bulk</div></div>
+    </div>
+
+    <h3>Tabela de limites observados</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Área</th><th>Limite</th><th>Tipo</th><th>Evidência do teste</th></tr></thead>
+        <tbody id="limits-body"></tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div class="stack gap8">
+        <h3>Latência por tamanho do lote (bulk)</h3>
+        <div class="card"><div class="bd"><div class="chart" id="bulk-chart"></div></div></div>
+        <p class="small tertiary">500 avaliações numa única chamada custam o mesmo que ~1,5 chamadas
+        individuais — o overhead por item é amortizado. Conclusão: <b>sempre invocar em bulk</b>.</p>
+      </div>
+      <div class="stack gap8">
+        <h3>O que isso significa para a Claro</h3>
+        <div class="callout warning">
+          <div class="ct">Risco 1 — Manutenção de linhas em volume</div>
+          <div>Com ~150k combinações, qualquer reajuste de preço exige desabilitar a versão da matriz,
+          recarregar em lotes de ~5k e reabilitar. É uma janela operacional, não um update simples.</div>
+        </div>
+        <div class="callout danger">
+          <div class="ct">Risco 2 — Invocação por item vs bulk</div>
+          <div>~1 s por chamada single vira gargalo se multiplicado por item de carrinho × refresh. A
+          arquitetura precisa invocar o ES <b>em bulk</b> (todos os itens numa chamada).</div>
+        </div>
+        <div class="callout info">
+          <div class="ct">Risco 3 — No-match silencioso</div>
+          <div>Sem linha default/wildcard, uma combinação inexistente retorna vazio e zera/quebra o
+          cálculo seguinte sem erro. Exige linhas de fallback e validação.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="ct">Mitigação pela decomposição (o que esta POC já resolve)</div>
+      <div>Quebrar o monólito em matrizes por domínio reduz drasticamente o nº de linhas por matriz
+      (ex.: preço base × política × fidelidade × bundle ≈ soma, não produto cartesiano), tornando
+      recargas mais rápidas, dentro do limite de steps e bem abaixo do teto de CPU por transação.</div>
+    </div>
+  </section>
+
+  <!-- 6. Validação no monólito -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>6 · Validação no monólito atual (<code>Pricing_Matrix__c</code>)</h2>
+    <p class="sub">Como reproduzir, na solução custom de hoje, a mesma lógica que a POC faz de forma
+      declarativa — passo a passo, via SOQL. As queries abaixo foram validadas direto na org do cliente,
+      contra o schema real do objeto.</p>
+
+    <div class="callout warning">
+      <div class="ct">O que o discovery revelou (e por que reforça a proposta)</div>
+      <div>No monólito <b>não existe "navegação encadeada"</b>: é um objeto gigante particionado por
+      <code>RecordType</code>, e cada step Apex (<code>Solar_PricingPlan*</code>, ~16 deles) faz uma query
+      filtrada própria. Quem encadeia e calcula o preço final é o <b>Apex</b> — não há uma SOQL única que
+      devolva o preço final. A ES torna esse waterfall declarativo e rastreável.</div>
+    </div>
+
+    <div class="grid2">
+      <div class="callout danger">
+        <div class="ct">Combo acoplado à modalidade</div>
+        <div>O "combo" não tem campo próprio: vive em <code>Modalidade__c</code> como texto
+        (<code>"CELULAR+FONE+INTERNET FIXA+TV"</code>), misturado com <code>INDIVIDUAL</code>.</div>
+      </div>
+      <div class="callout danger">
+        <div class="ct">Fidelidade embutida na política</div>
+        <div>Não há domínio de fidelidade: é o campo <code>Duration__c</code> dentro do RecordType
+        <code>Politica_Commercial</code>. Acoplamento que a decomposição elimina.</div>
+      </div>
+      <div class="callout warning">
+        <div class="ct">Canal = multi-select → full scan</div>
+        <div><code>Promotion_Channel__c</code> ("Perfil Vendas") é Picklist multi-select: exige
+        <code>INCLUDES()</code>, que não usa índice e varre a tabela inteira.</div>
+      </div>
+      <div class="callout info">
+        <div class="ct">Redundância combinatória</div>
+        <div>A mesma decisão lógica (ex.: <code>INDIVIDUAL / 12 / 540</code>) aparece em dezenas de linhas
+        físicas idênticas — uma por combinação das dimensões multi-select.</div>
+      </div>
+    </div>
+
+    <h3>Mapeamento POC → Monólito (schema real)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Dimensão da POC</th><th>No <code>Pricing_Matrix__c</code></th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td><code>PRODUTO</code></td><td><code>Product_Code__c</code></td><td>igualdade</td></tr>
+          <tr class="danger"><td><code>MODALIDADE</code> + <code>COMBO</code></td><td><code>Modalidade__c</code></td><td>mesmo campo — modalidade e combo acoplados</td></tr>
+          <tr class="warning"><td><code>PERFIL AGENTE</code> / <code>CANAL</code></td><td><code>Promotion_Channel__c</code> ("Perfil Vendas")</td><td>multi-select → <code>INCLUDES</code>, full scan</td></tr>
+          <tr><td><code>SEGMENTO</code></td><td><code>Business_Unit__c</code> / <code>Family__c</code></td><td>picklist</td></tr>
+          <tr class="warning"><td><code>PRAZO_FIDELIDADE</code></td><td><code>Duration__c</code> (no RT <code>Politica_Commercial</code>)</td><td>fidelidade sem domínio próprio</td></tr>
+          <tr><td>Base / Política / Promo</td><td><code>RecordType</code>: <code>Pricing</code>, <code>Politica_Commercial</code>, <code>Promotion</code>, <code>Discount_*</code></td><td>partição por RecordType</td></tr>
+          <tr class="info"><td><code>PREÇO</code> (saída)</td><td><code>PricingValue__c</code> ("Valor") / <code>FullPrice__c</code></td><td><code>AdjustmentType__c</code> / <code>ValueType__c</code> definem % vs valor</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info">
+      <div class="ct">Nota sobre os números</div>
+      <div>Os valores da seção 3 (R$ 199,90 → R$ 150,92) são <b>dados sintéticos da POC</b>, para ilustrar o
+      encadeamento. No produto real do cliente o preço base aparece como <b>540</b>; a validação aqui é da
+      <b>lógica e estrutura</b> (como as decisões se organizam), não do número.</div>
+    </div>
+
+    <h3>Queries de validação (passo a passo)</h3>
+    <p class="small sub">Produto de referência: <code>COM_INT_RES_1GB_SEGMENTACAO_000001</code>. Clique em "Copiar" e cole no Developer Console / Query Editor.</p>
+    <div class="stack gap14" id="queries"></div>
+  </section>
+
+  <!-- 7. Benchmark de performance -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>7 · Benchmark de performance — BRE decomposto vs. monólito</h2>
+    <p class="sub">Medido na org <code>org-demo</code> em 02/06/2026 sobre uma <b>estrutura dedicada</b>
+      (matrizes <code>Bench*</code> + ES <code>BenchPrecoFinal</code>), separada da POC. A matriz de
+      Política foi amplificada com dados sintéticos calibrados pela cardinalidade real
+      (produto × canal × segmento × prazo) até <b>154k linhas</b> — o volume estimado de produção.
+      Latência medida via REST Action <code>runExpressionSet</code>; carga via Bulk API.</p>
+
+    <div class="callout success">
+      <div class="ct">Achado principal: latência ~O(1) — não degrada com volume</div>
+      <div>De 5k a 154k linhas (<b>30× mais dados</b>) a latência do pipeline ficou
+      <b>estável (~0,85 s por chamada single; ~6 ms/avaliação em bulk)</b>. O lookup da Decision Matrix
+      é indexado por hash da chave de entrada, então o custo independe do nº de linhas — o oposto do
+      full table scan O(n) do objeto monolítico, que tende a piorar conforme cresce.</div>
+    </div>
+
+    <div class="grid4">
+      <div class="stat success"><div class="v">~0,85 s</div><div class="l">Latência single, estável em todos os tiers</div></div>
+      <div class="stat success"><div class="v">~6 ms</div><div class="l">Por avaliação em chamada bulk (x200)</div></div>
+      <div class="stat"><div class="v">30×</div><div class="l">Aumento de volume sem degradação</div></div>
+      <div class="stat warning"><div class="v">~90 s</div><div class="l">Carga de ~50k linhas (Bulk API)</div></div>
+    </div>
+
+    <h3>Curva latência × volume (matriz de Política)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Tier (linhas)</th><th>Single match p50</th><th>Single match p95</th>
+          <th>Single no-match p50</th><th>Bulk x200 (ms/req)</th><th>Tempo de carga</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>5.000</td><td>933 ms</td><td>1.376 ms</td><td>855 ms</td><td>6,92</td><td>~31 s</td></tr>
+          <tr><td>50.000</td><td>872 ms</td><td>1.154 ms</td><td>898 ms</td><td>6,15</td><td>101 s</td></tr>
+          <tr><td>100.000</td><td>848 ms</td><td>990 ms</td><td>859 ms</td><td>7,82</td><td>88 s</td></tr>
+          <tr class="success"><td><b>154.000</b></td><td><b>864 ms</b></td><td>1.265 ms</td><td>839 ms</td><td><b>5,51</b></td><td>93 s</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div class="stack gap8">
+        <h3>Leitura dos números</h3>
+        <div class="callout info">
+          <div class="ct">A latência single (~0,85 s) é dominada por rede + overhead da Action</div>
+          <div>Não pelo lookup da matriz. Por isso match e no-match custam quase o mesmo, e o valor
+          não muda entre 5k e 154k linhas. O custo real de avaliação aparece amortizado no bulk:
+          <b>~6 ms/avaliação</b>.</div>
+        </div>
+        <div class="callout success">
+          <div class="ct">Implicação para a Claro</div>
+          <div>Mesmo replicando a granularidade atual do monólito (~150k combinações) numa matriz BRE,
+          o tempo de resposta se mantém plano. A escalabilidade vem de invocar <b>sempre em bulk</b> e
+          de manter o lookup indexado.</div>
+        </div>
+      </div>
+      <div class="stack gap8">
+        <h3>Descoberta operacional na carga em massa</h3>
+        <div class="callout warning">
+          <div class="ct">Não preencher o campo <code>Name</code> ao carregar linhas via Bulk/API</div>
+          <div>O <code>CalculationMatrixRow.Name</code> é o <b>hash da chave de entrada</b> que o motor
+          usa para o lookup. Se um valor próprio for informado na carga, ele sobrescreve o hash e a linha
+          <b>nunca casa</b> (retorna vazio). A correção é omitir <code>Name</code> e deixar a plataforma
+          calculá-lo — vale para qualquer rotina de migração/recarga em produção.</div>
+        </div>
+        <div class="callout danger">
+          <div class="ct">Baseline do monólito (a medir no sandbox do cliente)</div>
+          <div>Para fechar a comparação, falta cronometrar o waterfall Apex <code>Solar_PricingPlan*</code>
+          sobre <code>Pricing_Matrix__c</code> no volume real (via <code>Limits.getCpuTime()</code> em Apex
+          anônimo). Esse número entra aqui ao lado da curva do BRE.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Validação com dados reais -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>8 · Validação com dados reais do cliente</h2>
+    <p class="sub">Importamos o export real <code>Pricing_Matrix__c.csv</code> (4.876 linhas) para a org
+      <code>org-demo</code>, decompondo os dois RecordTypes dominantes em matrizes BRE e comparando,
+      chave a chave, a saída do BRE com o valor que o monólito serve hoje.</p>
+
+    <div class="callout success">
+      <div class="ct">Equivalência funcional: 100% das chaves determinísticas</div>
+      <div>Para <b>1.270 chaves de preço base</b> e <b>416 de política comercial</b>, o pipeline BRE
+      retornou <b>exatamente</b> o mesmo valor do monólito (0 divergências). A decomposição reproduz a
+      precificação atual sem perda.</div>
+    </div>
+
+    <div class="grid4">
+      <div class="stat"><div class="v">4.876</div><div class="l">Linhas reais analisadas</div></div>
+      <div class="stat success"><div class="v">100%</div><div class="l">Match BRE × monólito (1.686 chaves)</div></div>
+      <div class="stat warning"><div class="v">4</div><div class="l">Produtos reais (resto é explosão multi-select)</div></div>
+      <div class="stat danger"><div class="v">300</div><div class="l">Chaves de preço ambíguas no monólito</div></div>
+    </div>
+
+    <h3>Decomposição dos RecordTypes</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>RecordType</th><th>Linhas físicas</th><th>Chaves atômicas (prod×modal×dur×canal)</th>
+          <th>Conflitos</th><th>Match BRE</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>Pricing</code> (preço base)</td><td>2.197</td><td>1.570</td>
+            <td class="warning">300 ambíguas</td><td class="success">1.270/1.270 (100%)</td></tr>
+          <tr><td><code>Politica_Commercial</code></td><td>1.616</td><td>416</td>
+            <td class="success">0</td><td class="success">416/416 (100%)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div class="stack gap8">
+        <h3>Achados sobre a lógica do monólito</h3>
+        <div class="callout warning">
+          <div class="ct">Preço promocional cravado por data, não em Promotions</div>
+          <div>A dimensão que decide o preço é <code>Start_Date__c</code>/<code>End_Date__c</code>: a mesma
+          combinação tem várias linhas (199,90 / 194,90 / 294,90…) empilhadas ao longo de 2022–2026,
+          <b>todas com <code>Active=true</code></b>. O motor escolhe por vigência — comportamento que
+          deveria estar no módulo nativo de Promoções.</div>
+        </div>
+        <div class="callout danger">
+          <div class="ct">19% das chaves de preço são ambíguas</div>
+          <div>Mesmo resolvendo por data, 300 das 1.570 chaves têm mais de um preço para a mesma
+          data/canal — o monólito depende de um desempate <b>implícito do Apex</b> (ordem/Id), não
+          expressável de forma declarativa sem limpeza de dados. Risco de inconsistência hoje.</div>
+        </div>
+      </div>
+      <div class="stack gap8">
+        <h3>Latência sobre dados reais</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Modo</th><th>p50</th><th>Por avaliação</th></tr></thead>
+            <tbody>
+              <tr><td>single</td><td>785 ms</td><td>785 ms</td></tr>
+              <tr><td>bulk x50</td><td>899 ms</td><td>~18 ms</td></tr>
+              <tr class="success"><td>bulk x200</td><td>1.100 ms</td><td><b>~5,5 ms</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout info">
+          <div class="ct">Multi-select é a real origem do volume</div>
+          <div>São só 4 produtos; as ~2,9k linhas de <code>Pricing</code> vêm de repetir a mesma decisão
+          por combinação de canais no campo multi-select. Decompondo em canal atômico, a regra fica
+          explícita e o lookup, indexado.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="ct">Conclusão</div>
+      <div>Com dados reais, o BRE decomposto (1) <b>reproduz 100%</b> da precificação determinística do
+      monólito, (2) <b>expõe</b> problemas hoje escondidos (promo por data, chaves ambíguas, redundância
+      por multi-select) e (3) mantém a <b>latência plana</b> já vista no benchmark sintético.</div>
+    </div>
+  </section>
+
+  <!-- Artefatos -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>Artefatos criados na org</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Artefato</th><th>Tipo</th><th>Papel</th></tr></thead>
+        <tbody>
+          <tr><td><code>PrecoBasePOCMatrix</code></td><td>Decision Matrix</td><td>Preço base limpo por PRODUTO × MODALIDADE</td></tr>
+          <tr><td><code>PoliticaComercialPOCMatrix</code></td><td>Decision Matrix</td><td>Fator multiplicador por CANAL × SEGMENTO</td></tr>
+          <tr><td><code>FidelidadePOCMatrix</code></td><td>Decision Matrix</td><td>Fator por prazo de fidelidade</td></tr>
+          <tr><td><code>BundlePOCMatrix</code></td><td>Decision Matrix</td><td>Desconto em R$ por tipo de combo</td></tr>
+          <tr class="info"><td><code>PrecoFinalPOC</code></td><td>Expression Set</td><td>Orquestrador: 7 steps encadeados → PRECO_FINAL</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ───────── Dados ─────────
+const ENDPOINT = "https://<sua-instancia>.my.salesforce.com/services/data/v60.0/actions/custom/runExpressionSet/PrecoFinalPOC";
+const P1G = "COM_INT_RES_1GB_SEGMENTACAO_000001";
+const P600 = "COM_OFFER_INT_RES_600MB_SEGMENTACAO_000001";
+
+const SCENARIOS = [
+  {
+    id: "cascata", titulo: "Cenário 1 — Cascata de descontos", tone: "success",
+    resumo: "Canal digital + 24 meses de fidelidade + combo 4P. As 3 camadas reduzem o preço.",
+    inputs: { PRODUTO: P1G, MODALIDADE: "INDIVIDUAL", CANAL: "DIGITAL", SEGMENTO: "VAREJO", PRAZO_FIDELIDADE: "24_MESES", COMBO: "COMBO_4P" },
+    stages: [199.9, 189.91, 170.92, 150.92],
+    outputs: { PRECO_POS_POLITICA: 189.91, PRECO_POS_FIDELIDADE: 170.92, PRECO_FINAL: 150.92 },
+  },
+  {
+    id: "cheio", titulo: "Cenário 2 — Preço cheio", tone: "info",
+    resumo: "Loja própria, sem fidelidade, sem combo. Nenhuma camada altera o preço base.",
+    inputs: { PRODUTO: P600, MODALIDADE: "INDIVIDUAL", CANAL: "Loja Propria", SEGMENTO: "VAREJO", PRAZO_FIDELIDADE: "SEM_FIDELIDADE", COMBO: "NENHUM" },
+    stages: [104.9, 104.9, 104.9, 104.9],
+    outputs: { PRECO_POS_POLITICA: 104.9, PRECO_POS_FIDELIDADE: 104.9, PRECO_FINAL: 104.9 },
+  },
+];
+
+const STEPS = [
+  { n: 1, tipo: "Lookup", nome: "Preço Base", artefato: "PrecoBasePOCMatrix", io: "PRODUTO, MODALIDADE → PRECO_BASE" },
+  { n: 2, tipo: "Lookup", nome: "Política Comercial", artefato: "PoliticaComercialPOCMatrix", io: "CANAL, SEGMENTO → FATOR_POLITICA" },
+  { n: 3, tipo: "Lookup", nome: "Fidelidade", artefato: "FidelidadePOCMatrix", io: "PRAZO_FIDELIDADE → FATOR_FIDELIDADE" },
+  { n: 4, tipo: "Lookup", nome: "Bundle", artefato: "BundlePOCMatrix", io: "COMBO → DESC_BUNDLE" },
+  { n: 5, tipo: "Cálculo", nome: "Aplica Política", artefato: "AssignParameterValues", io: "PRECO_POS_POLITICA = PRECO_BASE × FATOR_POLITICA" },
+  { n: 6, tipo: "Cálculo", nome: "Aplica Fidelidade", artefato: "AssignParameterValues", io: "PRECO_POS_FIDELIDADE = PRECO_POS_POLITICA × FATOR_FIDELIDADE" },
+  { n: 7, tipo: "Cálculo", nome: "Preço Final", artefato: "AssignParameterValues", io: "PRECO_FINAL = PRECO_POS_FIDELIDADE − DESC_BUNDLE" },
+];
+
+const LIMITES = [
+  { area: "Steps por versão de ES", limite: "Máximo 200", tipo: "Hard limit", tone: "danger", evid: '201 rejeitado no deploy: "An expression set version can have a maximum of 200 steps". 200 deploya e roda (S200=210).' },
+  { area: "Matrizes consultáveis por ES", limite: "≤ 200 (indireto)", tipo: "Derivado", tone: "warning", evid: "Cada lookup é 1 step → no mesmo orçamento de 200, somando lookups + cálculos. Na prática bem menos." },
+  { area: "Operações/cálculos por ES", limite: "≤ 200 (indireto)", tipo: "Derivado", tone: "warning", evid: "Steps de cálculo (AssignParameterValues) consomem o mesmo orçamento de 200 dos lookups." },
+  { area: "Edição de linhas com versão ativa", limite: "Bloqueada", tipo: "Operacional", tone: "warning", evid: "INVALID_INPUT ao inserir/editar/excluir linha com a versão habilitada. Exige desabilitar → carregar → reabilitar." },
+  { area: "Carga em massa de linhas", limite: "~5k por transação", tipo: "Governador", tone: "warning", evid: "Inserir 10k linhas num único insert estourou Apex CPU time limit. Tive que quebrar em lotes de 5k." },
+  { area: "No-match (sem linha correspondente)", limite: "Retorno vazio", tipo: "Risco funcional", tone: "danger", evid: "outputValues: {} (nulo silencioso). Exige linha default/wildcard senão o cálculo seguinte quebra ou zera." },
+  { area: "Exclusão de artefatos", limite: "Multi-etapa", tipo: "Governança", tone: "info", evid: 'Versão ativa não é deletável ("referenced elsewhere"). Precisa desativar → deletar versões → deletar definição.' },
+  { area: "Latência por chamada (single)", limite: "~0,5–1,5 s fixo", tipo: "Performance", tone: "info", evid: "Não cresce de 1k → 10k linhas: o overhead de request/REST domina, não o tamanho da matriz." },
+  { area: "Avaliação em lote (bulk)", limite: "Escala bem", tipo: "Performance (+)", tone: "success", evid: "500 avaliações numa única chamada em ~2 s (resposta ~200 KB). O custo por item é amortizado." },
+];
+const BULK_LAT = [1.44, 1.15, 1.26, 2.04];
+const BULK_CATS = ["N=1", "N=50", "N=200", "N=500"];
+
+const brl = (n) => "R$ " + n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const pillTone = (t) => (t === "success" ? "success" : (t === "danger" || t === "warning") ? "warning" : "info");
+const rowTone = (t) => (t === "danger" ? "danger" : t === "warning" ? "warning" : "");
+
+// ───────── Diagrama SVG ─────────
+function renderDiagram() {
+  const matrices = [
+    { y: 18, label: "1 · Preço Base", sub: "PRODUTO × MODALIDADE" },
+    { y: 92, label: "2 · Política", sub: "CANAL × SEGMENTO" },
+    { y: 166, label: "3 · Fidelidade", sub: "PRAZO_FIDELIDADE" },
+    { y: 240, label: "4 · Bundle", sub: "COMBO" },
+  ];
+  const mX=250,mW=220,mH=56,calcX=560,calcY=110,calcW=170,calcH=120,finX=800,finY=130,finW=180,finH=80;
+  const box="#f1f3f5",boxStroke="#d4d9de",accent="#2b6cb0",txt="#1c2024",txt2="#5b6470",line="#c4ccd4";
+  let s = `<svg viewBox="0 0 1000 320" width="100%" role="img" aria-label="Diagrama do pipeline">`;
+  s += `<rect x="10" y="110" width="150" height="120" rx="8" fill="#eaedf0" stroke="${boxStroke}"/>`;
+  s += `<text x="85" y="132" text-anchor="middle" font-size="13" font-weight="600" fill="${txt}">ENTRADAS</text>`;
+  ["PRODUTO","MODALIDADE","CANAL","SEGMENTO","PRAZO_FID.","COMBO"].forEach((t,i)=>{
+    s += `<text x="85" y="${152+i*13}" text-anchor="middle" font-size="9.5" fill="${txt2}">${t}</text>`;
+  });
+  matrices.forEach((m)=>{ s += `<line x1="160" y1="170" x2="${mX}" y2="${m.y+mH/2}" stroke="${line}" stroke-width="1"/>`; });
+  matrices.forEach((m)=>{
+    s += `<rect x="${mX}" y="${m.y}" width="${mW}" height="${mH}" rx="8" fill="${box}" stroke="${boxStroke}"/>`;
+    s += `<text x="${mX+14}" y="${m.y+23}" font-size="12.5" font-weight="600" fill="${txt}">${m.label}</text>`;
+    s += `<text x="${mX+14}" y="${m.y+41}" font-size="10" fill="${txt2}">${m.sub}</text>`;
+    s += `<line x1="${mX+mW}" y1="${m.y+mH/2}" x2="${calcX}" y2="${calcY+calcH/2}" stroke="${line}" stroke-width="1"/>`;
+  });
+  s += `<text x="${mX+mW/2}" y="310" text-anchor="middle" font-size="10" fill="${txt2}">4 Decision Matrices (steps GetOutputsFromDecisionMatrix)</text>`;
+  s += `<rect x="${calcX}" y="${calcY}" width="${calcW}" height="${calcH}" rx="8" fill="${box}" stroke="${accent}" stroke-width="1.5"/>`;
+  s += `<text x="${calcX+calcW/2}" y="${calcY+26}" text-anchor="middle" font-size="12.5" font-weight="600" fill="${txt}">Cálculo encadeado</text>`;
+  s += `<text x="${calcX+calcW/2}" y="${calcY+48}" text-anchor="middle" font-size="9.5" fill="${txt2}">step 5: × política</text>`;
+  s += `<text x="${calcX+calcW/2}" y="${calcY+64}" text-anchor="middle" font-size="9.5" fill="${txt2}">step 6: × fidelidade</text>`;
+  s += `<text x="${calcX+calcW/2}" y="${calcY+80}" text-anchor="middle" font-size="9.5" fill="${txt2}">step 7: − bundle</text>`;
+  s += `<text x="${calcX+calcW/2}" y="${calcY+102}" text-anchor="middle" font-size="9" fill="${accent}">saída ⟶ entrada</text>`;
+  s += `<line x1="${calcX+calcW}" y1="${calcY+calcH/2}" x2="${finX}" y2="${finY+finH/2}" stroke="${line}" stroke-width="1.5"/>`;
+  s += `<rect x="${finX}" y="${finY}" width="${finW}" height="${finH}" rx="8" fill="${accent}" stroke="${accent}"/>`;
+  s += `<text x="${finX+finW/2}" y="${finY+32}" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">PRECO_FINAL</text>`;
+  s += `<text x="${finX+finW/2}" y="${finY+54}" text-anchor="middle" font-size="10" fill="#fff">+ trilha de cada etapa</text>`;
+  s += `</svg>`;
+  document.getElementById("diagram").innerHTML = s;
+}
+
+// ───────── Bar chart genérico ─────────
+function renderBars(elId, cats, data, tone, fmt) {
+  const max = Math.max(...data) * 1.15;
+  let h = "";
+  data.forEach((v,i)=>{
+    const pct = max ? (v/max*100) : 0;
+    h += `<div class="bar-col">
+      <div class="bar-val">${fmt(v)}</div>
+      <div class="bar ${tone}" style="height:${pct}%"></div>
+      <div class="bar-cat">${cats[i]}</div>
+    </div>`;
+  });
+  document.getElementById(elId).innerHTML = h;
+}
+
+// ───────── Steps table ─────────
+function renderSteps() {
+  document.getElementById("steps-body").innerHTML = STEPS.map(s=>`
+    <tr>
+      <td class="center">${s.n}</td>
+      <td><span class="pill ${s.tipo==='Lookup'?'info':'success'}">${s.tipo}</span></td>
+      <td>${s.nome}</td>
+      <td><code>${s.artefato}</code></td>
+      <td class="small">${esc(s.io)}</td>
+    </tr>`).join("");
+}
+
+// ───────── Limits table ─────────
+function renderLimits() {
+  document.getElementById("limits-body").innerHTML = LIMITES.map(l=>`
+    <tr class="${rowTone(l.tone)}">
+      <td><b>${l.area}</b></td>
+      <td><b>${l.limite}</b></td>
+      <td><span class="pill ${pillTone(l.tone)}">${l.tipo}</span></td>
+      <td class="small sub">${esc(l.evid)}</td>
+    </tr>`).join("");
+}
+
+// ───────── Scenario explorer ─────────
+let curIdx = 0;
+function renderScenario() {
+  const sc = SCENARIOS[curIdx];
+  document.getElementById("scenario-pills").innerHTML = SCENARIOS.map((s,i)=>
+    `<span class="pill clickable ${i===curIdx?('active '+s.tone):'neutral'}" data-i="${i}">${s.titulo}</span>`).join("");
+  document.querySelectorAll("#scenario-pills .pill").forEach(p=>{
+    p.onclick = ()=>{ curIdx = parseInt(p.dataset.i); renderScenario(); };
+  });
+  document.getElementById("scenario-resumo").textContent = sc.resumo;
+  document.getElementById("inputs-body").innerHTML = Object.entries(sc.inputs).map(([k,v])=>
+    `<tr><td><code>${k}</code></td><td>${esc(v)}</td></tr>`).join("");
+  document.getElementById("outputs-body").innerHTML = Object.entries(sc.outputs).map(([k,v])=>
+    `<tr class="${k==='PRECO_FINAL'?sc.tone:''}"><td><code>${k}</code></td><td>${k==='PRECO_FINAL'?'<b>'+brl(v)+'</b>':brl(v)}</td></tr>`).join("");
+  renderBars("stage-chart", ["Base","Após Política","Após Fidelidade","Final"], sc.stages, sc.tone, brl);
+  const body = JSON.stringify({ inputs: [sc.inputs] });
+  document.getElementById("curl-block").textContent =
+    `TOK=$(cat /tmp/tok.txt)\ncurl -s "${ENDPOINT}" \\\n  -H "Authorization: Bearer $TOK" \\\n  -H "Content-Type: application/json" \\\n  -X POST -d '${body}'`;
+}
+
+// ───────── Queries de validação no monólito ─────────
+const PCODE = "COM_INT_RES_1GB_SEGMENTACAO_000001";
+const QUERIES = [
+  { group: "Descoberta (rode primeiro)", etapa: "0a", tone: "info", note: "Tooling API",
+    titulo: "Nome real do objeto (resolve INVALID_TYPE)",
+    desc: "Confirma se o objeto tem prefixo de namespace antes de tudo.",
+    sql: `SELECT QualifiedApiName, Label, NamespacePrefix, KeyPrefix
+FROM EntityDefinition
+WHERE QualifiedApiName LIKE '%Pricing_Matrix%'` },
+  { group: "Descoberta (rode primeiro)", etapa: "0b", tone: "info", note: "Tooling API",
+    titulo: "Campos reais do objeto",
+    desc: "Lista os nomes de API exatos e os tipos (confirma % vs valor, multi-select, etc.).",
+    sql: `SELECT QualifiedApiName, DataType, Label
+FROM FieldDefinition
+WHERE EntityDefinition.QualifiedApiName = 'Pricing_Matrix__c'
+ORDER BY QualifiedApiName` },
+  { group: "Descoberta (rode primeiro)", etapa: "0c", tone: "info",
+    titulo: "RecordTypes (os domínios do monólito)",
+    desc: "Os filtros das etapas dependem do DeveloperName real (ex.: Politica_Commercial, com 'mm').",
+    sql: `SELECT Id, Name, DeveloperName
+FROM RecordType
+WHERE SobjectType = 'Pricing_Matrix__c'
+ORDER BY DeveloperName` },
+
+  { group: "Mapa do produto", etapa: "P1", tone: "info",
+    titulo: "Linhas por RecordType (1 produto)",
+    desc: "Mostra quantas linhas cada domínio tem — e já dimensiona a redundância.",
+    sql: `SELECT RecordType.DeveloperName, COUNT(Id) linhas
+FROM Pricing_Matrix__c
+WHERE Product_Code__c = '${PCODE}'
+  AND Active__c = true
+GROUP BY RecordType.DeveloperName
+ORDER BY COUNT(Id) DESC` },
+  { group: "Mapa do produto", etapa: "P2", tone: "info",
+    titulo: "RecordType × Modalidade",
+    desc: "Mapa definitivo: onde vivem base, política e combos (encerra os chutes).",
+    sql: `SELECT RecordType.DeveloperName, Modalidade__c, COUNT(Id) linhas
+FROM Pricing_Matrix__c
+WHERE Product_Code__c = '${PCODE}'
+  AND Active__c = true
+GROUP BY RecordType.DeveloperName, Modalidade__c
+ORDER BY RecordType.DeveloperName, Modalidade__c` },
+
+  { group: "Waterfall por etapa (= o que o Apex faz)", etapa: "1", tone: "success",
+    titulo: "Preço base",
+    desc: "ES: lookup em PrecoBasePOCMatrix[PRODUTO, MODALIDADE]. Monólito: SELECT no RT 'Pricing'.",
+    sql: `SELECT Modalidade__c, Duration__c, PricingValue__c, FullPrice__c, AdjustmentType__c, ValueType__c
+FROM Pricing_Matrix__c
+WHERE RecordType.DeveloperName = 'Pricing'
+  AND Active__c = true
+  AND Product_Code__c = '${PCODE}'
+  AND Modalidade__c = 'INDIVIDUAL'
+LIMIT 50` },
+  { group: "Waterfall por etapa (= o que o Apex faz)", etapa: "2", tone: "success",
+    titulo: "Política comercial",
+    desc: "Veja os valores de Promotion_Channel__c no retorno para depois filtrar com INCLUDES('<valor real>').",
+    sql: `SELECT Modalidade__c, Duration__c, PricingValue__c, AdjustmentType__c, ValueType__c, Promotion_Channel__c
+FROM Pricing_Matrix__c
+WHERE RecordType.DeveloperName = 'Politica_Commercial'
+  AND Active__c = true
+  AND Product_Code__c = '${PCODE}'
+  AND Modalidade__c = 'INDIVIDUAL'
+LIMIT 50` },
+  { group: "Waterfall por etapa (= o que o Apex faz)", etapa: "3", tone: "success",
+    titulo: "Fidelidade (Duration embutido)",
+    desc: "Não é RT próprio: é o Duration__c dentro da política. Use 12 (não há 24 para este produto).",
+    sql: `SELECT Modalidade__c, Duration__c, PricingValue__c, AdjustmentType__c, ValueType__c
+FROM Pricing_Matrix__c
+WHERE RecordType.DeveloperName = 'Politica_Commercial'
+  AND Active__c = true
+  AND Product_Code__c = '${PCODE}'
+  AND Modalidade__c = 'INDIVIDUAL'
+  AND Duration__c = 12` },
+  { group: "Waterfall por etapa (= o que o Apex faz)", etapa: "4", tone: "success",
+    titulo: "Combo / bundle",
+    desc: "O combo é uma string em Modalidade__c, dentro do mesmo RT de política (não há Package_Pricing para este produto).",
+    sql: `SELECT Modalidade__c, Combo_Multi__c, Duration__c, PricingValue__c
+FROM Pricing_Matrix__c
+WHERE RecordType.DeveloperName = 'Politica_Commercial'
+  AND Active__c = true
+  AND Product_Code__c = '${PCODE}'
+  AND Modalidade__c = 'CELULAR+FONE+INTERNET FIXA+TV'
+LIMIT 50` },
+  { group: "Waterfall por etapa (= o que o Apex faz)", etapa: "5", tone: "success",
+    titulo: "Promoção / desconto embutido (anti-pattern)",
+    desc: "Preço promocional cravado na matriz, em vez do módulo nativo de Promotions.",
+    sql: `SELECT RecordType.DeveloperName, Modalidade__c, PricingValue__c, IsPercentDiscount__c,
+       Promotion_Duration__c, Promo_Duration_Unit__c
+FROM Pricing_Matrix__c
+WHERE RecordType.DeveloperName IN ('Promotion','Discount_Pricing','Discount_Rate','Bonus')
+  AND Active__c = true
+  AND Product_Code__c = '${PCODE}'
+LIMIT 50` },
+
+  { group: "Diagnóstico (leve pro cliente)", etapa: "D", tone: "danger",
+    titulo: "Redundância — a explosão combinatória",
+    desc: "Cada linha = 1 decisão lógica única; 'repeticoes' = linhas físicas idênticas. Na ES, cada uma vira 1 linha.",
+    sql: `SELECT Modalidade__c, Duration__c, PricingValue__c, COUNT(Id) repeticoes
+FROM Pricing_Matrix__c
+WHERE RecordType.DeveloperName = 'Politica_Commercial'
+  AND Active__c = true
+  AND Product_Code__c = '${PCODE}'
+GROUP BY Modalidade__c, Duration__c, PricingValue__c
+ORDER BY COUNT(Id) DESC` },
+];
+
+function renderQueries() {
+  const el = document.getElementById("queries");
+  let html = "", lastGroup = null;
+  QUERIES.forEach((q, i) => {
+    if (q.group !== lastGroup) { html += `<div class="group-label">${q.group}</div>`; lastGroup = q.group; }
+    html += `<div class="qcard">
+      <div class="qhd">
+        <div class="left">
+          <span class="pill ${pillTone(q.tone)}">Etapa ${q.etapa}</span>
+          <b>${esc(q.titulo)}</b>
+          ${q.note ? `<span class="pill neutral">${q.note}</span>` : ""}
+        </div>
+        <button class="copy-btn" data-i="${i}">Copiar</button>
+      </div>
+      ${q.desc ? `<div class="qdesc">${q.desc}</div>` : ""}
+      <pre id="q${i}">${esc(q.sql)}</pre>
+    </div>`;
+  });
+  el.innerHTML = html;
+  el.querySelectorAll(".copy-btn").forEach((b) => {
+    b.onclick = () => {
+      const sql = QUERIES[parseInt(b.dataset.i)].sql;
+      navigator.clipboard.writeText(sql).then(() => {
+        b.textContent = "Copiado!"; b.classList.add("ok");
+        setTimeout(() => { b.textContent = "Copiar"; b.classList.remove("ok"); }, 1500);
+      });
+    };
+  });
+}
+
+// ───────── Init ─────────
+renderDiagram();
+renderSteps();
+renderLimits();
+renderScenario();
+renderBars("bulk-chart", BULK_CATS, BULK_LAT, "info", (v)=>v.toFixed(2)+"s");
+renderQueries();
+</script>
+<!-- sidebar global -->
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = "..";</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

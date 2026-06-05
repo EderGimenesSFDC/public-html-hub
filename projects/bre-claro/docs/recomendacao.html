@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recomendação — Adotar o BRE · Claro BR</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F6F9; color: #1A1A1A; line-height: 1.65;
+  }
+  .page { max-width: 920px; margin: 0 auto; padding: 40px 28px 100px; }
+  h1  { font-size: 28px; font-weight: 800; color: #032D60; line-height: 1.2; margin-bottom: 8px; }
+  h2  { font-size: 20px; font-weight: 700; color: #032D60; margin: 44px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #E0E6EF; }
+  h3  { font-size: 15px; font-weight: 700; color: #032D60; margin: 20px 0 8px; }
+  p   { margin-bottom: 14px; font-size: 14px; }
+  strong { font-weight: 700; }
+  em    { font-style: italic; color: #444; }
+  code  { background: #E8EDF2; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+  a     { color: #0176D3; }
+  ul, ol { padding-left: 20px; font-size: 14px; margin-bottom: 12px; }
+  li    { margin-bottom: 6px; }
+
+  /* Hero */
+  .hero { background: #032D60; color: #fff; border-radius: 12px; padding: 40px 36px; margin-bottom: 36px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; right: -40px; bottom: -40px; width: 220px; height: 220px; border-radius: 50%; background: rgba(1,118,211,0.15); }
+  .hero-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
+  .hero p   { color: rgba(255,255,255,0.82); font-size: 15px; max-width: 640px; line-height: 1.7; margin-bottom: 0; }
+
+  /* Tese central */
+  .tese {
+    background: #E3F2FD; border-left: 4px solid #0176D3;
+    border-radius: 0 8px 8px 0; padding: 22px 24px; margin: 20px 0;
+    font-size: 15px; font-weight: 600; color: #032D60; line-height: 1.6;
+  }
+
+  /* Frase de fechamento */
+  .closing {
+    background: #fff; border: 2px solid #032D60; border-radius: 10px;
+    padding: 28px 32px; margin: 28px 0;
+    font-size: 15px; font-style: italic; color: #032D60; line-height: 1.7;
+    text-align: center;
+  }
+  .closing cite { display: block; font-style: normal; font-size: 12px; color: #888; margin-top: 12px; font-weight: 600; }
+
+  /* Tabela de evidências */
+  .ev-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #E0E0E0; margin: 16px 0; }
+  .ev-table th { background: #032D60; color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; }
+  .ev-table td { padding: 11px 14px; border-bottom: 1px solid #F0F0F0; vertical-align: top; }
+  .ev-table tr:last-child td { border-bottom: none; }
+  .ev-table tr:nth-child(even) td { background: #F9FBFC; }
+  .ev-badge { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .ev-star  { background: #E8F5E9; color: #2E7D32; }
+  .ev-blue  { background: #E3F2FD; color: #0176D3; }
+
+  /* Tabela BRE vs Apex */
+  .crit-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #E0E0E0; margin: 16px 0; }
+  .crit-table th { padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 700; color: #fff; }
+  .crit-table th:first-child  { background: #2E7D32; }
+  .crit-table th:last-child   { background: #E65C00; }
+  .crit-table td { padding: 10px 14px; border-bottom: 1px solid #F0F0F0; }
+  .crit-table tr:last-child td { border-bottom: none; }
+  .crit-table td:first-child  { border-right: 1px solid #F0F0F0; }
+
+  /* Honestidade */
+  .honesty { background: #FFF8E1; border-left: 3px solid #FFC107; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 18px 0; font-size: 13px; line-height: 1.65; }
+  .honesty strong { color: #E65C00; }
+
+  /* Próximos passos numerados */
+  .steps { counter-reset: step; margin: 16px 0; }
+  .step  { display: flex; gap: 16px; margin-bottom: 14px; align-items: flex-start; }
+  .step-num {
+    counter-increment: step; flex-shrink: 0;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #032D60; color: #fff; font-size: 16px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-body h4 { font-size: 14px; font-weight: 700; color: #032D60; margin-bottom: 4px; }
+  .step-body p  { font-size: 13px; color: #555; margin-bottom: 0; }
+
+  /* Callouts */
+  .callout { border-radius: 8px; padding: 16px 20px; margin: 20px 0; display: flex; gap: 14px; font-size: 14px; line-height: 1.6; }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-ok   { background: #E8F5E9; border-left: 3px solid #2E7D32; }
+  .callout-warn { background: #FFF3E0; border-left: 3px solid #E65C00; }
+
+  .divider { height: 1px; background: #E0E0E0; margin: 36px 0; }
+
+  @media (max-width: 700px) {
+    .crit-table { display: block; overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Recomendação técnica definitiva · Baseada em evidência de POC</div>
+    <h1 style="color:#fff;margin-bottom:14px">Adotar o BRE como Motor Declarativo de Precificação e Regras</h1>
+    <p>Substituir a lógica monolítica em Apex/SOQL pelo Business Rules Engine nativo
+    do Salesforce Industries (Expression Sets + Decision Matrices) para os domínios de
+    precificação, elegibilidade e catálogo da Claro BR.</p>
+  </div>
+
+  <!-- Tese central -->
+  <h2>A tese que sustenta tudo</h2>
+  <div class="tese">
+    O valor do BRE <strong>não é velocidade por chamada</strong> — é estrutural:
+    escala previsível dentro dos limites da plataforma, segurança contra limites de governador
+    em cenários de carrinho, e custo de manutenção/governança substancialmente menor.
+    Essa distinção é o que torna irrelevante a comparação ingênua de latência por chamada unitária.
+  </div>
+  <p>O problema real não é "uma consulta isolada". É:</p>
+  <ul>
+    <li>Processar <strong>carrinhos com muitos produtos</strong> dentro do limite de 100 SOQL/transação da plataforma</li>
+    <li>Manter <strong>dezenas de regras</strong> que mudam com frequência, sem reescrever e re-testar Apex a cada alteração</li>
+    <li>Crescer o <strong>volume de tabelas de preço</strong> sem degradar e sem virar projeto de tuning de índices</li>
+  </ul>
+
+  <!-- Evidências -->
+  <h2>O que está provado — evidências da POC</h2>
+  <p>Base: 4 POCs na org <code>org-demo</code> · 53 cenários REST · expressamente
+  <strong>PrecoCompleto</strong> (12 matrizes · 22 steps · 0 Apex · 18/18 PASS).</p>
+
+  <table class="ev-table">
+    <thead>
+      <tr>
+        <th style="width:140px">Eixo</th>
+        <th>Resultado medido</th>
+        <th style="width:240px">Por que importa para a decisão</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="ev-badge ev-star">Funcional</span></td>
+        <td>18/18 cenários no <code>PrecoCompleto</code> · 12 matrizes · 22 steps · <strong>0 Apex</strong> no caminho de precificação</td>
+        <td>O motor cobre a complexidade real de telecom de forma 100% declarativa e versionada</td>
+      </tr>
+      <tr>
+        <td><span class="ev-badge ev-blue">Escala O(1)</span></td>
+        <td>60× volume (5k→300k linhas) com <strong>~2,7× latência</strong> — crescimento sub-linear por lookup em hash</td>
+        <td>Tabelas de preço crescendo não degradam nem exigem gestão de índice</td>
+      </tr>
+      <tr>
+        <td><span class="ev-badge ev-blue">Concorrência</span></td>
+        <td>Throughput <strong>linear</strong> (1→20 clientes paralelos) · 60,4 req/s · p95 <strong>estável</strong> sem degradação</td>
+        <td>Aguenta carga paralela de pico de vendas sem contenção</td>
+      </tr>
+      <tr>
+        <td><span class="ev-badge ev-star">★ Governador</span></td>
+        <td>BRE: <strong>0 SOQL</strong> · 200 itens por chamada a <strong>7,48 ms/avaliação</strong> · Monólito naïve: <strong>estoura em ~14 itens</strong> (7 SOQL/item × 14 = 98, teto = 100)</td>
+        <td><strong>O diferencial decisivo</strong>: o código orgânico morre em escala de carrinho real; o BRE não tem esse problema por design</td>
+      </tr>
+      <tr>
+        <td><span class="ev-badge ev-blue">Manutenção</span></td>
+        <td>Regra declarativa e <strong>versionada</strong> · ~30× menos linhas · sem gestão de índices</td>
+        <td>Time-to-change e risco de regressão muito menores; negócio pode editar sem dev</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-ok">
+    <span class="callout-icon">✅</span>
+    <div><strong>Conclusão:</strong> todos os mecanismos de precificação de um produto telecom real
+    (preço base, geo, de/por, bundle, desconto, pagamento, bônus, OTC, multa, COALESCE de 5 níveis)
+    funcionam 100% declarativamente. A complexidade do problema foi coberta com zero linhas de Apex.</div>
+  </div>
+
+  <!-- Honestidade -->
+  <h2>Honestidade intelectual — onde o BRE NÃO vence</h2>
+  <div class="honesty">
+    <p><strong>Para um lookup único e simples</strong>, uma SOQL por External Id (~270 ms, plano) é
+    <strong>mais rápida</strong> que uma chamada de BRE (~370–750 ms, overhead do motor/Action).</p>
+    <p style="margin-top:8px">Isso é verdade e é esperado. A mitigação é direta: o overhead é <strong>fixo e se dilui em lote</strong>
+    (cai para 5–8 ms/avaliação em bulk de 200). Para o caso de uso real — carrinho com múltiplos
+    produtos e regras encadeadas — o BRE vence estruturalmente. Para um <em>get</em> pontual e trivial, uma
+    query direta continua válida e não é onde está o problema.</p>
+    <p style="margin-top:8px">Colocar isso explicitamente <strong>fortalece</strong> a recomendação: evidencia que a escolha é
+    consciente e baseada em análise, não em entusiasmo com a tecnologia.</p>
+  </div>
+
+  <!-- Critério BRE vs Apex -->
+  <h2>Critério de decisão — quando usar BRE, quando usar Apex/SOQL</h2>
+  <table class="crit-table">
+    <thead>
+      <tr>
+        <th>Use BRE quando…</th>
+        <th>Use Apex/SOQL quando…</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A regra muda com frequência e o negócio precisa editar</td>
+        <td>A lógica é estável e puramente técnica</td>
+      </tr>
+      <tr>
+        <td>Precificação, elegibilidade, qualificação, catálogo</td>
+        <td>Integrações com sistemas externos, orquestração, efeitos colaterais</td>
+      </tr>
+      <tr>
+        <td>Carrinho/lote com muitos itens — risco de limite de governador</td>
+        <td>Operação verdadeiramente pontual e trivial (um get simples)</td>
+      </tr>
+      <tr>
+        <td>Auditoria e versionamento da regra são necessários</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Riscos -->
+  <h2>Riscos e mitigações</h2>
+  <table class="ev-table">
+    <thead>
+      <tr><th>Risco</th><th>Mitigação</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Curva de aprendizado em Expression Sets / Decision Matrices</td>
+        <td>As POCs já servem de template; documentação em <code>docs/</code>; padrões definidos no projeto</td>
+      </tr>
+      <tr>
+        <td>Overhead por chamada em fluxos ultra-sensíveis a latência single</td>
+        <td>Usar BRE em lote; reservar Apex direto para o caso pontual trivial onde latência importa</td>
+      </tr>
+      <tr>
+        <td>Volumetria real da Claro ≠ sandbox da POC</td>
+        <td>Tendências (sub-linear, linear, 0 SOQL) são estruturais e independem da curva absoluta; medir em produção com o mesmo harness <code>loadtest/</code></td>
+      </tr>
+      <tr>
+        <td>Governança de versões das regras</td>
+        <td>Versionamento nativo do Expression Set + processo de publish/ativação definido na equipe</td>
+      </tr>
+      <tr>
+        <td><strong>Order Template ativo</strong> bloqueia <code>addToCart</code> — pré-requisito crítico</td>
+        <td>Identificar responsável técnico e cronogramar a remoção como pré-requisito antes do Sprint 0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Próximos passos -->
+  <h2>Próximos passos sugeridos</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Aprovar a direção BRE para precificação/catálogo</h4>
+        <p>Decisão de negócio e tecnologia: adotar BRE como o motor declarativo de regras para os domínios mapeados.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Resolver o pré-requisito do Order Template</h4>
+        <p>Identificar responsável, definir estratégia de remoção/adequação. É o único bloqueio técnico para integrar o BRE ao fluxo de venda.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Workshop de arquitetura (2–3 semanas)</h4>
+        <p>Mapear Pricing Matrix atual → Decision Matrices · estratégia de convivência com o legado · estimativa de esforço real de migração com o time de pricing.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Sprint 0 — 1 domínio piloto (4–6 semanas)</h4>
+        <p>Migrar um family/oferta real (ex.: Internet Fixa) com dados reais da Claro. Estabelecer baseline de SLA e medir em produção usando o mesmo harness <code>loadtest/</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Capacitar o time comercial/funcional</h4>
+        <p>Treinar time de pricing para editar Decision Matrices sem depender de desenvolvimento — o objetivo central da mudança de paradigma.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frase de fechamento -->
+  <div class="closing">
+    "Para uma consulta isolada, uma query indexada é mais rápida.
+    Mas precificação real é carrinho com muitas regras que mudam toda semana —
+    e aí o motor declarativo entrega <strong>0 SOQL, escala previsível e regra versionada</strong>,
+    enquanto o código orgânico estoura o limite da plataforma em ~14 itens.
+    A recomendação é mirar o BRE."
+    <cite>— Síntese das evidências das 4 POCs · org org-demo · Junho/2026</cite>
+  </div>
+
+  <!-- Links -->
+  <div class="divider"></div>
+  <h3>Documentação de suporte</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+    <a href="para-gestores.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Gestores</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Visão executiva completa</div>
+    </a>
+    <a href="poc-bre-completa.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">POC Completa</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">PrecoCompleto — 18/18 resultados</div>
+    </a>
+    <a href="performance.html" style="text-decoration:none;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px;display:block">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:4px">Performance</div>
+      <div style="font-size:13px;font-weight:700;color:#032D60">Dashboard completo de carga</div>
+    </a>
+  </div>
+
+</div>
+
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = '..';</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

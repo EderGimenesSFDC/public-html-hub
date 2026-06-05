@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>POC · Preço Completo — Motor Unificado BRE (Salesforce Industries)</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #f1f3f5;
+    --surface-3: #eaedf0;
+    --text: #1c2024;
+    --text-2: #5b6470;
+    --text-3: #8a929c;
+    --stroke: #e2e6ea;
+    --stroke-2: #d4d9de;
+    --accent: #2b6cb0;
+    --accent-soft: #e8f0f9;
+    --success: #2f8a57;
+    --success-soft: #e6f4ec;
+    --warning: #b7791f;
+    --warning-soft: #fbf2e0;
+    --danger: #c0392b;
+    --danger-soft: #fbeae8;
+    --info: #2b6cb0;
+    --info-soft: #e8f0f9;
+    --purple: #6941c6;
+    --purple-soft: #f1edfb;
+    --teal: #00696d;
+    --teal-soft: #e0f5f5;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  p { margin: 0; }
+  .sub { color: var(--text-2); }
+  .small { font-size: 13px; }
+  .tertiary { color: var(--text-3); }
+  code, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+  }
+  code {
+    background: var(--surface-3);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+  pre {
+    background: var(--surface-3);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    line-height: 1.6;
+  }
+  .divider { height: 1px; background: var(--stroke); margin: 28px 0; border: none; }
+  section { margin-top: 6px; }
+  .stack { display: flex; flex-direction: column; }
+  .gap6 > * + * { margin-top: 6px; }
+  .gap8 > * + * { margin-top: 8px; }
+  .gap10 > * + * { margin-top: 10px; }
+  .gap14 > * + * { margin-top: 14px; }
+  .gap24 > * + * { margin-top: 24px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid4, .grid3, .grid2 { grid-template-columns: 1fr; } }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat .l { font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+  .stat.danger .v { color: var(--danger); }
+  .stat.warning .v { color: var(--warning); }
+  .stat.success .v { color: var(--success); }
+  .stat.accent .v { color: var(--accent); }
+  .stat.purple .v { color: var(--purple); }
+  .stat.teal .v { color: var(--teal); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card .hd {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--stroke);
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .card .bd { padding: 16px; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--stroke-2);
+  }
+  .callout .ct { font-weight: 600; margin-bottom: 4px; }
+  .callout.info { background: var(--info-soft); border-color: #cfe0f2; }
+  .callout.success { background: var(--success-soft); border-color: #c6e6d4; }
+  .callout.warning { background: var(--warning-soft); border-color: #ecd9ad; }
+  .callout.danger { background: var(--danger-soft); border-color: #f0c8c2; }
+  .callout.teal { background: var(--teal-soft); border-color: #b2e0e1; }
+  .callout.purple { background: var(--purple-soft); border-color: #d4c8f0; }
+  .callout.info .ct { color: var(--info); }
+  .callout.success .ct { color: var(--success); }
+  .callout.warning .ct { color: var(--warning); }
+  .callout.danger .ct { color: var(--danger); }
+  .callout.teal .ct { color: var(--teal); }
+  .callout.purple .ct { color: var(--purple); }
+
+  .pill {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px;
+    border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill.neutral { background: var(--surface-3); color: var(--text-2); }
+  .pill.info { background: var(--info-soft); color: var(--info); }
+  .pill.success { background: var(--success-soft); color: var(--success); }
+  .pill.warning { background: var(--warning-soft); color: var(--warning); }
+  .pill.purple { background: var(--purple-soft); color: var(--purple); }
+  .pill.teal { background: var(--teal-soft); color: var(--teal); }
+  .pill.danger { background: var(--danger-soft); color: var(--danger); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); font-weight: 600; }
+  tr.danger td { background: var(--danger-soft); }
+  tr.warning td { background: var(--warning-soft); }
+  tr.info td { background: var(--info-soft); }
+  tr.success td { background: var(--success-soft); }
+  tr.teal td { background: var(--teal-soft); }
+  tr.purple td { background: var(--purple-soft); }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; }
+  td.center, th.center { text-align: center; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .head-badge { display:inline-block; font-size:12px; color:var(--text-2); border:1px solid var(--stroke-2); border-radius:999px; padding:2px 10px; }
+  a.link { color: var(--accent); text-decoration: none; font-weight: 600; }
+  a.link:hover { text-decoration: underline; }
+
+  .badge-new { display:inline-block; font-size:11px; font-weight:700; background:#e8f4ea; color:var(--success); border:1px solid #c6e6d4; border-radius:4px; padding:1px 6px; margin-left:4px; }
+  .badge-prev { display:inline-block; font-size:11px; font-weight:700; background:var(--info-soft); color:var(--info); border:1px solid #cfe0f2; border-radius:4px; padding:1px 6px; margin-left:4px; }
+
+  .mermaid-wrap { overflow-x: auto; border: 1px solid var(--stroke); border-radius: 10px; background: var(--surface); padding: 20px 16px; }
+  .mermaid svg { max-width: 100%; height: auto; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: false, theme: 'default', flowchart: { htmlLabels: true, curve: 'basis' } });</script>
+</head>
+<body>
+<div class="wrap stack gap24">
+
+  <!-- Cabeçalho -->
+  <div class="stack gap6">
+    <div class="row">
+      <span class="head-badge">org org-demo · API v60</span>
+      <span class="pill success">Provada · 18/18 cenários PASS</span>
+      <span class="pill success">incremental sobre POC 1/2/3</span>
+      <span class="pill neutral">0 linha de Apex</span>
+      <span class="pill teal">12 matrizes · 22 steps · 1 Expression Set</span>
+    </div>
+    <h1>POC · Preço Completo — o motor unificado BRE</h1>
+    <p class="sub">
+      As POCs anteriores provaram mecanismos em grupos separados. Esta é a <b>fusão incremental</b>:
+      um único Expression Set (<code>PrecoCompleto</code>) absorve <b>tudo que o engine Apex da Claro faz hoje</b> —
+      os <b>14 passos</b> das classes <code>Solar_PricingPlan*</code> mapeados em <b>12 matrizes independentes</b>,
+      orquestradas em <b>22 steps declarativos</b> sem uma linha de Apex.
+      COALESCE geográfico de <b>5 níveis</b> (Node › Cidade › DDD › UF › nacional), de/por, bundle,
+      desconto, pagamento, bônus+crédito, adesão e multa — todos no mesmo ES.
+      <b>18/18 cenários validados · 0 SOQL · 7,62 ms/avaliação em bulk de 200.</b>
+    </p>
+    <p class="small tertiary">
+      Complementa
+      <a class="link" href="poc-bre-claro.html">poc-bre-claro.html</a> (POC 1 · pipeline),
+      <a class="link" href="poc-bre-composto.html">poc-bre-composto.html</a> (POC 2 · geo+pagamento+adesão),
+      <a class="link" href="poc-bre-avancado.html">poc-bre-avancado.html</a> (POC 3 · de/por+bundle+bônus+multa) e
+      <a class="link" href="visao-negocio-precificacao.html">visao-negocio-precificacao.html</a> (visão de negócio).
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid4">
+    <div class="stat teal"><div class="v">12</div><div class="l">Decision Matrices (todos os mecanismos do Apex em matrizes BRE)</div></div>
+    <div class="stat accent"><div class="v">22</div><div class="l">Steps no Expression Set (12 lookups + COALESCE + composição)</div></div>
+    <div class="stat success"><div class="v">18/18</div><div class="l">Cenários validados PASS — cobrem todos os arquétipos de preço</div></div>
+    <div class="stat success"><div class="v">0</div><div class="l">Linhas de Apex e 0 SOQL por avaliação — declarativo e seguro</div></div>
+  </div>
+
+  <!-- Resumo executivo -->
+  <div class="callout success">
+    <div class="ct">Resultado em uma frase</div>
+    <p>Tudo que o engine Apex calcula hoje — preço-base com de/por, prioridade geográfica em 5 níveis,
+      bundle por combinação, desconto comercial, ajuste de pagamento, bônus condicionado a crédito,
+      taxa de adesão e multa de fidelização — <b>cabe em 12 matrizes e 22 steps declarativos</b>.
+      <b>18/18 cenários PASS · 0 Apex · 0 SOQL · 7,62 ms/avaliação em bulk de 200 itens.</b>
+      Adicionar um mecanismo = adicionar uma matriz, não reabrir código.</p>
+  </div>
+
+  <!-- Por que a POC Completa existe -->
+  <div class="callout info">
+    <div class="ct">Por que esta POC existe — a história das anteriores</div>
+    <div class="small">
+      <b>POC 1</b> (pipeline) mostrou que o BRE consegue substituir a Pricing_Matrix__c monolítica com uma
+      Expression Set de 7 steps. <b>POC 2</b> (Composto) adicionou geo cidade/UF, pagamento e adesão.
+      <b>POC 3</b> (Avançado) adicionou de/por, bundle, desconto, bônus e multa — mas <em>em paralelo</em> à POC 2,
+      sem geo cidade e sem pagamento.<br><br>
+      <b>A POC Completa é incremental</b>: parte do que a POC 2 provou (COALESCE geo), adiciona o que a POC 3
+      provou (de/por, bundle, bônus, multa), e inclui os mecanismos ainda não provados em nenhuma das anteriores
+      (<b>DDD</b>, <b>Node de rede</b>, <b>canal de vendas</b>). Um único ES que fecha o argumento.
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- 1. Os 12 mecanismos -->
+  <section class="stack gap8">
+    <h2>1 · Os 12 mecanismos — cada um é uma matriz independente</h2>
+    <p class="sub small">Cada linha corresponde a uma Decision Matrix. A coluna "Novo" indica se o mecanismo
+      não foi provado em nenhuma POC anterior.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Matriz BRE</th>
+            <th>Chave (entradas)</th>
+            <th>Como o ES usa</th>
+            <th>Origem no Apex</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="info">
+            <td><b>1</b></td>
+            <td><code>Poc4BaseMatrix</code></td>
+            <td class="small">produto × modalidade × prazo × segmento × <b>tipo_pedido</b> × <b>operação</b></td>
+            <td class="small">Devolve <b>PRECO</b> (por), <b>FULLPRICE</b> (de) e <b>IS_BASE</b>.
+              ES escolhe via <code>IF(IS_BASE&gt;0, FULLPRICE, PRECO)</code> — jornada base paga o "de", prospect paga o "por".</td>
+            <td class="small"><code>GetMatrixPriceComercial</code></td>
+            <td><span class="pill info">POC 1+3</span></td>
+          </tr>
+          <tr class="teal">
+            <td><b>2</b></td>
+            <td><code>Poc4GeoCidadeMatrix</code></td>
+            <td class="small">produto × <b>cidade</b> (esparso)</td>
+            <td class="small">Override mais específico. Cidade presente = ignora UF, DDD e nacional.</td>
+            <td class="small"><code>GetOfferPrice</code> (<code>OfferCity__c</code>)</td>
+            <td><span class="pill teal">POC 2</span></td>
+          </tr>
+          <tr class="teal">
+            <td><b>3</b></td>
+            <td><code>Poc4GeoUFMatrix</code></td>
+            <td class="small">produto × <b>UF</b> (wildcard <code>*</code> = nacional)</td>
+            <td class="small">Fallback estadual quando não há linha de cidade.</td>
+            <td class="small"><code>GetOfferPrice</code> (<code>OfferUF__c</code>)</td>
+            <td><span class="pill teal">POC 2+3</span></td>
+          </tr>
+          <tr>
+            <td><b>4</b></td>
+            <td><code>Poc4GeoDDDMatrix</code></td>
+            <td class="small">produto × <b>DDD</b> (sub-regional)</td>
+            <td class="small">Entre UF e cidade: uma DDD pode cobrir múltiplas cidades.</td>
+            <td class="small"><code>GetOfferPrice</code> (<code>OfferDDD__c</code>)</td>
+            <td><span class="pill success">Novo <span class="badge-new">★</span></span></td>
+          </tr>
+          <tr>
+            <td><b>5</b></td>
+            <td><code>Poc4NodeMatrix</code></td>
+            <td class="small">produto × <b>nó de rede</b> × cidade × UF</td>
+            <td class="small">Oferta exclusiva geo de maior prioridade (vence todos).</td>
+            <td class="small"><code>GetOfferPrice</code> (<code>Nodes__c</code>)</td>
+            <td><span class="pill success">Novo <span class="badge-new">★</span></span></td>
+          </tr>
+          <tr class="warning">
+            <td><b>6</b></td>
+            <td><code>Poc4BundleMatrix</code></td>
+            <td class="small">TV × Internet × Fone × Móvel</td>
+            <td class="small">Preço fechado por combinação de componentes — <code>IF(bundle&gt;0, bundle, base)</code> (COALESCE).</td>
+            <td class="small"><code>GetBundlePrice</code></td>
+            <td><span class="pill warning">POC 3</span></td>
+          </tr>
+          <tr>
+            <td><b>7</b></td>
+            <td><code>Poc4DescontoMatrix</code></td>
+            <td class="small">produto × grupo × perfil (Política Comercial)</td>
+            <td class="small">Desconto estrutural (sem data de fim). Regra de negócio: promoção com vigência → nativo.</td>
+            <td class="small"><code>SetDiscountPricing</code></td>
+            <td><span class="pill warning">POC 3</span></td>
+          </tr>
+          <tr>
+            <td><b>8</b></td>
+            <td><code>Poc4PagamentoMatrix</code></td>
+            <td class="small">produto × família × método_pgto × tipo_fatura</td>
+            <td class="small">Addition (boleto +5) ou Discount (cartão -5) conforme forma de pagamento.</td>
+            <td class="small"><code>SetPaymentAdjust</code> + <code>GetMatrixPriceComercial</code></td>
+            <td><span class="pill teal">POC 2</span></td>
+          </tr>
+          <tr>
+            <td><b>9</b></td>
+            <td><code>Poc4BonusMatrix</code></td>
+            <td class="small">modalidade × UF* × cidade × DDD × <b>crédito</b></td>
+            <td class="small">Bônus condicionado a crédito OK. COALESCE geo igual à base. Crédito REST = sem linha = 0.</td>
+            <td class="small"><code>GetBonus</code> (obj <code>Bonus__c</code>)</td>
+            <td><span class="pill warning">POC 3</span></td>
+          </tr>
+          <tr>
+            <td><b>10</b></td>
+            <td><code>Poc4InstalacaoMatrix</code></td>
+            <td class="small">produto × UF* (wildcard nacional)</td>
+            <td class="small">Taxa única (one-time). UF específica vence o curinga nacional.</td>
+            <td class="small"><code>Pricing_Matrix__c</code> RecordType=Installation</td>
+            <td><span class="pill teal">POC 2+3</span></td>
+          </tr>
+          <tr>
+            <td><b>11</b></td>
+            <td><code>Poc4AdesaoMatrix</code></td>
+            <td class="small">produto × prazo × segmento × business_unit</td>
+            <td class="small">OTC de adesão — exposta como <code>OTC_ADESAO</code>, somada ao <code>OTC_FINAL</code>.</td>
+            <td class="small"><code>SetMemberFeePricingPlan</code></td>
+            <td><span class="pill teal">POC 2</span></td>
+          </tr>
+          <tr>
+            <td><b>12</b></td>
+            <td><code>Poc4MultaMatrix</code></td>
+            <td class="small">produto × prazo (permanência)</td>
+            <td class="small"><b>Exposta à parte</b> como <code>MULTA_FIDELIDADE</code>, <b>não entra</b> no cálculo do preço recorrente.</td>
+            <td class="small"><code>SetFidelity</code> + <code>PenaltyAmount__c</code></td>
+            <td><span class="pill warning">POC 3</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">Mecanismos <b>deliberadamente fora do escopo</b>: promoção com vigência (→ Promotions nativas), SimCard R$15, Dependentes, Cross-Sell, PME Fixa com Physical Layer, Aparelho/eSIM.</p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 2. Arquitetura do ES -->
+  <section class="stack gap8">
+    <h2>2 · Arquitetura <code>PrecoCompleto</code> — 22 steps em 3 blocos</h2>
+    <p class="sub small">Cada bloco tem responsabilidade única. O ES não toma decisão de negócio — apenas orquestra lookups e expressões de composição.</p>
+
+    <div class="grid3">
+      <div class="card">
+        <div class="hd">Bloco 1 · Lookups (steps 1–12)</div>
+        <div class="bd small sub">
+          Um step por matriz. Cada um resolve uma variável de saída independente.<br><br>
+          <code>PRECO</code>, <code>FULLPRICE</code>, <code>IS_BASE</code>, <code>PRECO_CIDADE</code>,
+          <code>PRECO_UF</code>, <code>PRECO_DDD</code>, <code>PRECO_NODE</code>, <code>PRECO_BUNDLE</code>,
+          <code>DESCONTO</code>, <code>ADJ_PGTO</code>, <code>BONUS</code>, <code>OTC_INST</code>,
+          <code>OTC_ADESAO</code>, <code>MULTA</code>
+        </div>
+      </div>
+      <div class="card">
+        <div class="hd">Bloco 2 · COALESCE geográfico (steps 13–14)</div>
+        <div class="bd small sub">
+          Step 13 — Resolução de 5 níveis:<br>
+          <code>IF(PRECO_NODE &gt; 0, PRECO_NODE,<br>
+          &nbsp;IF(PRECO_CIDADE &gt; 0, PRECO_CIDADE,<br>
+          &nbsp;&nbsp;IF(PRECO_DDD &gt; 0, PRECO_DDD,<br>
+          &nbsp;&nbsp;&nbsp;IF(PRECO_UF &gt; 0, PRECO_UF,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;IF(IS_BASE &gt; 0, FULLPRICE, PRECO)))))</code><br><br>
+          Step 14 — Bundle override:<br>
+          <code>IF(PRECO_BUNDLE &gt; 0, PRECO_BUNDLE, PRECO_BASE_RESOLVIDO)</code>
+        </div>
+      </div>
+      <div class="card">
+        <div class="hd">Bloco 3 · Composição final (steps 15–25)</div>
+        <div class="bd small sub">
+          <code>PRECO_DESCONTADO = PRECO_COM_BUNDLE - DESCONTO</code><br>
+          <code>PRECO_COM_PGTO = PRECO_DESCONTADO + ADJ_PGTO</code><br>
+          <code>PRECO_RECORRENTE = PRECO_COM_PGTO - BONUS</code><br>
+          <code>OTC_FINAL = OTC_ADESAO + OTC_INST</code><br>
+          <code>MULTA_FIDELIDADE = MULTA</code><br><br>
+          Steps finais: validação de canal, binding de variáveis de preço.
+        </div>
+      </div>
+    </div>
+
+    <pre>
+Expression Set: PrecoCompleto   (22 steps, 12 matrizes, 3 saídas principais)
+
+── Bloco 1 · Lookups ──────────────────────────────────────────────────────────
+step 01  Poc4BaseMatrix         → PRECO, FULLPRICE, IS_BASE
+step 02  Poc4GeoCidadeMatrix    → PRECO_CIDADE
+step 03  Poc4GeoUFMatrix        → PRECO_UF
+step 04  Poc4GeoDDDMatrix       → PRECO_DDD          ★ novo
+step 05  Poc4NodeMatrix         → PRECO_NODE          ★ novo
+step 06  Poc4BundleMatrix       → PRECO_BUNDLE
+step 07  Poc4DescontoMatrix     → DESCONTO
+step 08  Poc4PagamentoMatrix    → ADJ_PGTO
+step 09  Poc4BonusMatrix        → BONUS
+step 10  Poc4InstalacaoMatrix   → OTC_INST
+step 11  Poc4AdesaoMatrix       → OTC_ADESAO
+step 12  Poc4MultaMatrix        → MULTA
+
+── Bloco 2 · COALESCE geográfico + bundle ────────────────────────────────────
+step 13  PRECO_BASE_RESOLVIDO   = IF(PRECO_NODE>0, PRECO_NODE,
+                                   IF(PRECO_CIDADE>0, PRECO_CIDADE,
+                                   IF(PRECO_DDD>0, PRECO_DDD,
+                                   IF(PRECO_UF>0, PRECO_UF,
+                                   IF(IS_BASE>0, FULLPRICE, PRECO)))))
+step 14  PRECO_COM_BUNDLE       = IF(PRECO_BUNDLE>0, PRECO_BUNDLE, PRECO_BASE_RESOLVIDO)
+
+── Bloco 3 · Composição final ────────────────────────────────────────────────
+step 15  PRECO_DESCONTADO       = PRECO_COM_BUNDLE - DESCONTO
+step 16  PRECO_COM_PGTO         = PRECO_DESCONTADO + ADJ_PGTO
+step 17  PRECO_RECORRENTE       = PRECO_COM_PGTO - BONUS
+step 18  OTC_FINAL              = OTC_ADESAO + OTC_INST
+step 19  MULTA_FIDELIDADE       = MULTA                 ← info contratual, não soma no preço
+step 20  validação de canal     (Promotion_Channel__c)
+step 21–22  binding de variáveis de preço (PRECO_LISTA, DESCONTO, BONUS expostos)
+    </pre>
+
+    <div class="stack gap8" style="margin-top:20px">
+      <!-- toolbar: título + abas + expandir -->
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;justify-content:space-between">
+        <div>
+          <h3 style="font-size:14px;font-weight:600;margin:0 0 4px">Diagrama de fluxo de dados — lineage das variáveis</h3>
+          <p class="small sub">Cada aresta identifica a variável exata que transita entre blocos. Siga as setas para rastrear de onde cada número vem e onde é consumido.</p>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;margin-top:2px;flex-wrap:wrap">
+          <button class="diag-tab" data-tab="lr" onclick="switchDiagTab('lr')"
+            style="font-size:13px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--accent);cursor:pointer;background:var(--accent);color:#fff;transition:all .15s">
+            → Horizontal
+          </button>
+          <button class="diag-tab" data-tab="td" onclick="switchDiagTab('td')"
+            style="font-size:13px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--stroke-2);cursor:pointer;background:var(--surface);color:var(--text-2);transition:all .15s">
+            ↓ Vertical
+          </button>
+          <button onclick="openDiagModal()"
+            style="font-size:13px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--stroke-2);cursor:pointer;background:var(--surface);color:var(--text-2);transition:all .15s"
+            title="Abrir diagrama em tela cheia">
+            ⤢ Expandir
+          </button>
+          <span style="width:1px;height:20px;background:var(--stroke-2);display:inline-block;margin:0 2px"></span>
+          <button id="diag-copy-btn" onclick="copyDiagCode()"
+            style="font-size:13px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--stroke-2);cursor:pointer;background:var(--surface);color:var(--text-2);transition:all .15s"
+            title="Copiar código Mermaid desta aba">
+            📋 Copiar código
+          </button>
+        </div>
+      </div>
+      <!-- Dica de uso -->
+      <div style="font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span>O botão <b>Copiar código</b> copia o fonte Mermaid da aba ativa.</span>
+        <span>Cole em</span>
+        <a href="https://mermaid.live" target="_blank" rel="noopener"
+          style="color:var(--accent);font-weight:600;text-decoration:none">mermaid.live ↗</a>
+        <span>para editar, exportar PNG/SVG ou embutir em outras ferramentas (Confluence, Notion, etc.).</span>
+      </div>
+
+      <!-- Painel Horizontal (LR) — visível por padrão -->
+      <div id="diag-panel-lr" class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+
+  subgraph IN["  ENTRADAS  "]
+    direction TB
+    I1["produto · modalidade\nprazo · segmento\ntipo_pedido · operação"]
+    I2["geo: cidade · UF · DDD · node"]
+    I3["bundle:\nTV · Internet · Fone · Móvel"]
+    I4["produto · grupo · perfil\n(Política Comercial)"]
+    I5["produto · família\nmétodo_pgto · tipo_fatura"]
+    I6["modalidade · UF · cidade\nDDD · crédito"]
+    I7["produto · UF (wildcard)"]
+    I8["produto · prazo\nsegmento · business_unit"]
+    I9["produto · prazo\n(permanência)"]
+  end
+
+  subgraph B1["  BLOCO 1 · Decision Matrices  (steps 1–12)  "]
+    direction TB
+    M1["1 · Poc4BaseMatrix\n→ PRECO · FULLPRICE · IS_BASE"]
+    M2["2 · Poc4GeoCidadeMatrix\n→ PRECO_CIDADE"]
+    M3["3 · Poc4GeoUFMatrix\n→ PRECO_UF"]
+    M4["4 · Poc4GeoDDDMatrix\n→ PRECO_DDD"]
+    M5["5 · Poc4NodeMatrix\n→ PRECO_NODE"]
+    M6["6 · Poc4BundleMatrix\n→ PRECO_BUNDLE"]
+    M7["7 · Poc4DescontoMatrix\n→ DESCONTO"]
+    M8["8 · Poc4PagamentoMatrix\n→ ADJ_PGTO"]
+    M9["9 · Poc4BonusMatrix\n→ BONUS"]
+    M10["10 · Poc4InstalacaoMatrix\n→ OTC_INST"]
+    M11["11 · Poc4AdesaoMatrix\n→ OTC_ADESAO"]
+    M12["12 · Poc4MultaMatrix\n→ MULTA"]
+  end
+
+  subgraph B2["  BLOCO 2 · De/por + COALESCE geo  (steps 13–15)  "]
+    direction TB
+    S13["13 · PRECO_LISTA\nIF(IS_BASE &gt; 0, FULLPRICE, PRECO)\njornada de/por — portabilidade / retenção"]
+    S14["14 · PRECO_BASE_RESOLVIDO\nCOALESCE: NODE › CIDADE › DDD › UF › LISTA\no geo mais específico prevalece"]
+    S15["15 · PRECO_COM_BUNDLE\nIF(PRECO_BUNDLE &gt; 0, PRECO_BUNDLE, PRECO_BASE_RESOLVIDO)\nbundle sobrescreve geo"]
+  end
+
+  subgraph B3["  BLOCO 3 · Composição final  (steps 16–22)  "]
+    direction TB
+    S16["16 · PRECO_DESCONTADO\n= PRECO_COM_BUNDLE − DESCONTO"]
+    S17["17 · PRECO_COM_PGTO\n= PRECO_DESCONTADO + ADJ_PGTO"]
+    S18["★ 18 · PRECO_RECORRENTE\n= PRECO_COM_PGTO − BONUS"]
+    S19["★ 19 · OTC_FINAL\n= OTC_ADESAO + OTC_INST"]
+    S20["★ 20 · MULTA_FIDELIDADE\n= MULTA"]
+    S21["21 · DESCONTO_APLICADO\n= DESCONTO  (auditoria)"]
+    S22["22 · BONUS_APLICADO\n= BONUS  (auditoria)"]
+  end
+
+  subgraph OUT_P["  ★ Saídas Principais  "]
+    direction TB
+    OP1["PRECO_RECORRENTE\npreço mensal final"]
+    OP2["OTC_FINAL\ninstalação + adesão"]
+    OP3["MULTA_FIDELIDADE\nmulta por cancelamento"]
+  end
+
+  subgraph OUT_A["  Saídas Auxiliares (auditoria)  "]
+    direction TB
+    OA1["PRECO_LISTA"]
+    OA2["PRECO_BASE_RESOLVIDO"]
+    OA3["DESCONTO_APLICADO"]
+    OA4["BONUS_APLICADO"]
+  end
+
+  I1 --> M1
+  I2 --> M2 & M3 & M4 & M5
+  I3 --> M6
+  I4 --> M7
+  I5 --> M8
+  I6 --> M9
+  I7 --> M10
+  I8 --> M11
+  I9 --> M12
+
+  M1 -->|"IS_BASE · FULLPRICE · PRECO"| S13
+  S13 -->|PRECO_LISTA| S14
+  M2 -->|PRECO_CIDADE| S14
+  M3 -->|PRECO_UF| S14
+  M4 -->|PRECO_DDD| S14
+  M5 -->|PRECO_NODE| S14
+  S14 -->|PRECO_BASE_RESOLVIDO| S15
+  M6 -->|PRECO_BUNDLE| S15
+
+  M7 -->|DESCONTO| S16
+  M7 -->|DESCONTO| S21
+  M8 -->|ADJ_PGTO| S17
+  M9 -->|BONUS| S18
+  M9 -->|BONUS| S22
+  M10 -->|OTC_INST| S19
+  M11 -->|OTC_ADESAO| S19
+  M12 -->|MULTA| S20
+
+  S15 -->|PRECO_COM_BUNDLE| S16
+  S16 -->|PRECO_DESCONTADO| S17
+  S17 -->|PRECO_COM_PGTO| S18
+
+  S18 --> OP1
+  S19 --> OP2
+  S20 --> OP3
+  S13 --> OA1
+  S14 --> OA2
+  S21 --> OA3
+  S22 --> OA4
+
+  classDef input    fill:#EFF6FF,stroke:#3B82F6,color:#1E40AF,font-size:12px
+  classDef matrix   fill:#DBEAFE,stroke:#1565C0,color:#1E3A5F,font-size:12px
+  classDef coalesce fill:#CCFBF1,stroke:#00695C,color:#004D40,font-size:12px
+  classDef comp     fill:#FEE2E2,stroke:#B91C1C,color:#7F1D1D,font-size:12px
+  classDef mainout  fill:#DCFCE7,stroke:#15803D,color:#14532D,font-weight:bold,font-size:12px
+  classDef auxout   fill:#F1F5F9,stroke:#64748B,color:#334155,font-size:11px
+
+  class I1,I2,I3,I4,I5,I6,I7,I8,I9 input
+  class M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12 matrix
+  class S13,S14,S15 coalesce
+  class S16,S17,S18,S19,S20,S21,S22 comp
+  class OP1,OP2,OP3 mainout
+  class OA1,OA2,OA3,OA4 auxout
+        </div>
+      </div>
+
+      <!-- Painel Vertical (TD) — oculto via JS após render -->
+      <div id="diag-panel-td" class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+
+  subgraph IN["  ENTRADAS  "]
+    direction TB
+    I1["produto · modalidade\nprazo · segmento\ntipo_pedido · operação"]
+    I2["geo: cidade · UF · DDD · node"]
+    I3["bundle:\nTV · Internet · Fone · Móvel"]
+    I4["produto · grupo · perfil\n(Política Comercial)"]
+    I5["produto · família\nmétodo_pgto · tipo_fatura"]
+    I6["modalidade · UF · cidade\nDDD · crédito"]
+    I7["produto · UF (wildcard)"]
+    I8["produto · prazo\nsegmento · business_unit"]
+    I9["produto · prazo\n(permanência)"]
+  end
+
+  subgraph B1["  BLOCO 1 · Decision Matrices  (steps 1–12)  "]
+    direction TB
+    M1["1 · Poc4BaseMatrix\n→ PRECO · FULLPRICE · IS_BASE"]
+    M2["2 · Poc4GeoCidadeMatrix\n→ PRECO_CIDADE"]
+    M3["3 · Poc4GeoUFMatrix\n→ PRECO_UF"]
+    M4["4 · Poc4GeoDDDMatrix\n→ PRECO_DDD"]
+    M5["5 · Poc4NodeMatrix\n→ PRECO_NODE"]
+    M6["6 · Poc4BundleMatrix\n→ PRECO_BUNDLE"]
+    M7["7 · Poc4DescontoMatrix\n→ DESCONTO"]
+    M8["8 · Poc4PagamentoMatrix\n→ ADJ_PGTO"]
+    M9["9 · Poc4BonusMatrix\n→ BONUS"]
+    M10["10 · Poc4InstalacaoMatrix\n→ OTC_INST"]
+    M11["11 · Poc4AdesaoMatrix\n→ OTC_ADESAO"]
+    M12["12 · Poc4MultaMatrix\n→ MULTA"]
+  end
+
+  subgraph B2["  BLOCO 2 · De/por + COALESCE geo  (steps 13–15)  "]
+    direction TB
+    S13["13 · PRECO_LISTA\nIF(IS_BASE &gt; 0, FULLPRICE, PRECO)\njornada de/por — portabilidade / retenção"]
+    S14["14 · PRECO_BASE_RESOLVIDO\nCOALESCE: NODE › CIDADE › DDD › UF › LISTA\no geo mais específico prevalece"]
+    S15["15 · PRECO_COM_BUNDLE\nIF(PRECO_BUNDLE &gt; 0, PRECO_BUNDLE, PRECO_BASE_RESOLVIDO)\nbundle sobrescreve geo"]
+  end
+
+  subgraph B3["  BLOCO 3 · Composição final  (steps 16–22)  "]
+    direction TB
+    S16["16 · PRECO_DESCONTADO\n= PRECO_COM_BUNDLE − DESCONTO"]
+    S17["17 · PRECO_COM_PGTO\n= PRECO_DESCONTADO + ADJ_PGTO"]
+    S18["★ 18 · PRECO_RECORRENTE\n= PRECO_COM_PGTO − BONUS"]
+    S19["★ 19 · OTC_FINAL\n= OTC_ADESAO + OTC_INST"]
+    S20["★ 20 · MULTA_FIDELIDADE\n= MULTA"]
+    S21["21 · DESCONTO_APLICADO\n= DESCONTO  (auditoria)"]
+    S22["22 · BONUS_APLICADO\n= BONUS  (auditoria)"]
+  end
+
+  subgraph OUT_P["  ★ Saídas Principais  "]
+    direction TB
+    OP1["PRECO_RECORRENTE\npreço mensal final"]
+    OP2["OTC_FINAL\ninstalação + adesão"]
+    OP3["MULTA_FIDELIDADE\nmulta por cancelamento"]
+  end
+
+  subgraph OUT_A["  Saídas Auxiliares (auditoria)  "]
+    direction TB
+    OA1["PRECO_LISTA"]
+    OA2["PRECO_BASE_RESOLVIDO"]
+    OA3["DESCONTO_APLICADO"]
+    OA4["BONUS_APLICADO"]
+  end
+
+  I1 --> M1
+  I2 --> M2 & M3 & M4 & M5
+  I3 --> M6
+  I4 --> M7
+  I5 --> M8
+  I6 --> M9
+  I7 --> M10
+  I8 --> M11
+  I9 --> M12
+
+  M1 -->|"IS_BASE · FULLPRICE · PRECO"| S13
+  S13 -->|PRECO_LISTA| S14
+  M2 -->|PRECO_CIDADE| S14
+  M3 -->|PRECO_UF| S14
+  M4 -->|PRECO_DDD| S14
+  M5 -->|PRECO_NODE| S14
+  S14 -->|PRECO_BASE_RESOLVIDO| S15
+  M6 -->|PRECO_BUNDLE| S15
+
+  M7 -->|DESCONTO| S16
+  M7 -->|DESCONTO| S21
+  M8 -->|ADJ_PGTO| S17
+  M9 -->|BONUS| S18
+  M9 -->|BONUS| S22
+  M10 -->|OTC_INST| S19
+  M11 -->|OTC_ADESAO| S19
+  M12 -->|MULTA| S20
+
+  S15 -->|PRECO_COM_BUNDLE| S16
+  S16 -->|PRECO_DESCONTADO| S17
+  S17 -->|PRECO_COM_PGTO| S18
+
+  S18 --> OP1
+  S19 --> OP2
+  S20 --> OP3
+  S13 --> OA1
+  S14 --> OA2
+  S21 --> OA3
+  S22 --> OA4
+
+  classDef input    fill:#EFF6FF,stroke:#3B82F6,color:#1E40AF,font-size:12px
+  classDef matrix   fill:#DBEAFE,stroke:#1565C0,color:#1E3A5F,font-size:12px
+  classDef coalesce fill:#CCFBF1,stroke:#00695C,color:#004D40,font-size:12px
+  classDef comp     fill:#FEE2E2,stroke:#B91C1C,color:#7F1D1D,font-size:12px
+  classDef mainout  fill:#DCFCE7,stroke:#15803D,color:#14532D,font-weight:bold,font-size:12px
+  classDef auxout   fill:#F1F5F9,stroke:#64748B,color:#334155,font-size:11px
+
+  class I1,I2,I3,I4,I5,I6,I7,I8,I9 input
+  class M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12 matrix
+  class S13,S14,S15 coalesce
+  class S16,S17,S18,S19,S20,S21,S22 comp
+  class OP1,OP2,OP3 mainout
+  class OA1,OA2,OA3,OA4 auxout
+        </div>
+      </div>
+
+      <p class="small tertiary">Fonte: <code>diagrams/src/preco-completo-dataflow.mmd</code> · renderizado pelo Mermaid.js · <kbd style="font-size:11px;background:var(--surface-3);border:1px solid var(--stroke-2);border-radius:3px;padding:1px 5px">ESC</kbd> fecha o modal</p>
+    </div>
+
+    <!-- ── Modal fullscreen ───────────────────────────────────────────── -->
+    <div id="diag-modal"
+      style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);align-items:center;justify-content:center"
+      onclick="if(event.target===this)closeDiagModal()">
+      <div style="background:#fff;border-radius:12px;padding:20px;width:92vw;max-height:94vh;overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.35)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px">
+          <strong style="font-size:14px;color:var(--text)">Diagrama de fluxo de dados — PrecoCompleto (22 steps · 12 matrizes)</strong>
+          <button onclick="closeDiagModal()"
+            style="font-size:22px;line-height:1;background:var(--surface-2);border:1px solid var(--stroke);cursor:pointer;padding:2px 10px;border-radius:6px;color:var(--text-2);flex-shrink:0"
+            title="Fechar (ESC)">×</button>
+        </div>
+        <div id="diag-modal-svg" style="overflow:auto;width:calc(90vw - 48px);min-height:500px"></div>
+      </div>
+    </div>
+
+    <script>
+    (function () {
+      var currentDiagTab = 'lr';
+      var diagSource = { lr: '', td: '' };  // código-fonte capturado antes do render
+
+      // ── Inicialização: renderiza LR e TD explicitamente, depois esconde TD ──
+      document.addEventListener('DOMContentLoaded', function () {
+        var lrNode = document.querySelector('#diag-panel-lr .mermaid');
+        var tdNode = document.querySelector('#diag-panel-td .mermaid');
+
+        // Captura o fonte antes do Mermaid substituir o conteúdo pelo SVG
+        if (lrNode) diagSource.lr = lrNode.textContent.trim();
+        if (tdNode) diagSource.td = tdNode.textContent.trim();
+
+        var nodes  = [lrNode, tdNode].filter(Boolean);
+
+        var afterRender = function () {
+          // Esconde TD após ambos renderizados com sucesso
+          var tdPanel = document.getElementById('diag-panel-td');
+          if (tdPanel) tdPanel.style.display = 'none';
+          // Garante que SVGs se adaptem à largura do container
+          document.querySelectorAll('#diag-panel-lr svg, #diag-panel-td svg').forEach(function (s) {
+            s.removeAttribute('width'); s.style.width = '100%'; s.style.height = 'auto';
+          });
+        };
+
+        if (nodes.length > 0) {
+          var p = mermaid.run({ nodes: nodes });
+          if (p && typeof p.then === 'function') {
+            p.then(afterRender).catch(afterRender);
+          } else {
+            // fallback síncrono
+            setTimeout(afterRender, 600);
+          }
+        }
+      });
+
+      // ── Troca de aba ─────────────────────────────────────────────────────────
+      window.switchDiagTab = function (tab) {
+        currentDiagTab = tab;
+        document.getElementById('diag-panel-lr').style.display = tab === 'lr' ? '' : 'none';
+        document.getElementById('diag-panel-td').style.display = tab === 'td' ? '' : 'none';
+
+        document.querySelectorAll('.diag-tab').forEach(function (b) {
+          var active = b.getAttribute('data-tab') === tab;
+          b.style.background  = active ? 'var(--accent)' : 'var(--surface)';
+          b.style.color       = active ? '#fff'          : 'var(--text-2)';
+          b.style.borderColor = active ? 'var(--accent)' : 'var(--stroke-2)';
+        });
+      };
+
+      // ── Modal fullscreen ──────────────────────────────────────────────────────
+      window.openDiagModal = function () {
+        var panelId = currentDiagTab === 'lr' ? 'diag-panel-lr' : 'diag-panel-td';
+        var svg     = document.querySelector('#' + panelId + ' svg');
+        var box     = document.getElementById('diag-modal-svg');
+        box.innerHTML = '';
+        if (svg) {
+          var clone = svg.cloneNode(true);
+          // Remove todas as restrições de tamanho que o Mermaid injeta
+          clone.removeAttribute('width');
+          clone.removeAttribute('height');
+          clone.removeAttribute('style');
+          // Força o SVG a preencher o container do modal
+          clone.setAttribute('width',  '100%');
+          clone.setAttribute('height', '100%');
+          clone.style.display  = 'block';
+          clone.style.minWidth = '600px';
+          box.appendChild(clone);
+        } else {
+          box.innerHTML = '<p style="color:#888;padding:20px">Diagrama ainda carregando — tente novamente em instantes.</p>';
+        }
+        document.getElementById('diag-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeDiagModal = function () {
+        document.getElementById('diag-modal').style.display = 'none';
+        document.body.style.overflow = '';
+      };
+
+      // ── Copiar código Mermaid da aba ativa ───────────────────────────────────
+      window.copyDiagCode = function () {
+        var code = currentDiagTab === 'lr' ? diagSource.lr : diagSource.td;
+        if (!code) { return; }
+        var btn  = document.getElementById('diag-copy-btn');
+        navigator.clipboard.writeText(code).then(function () {
+          btn.textContent = '✓ Copiado!';
+          btn.style.color       = 'var(--success)';
+          btn.style.borderColor = '#c6e6d4';
+          btn.style.background  = 'var(--success-soft)';
+          setTimeout(function () {
+            btn.textContent = '📋 Copiar código';
+            btn.style.color       = 'var(--text-2)';
+            btn.style.borderColor = 'var(--stroke-2)';
+            btn.style.background  = 'var(--surface)';
+          }, 2200);
+        }).catch(function () {
+          // fallback: selecionar numa textarea temporária
+          var ta = document.createElement('textarea');
+          ta.value = code;
+          ta.style.position = 'fixed'; ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btn.textContent = '✓ Copiado!';
+          setTimeout(function () { btn.textContent = '📋 Copiar código'; }, 2200);
+        });
+      };
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeDiagModal();
+      });
+    })();
+    </script>
+
+    <div class="callout teal">
+      <div class="ct">Lição de processo (registrada no guia)</div>
+      <p class="small">Uma matriz já ligada a um Expression Set <b>não pode ser recarregada in-place</b>
+        (mesmo com o ES inativo, ela segue referenciada). Regra de ouro: <b>carregar todos os dados antes de
+        ativar o ES</b>. Superdimensionar a carga inicial é recomendado.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 3. COALESCE geográfico completo -->
+  <section class="stack gap8">
+    <h2>3 · COALESCE geográfico completo — 5 níveis de granularidade</h2>
+    <p class="sub small">Novo em relação às POCs anteriores: <b>DDD</b> (sub-regional) e <b>Node</b> (nó de rede / oferta exclusiva).
+      O motor sempre usa <b>o preço mais específico que existir</b>.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Prioridade</th>
+            <th>Nível</th>
+            <th>Campo na matriz</th>
+            <th>Quando usar</th>
+            <th>Exemplo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="purple">
+            <td class="center"><b>1 (maior)</b></td>
+            <td><b>Node + Cidade + UF</b></td>
+            <td><code>Nodes__c</code> + <code>OfferCity__c</code> + <code>OfferUF__c</code></td>
+            <td class="small">Oferta exclusiva por nó de rede — mais granular. Campanhas de infraestrutura.</td>
+            <td class="small">Node CLARO_SP1 / São Paulo / SP → R$ 249,90</td>
+            <td><span class="pill success">Novo ★</span></td>
+          </tr>
+          <tr class="teal">
+            <td class="center"><b>2</b></td>
+            <td>Cidade + UF</td>
+            <td><code>OfferCity__c</code> + <code>OfferUF__c</code></td>
+            <td class="small">Override por cidade. Validado na POC 2.</td>
+            <td class="small">São Paulo / SP → R$ 259,90</td>
+            <td><span class="pill teal">POC 2</span></td>
+          </tr>
+          <tr>
+            <td class="center"><b>3</b></td>
+            <td>DDD</td>
+            <td><code>OfferDDD__c</code></td>
+            <td class="small">Sub-regional: uma DDD pode cobrir múltiplas cidades e ser menos granular que cidade, mas mais que UF.</td>
+            <td class="small">DDD 11 → R$ 264,90</td>
+            <td><span class="pill success">Novo ★</span></td>
+          </tr>
+          <tr>
+            <td class="center"><b>4</b></td>
+            <td>UF (estado)</td>
+            <td><code>UF__c</code> (wildcard <code>*</code> = nacional)</td>
+            <td class="small">Override estadual genérico. Validado nas POCs 2 e 3.</td>
+            <td class="small">SP → R$ 279,90</td>
+            <td><span class="pill teal">POC 2+3</span></td>
+          </tr>
+          <tr class="success">
+            <td class="center"><b>5 (menor)</b></td>
+            <td>Nacional (base)</td>
+            <td><code>IS_BASE</code> (de/por switch)</td>
+            <td class="small">Fallback: nenhum override geográfico ativo. Usa de/por conforme jornada.</td>
+            <td class="small">Nacional → R$ 269,90 (prospect) / R$ 319,90 (retenção)</td>
+            <td><span class="pill info">POC 1+2+3</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info">
+      <div class="ct">Por que DDD e Node importam</div>
+      <p class="small">A Pricing_Matrix__c real da Claro usa <code>DDD__c</code> em 2.927 linhas e
+        <code>OfferDDD__c</code> / <code>OfferCity__c</code> nos registros de <code>GetOfferPrice</code>.
+        Sem esses dois níveis, o BRE não consegue replicar todas as variações de preço que o Apex resolveria.
+        Com eles, o COALESCE fica <b>completo e sem buracos</b>.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 4. Cenários de validação -->
+  <section class="stack gap8">
+    <h2>4 · Os 18 cenários validados — 18/18 PASS (REST, dados reais)</h2>
+    <p class="sub small">Cada cenário isola ou combina mecanismos. Os 8 primeiros reproduzem cenários já validados
+      nas POCs anteriores (regressão). Os cenários 9–16 são novos. Os cenários 17–18 combinam tudo.
+      <b>Todos 18 passaram.</b></p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Cenário</th><th>Mecanismo(s) provado(s)</th>
+            <th class="num">Mensal (R$)</th>
+            <th class="num">Desc.</th>
+            <th class="num">Bônus</th>
+            <th class="num">Adesão</th>
+            <th class="num">Multa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>01</td><td>Base prospect novo</td><td class="small">preço-base (PricingValue)</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>02</td><td>Portabilidade</td><td class="small">RequestType = Portabilidade</td><td class="num">259,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>03</td><td>Jornada base (de/por)</td><td class="small">IS_BASE → usa FULLPRICE</td><td class="num">319,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>04</td><td>Perfil PROMO (desconto)</td><td class="small">Poc4DescontoMatrix</td><td class="num">239,90</td><td class="num">30,00</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>05</td><td>Bundle TV+Net+Fone</td><td class="small">Poc4BundleMatrix vence base</td><td class="num">309,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>06</td><td>Bônus (crédito OK)</td><td class="small">Poc4BonusMatrix + crédito</td><td class="num">249,90</td><td class="num">—</td><td class="num">20,00</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>07</td><td>Instalação em SP</td><td class="small">Poc4InstalacaoMatrix UF</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">99,90</td><td class="num">—</td></tr>
+          <tr><td>08</td><td>Fidelidade 12 meses</td><td class="small">Poc4MultaMatrix</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">240,00</td></tr>
+
+          <tr class="teal"><td>09</td><td><b>Cidade São Paulo/SP</b></td><td class="small">COALESCE: Poc4GeoCidadeMatrix vence UF</td><td class="num">259,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr class="teal"><td>10</td><td><b>DDD 11 (sem cidade)</b></td><td class="small">COALESCE: Poc4GeoDDDMatrix vence UF ★</td><td class="num">264,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr class="purple"><td>11</td><td><b>Node CLARO_SP1</b></td><td class="small">COALESCE: Poc4NodeMatrix vence tudo ★</td><td class="num">249,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>12</td><td>Método pgto boleto</td><td class="small">Poc4PagamentoMatrix (Addition)</td><td class="num">274,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>13</td><td>Crédito REST (sem bônus)</td><td class="small">Poc4BonusMatrix: crédito REST → sem linha → 0</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>14</td><td>Segmento PME</td><td class="small">Poc4BaseMatrix: Business_Unit = PME</td><td class="num">229,90</td><td class="num">—</td><td class="num">—</td><td class="num">199,90</td><td class="num">—</td></tr>
+          <tr><td>15</td><td>Canal restrito (SF_COM_AA)</td><td class="small">Promotion_Channel__c filtra matrix ★</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>16</td><td>Instalação em AM (UF diferente)</td><td class="small">Poc4InstalacaoMatrix: AM override</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">209,90</td><td class="num">—</td></tr>
+          <tr class="success"><td>17</td><td><b>Tudo junto (11 mecanismos)</b></td><td class="small">bundle + desconto + bônus + pagamento + geo cidade + adesão</td><td class="num"><b>289,90</b></td><td class="num">30,00</td><td class="num">20,00</td><td class="num">99,90</td><td class="num">—</td></tr>
+          <tr class="warning"><td>18</td><td><b>Tudo + fidelidade</b></td><td class="small">combo máximo com multa — cenário mais completo</td><td class="num"><b>289,90</b></td><td class="num">30,00</td><td class="num">20,00</td><td class="num">99,90</td><td class="num"><b>240,00</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">★ = mecanismo novo, não provado em POC anterior. Cenários 09–16 são adicionais; 17–18 são os de maior valor probatório. Runner: <code>scripts/test_completa.py</code>. Todos 18 PASS.</p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 5. Mapeamento Apex → BRE -->
+  <section class="stack gap8">
+    <h2>5 · Mapeamento completo — 14 classes Apex → 12 matrizes BRE</h2>
+    <p class="sub small">A análise partiu das classes <code>Solar_PricingPlan*</code> e da <code>Pricing_Matrix__c</code>
+      (4.877 linhas (sandbox), 5 RecordTypes). Cada passo do engine atual tem um equivalente declarativo.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Classe Apex</th><th>Função no engine atual</th><th>Equivalente BRE</th><th>Observação</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>GetMatrixPriceComercial</code></td><td class="small">Lookup principal na Pricing_Matrix__c; monta listas de preços (default, bundle, offer)</td><td><code>Poc4BaseMatrix</code></td><td class="small">Inclui de/por e portabilidade</td></tr>
+          <tr><td><code>GetOfferPrice</code></td><td class="small">Prioridade geo: Node+Cidade+UF &gt; Cidade+UF &gt; DDD &gt; UF</td><td><code>Poc4NodeMatrix</code> + <code>Poc4GeoCidadeMatrix</code> + <code>Poc4GeoDDDMatrix</code> + <code>Poc4GeoUFMatrix</code></td><td class="small">COALESCE de 5 níveis no ES</td></tr>
+          <tr><td><code>GetBundlePrice</code></td><td class="small">Preço por combinação TV/Internet/Fone/Móvel</td><td><code>Poc4BundleMatrix</code></td><td class="small">Flags viram chave de lookup</td></tr>
+          <tr><td><code>SetDiscountPricing</code></td><td class="small">Aplica desconto da Política Comercial</td><td><code>Poc4DescontoMatrix</code></td><td class="small">Desconto estrutural (sem data de fim)</td></tr>
+          <tr><td><code>SetPaymentAdjust</code></td><td class="small">Ajuste por método de pagamento (PF)</td><td><code>Poc4PagamentoMatrix</code></td><td class="small">Addition ou Discount</td></tr>
+          <tr><td><code>GetBonus</code></td><td class="small">Bônus do objeto Bonus__c com geo e crédito</td><td><code>Poc4BonusMatrix</code></td><td class="small">Bônus real é franquia/GB; proxy em R$ para POC</td></tr>
+          <tr><td><code>SetFidelity</code></td><td class="small">Define duração (0 ou 12m) e multa no item</td><td><code>Poc4MultaMatrix</code></td><td class="small">Duration__c + PenaltyAmount__c</td></tr>
+          <tr><td><code>SetMemberFeePricingPlan</code></td><td class="small">OTC de adesão</td><td><code>Poc4AdesaoMatrix</code></td><td class="small">—</td></tr>
+          <tr class="warning"><td><code>SetPromotionAdjust</code></td><td class="small">Aplica ajuste de promoção com vigência</td><td>—</td><td class="small">Fora do BRE → Promotions nativas</td></tr>
+          <tr class="warning"><td><code>DeletePromotion</code></td><td class="small">Remove promoções ao reabrir carrinho</td><td>—</td><td class="small">Fora do BRE</td></tr>
+          <tr class="warning"><td><code>SetOneTimeChargeToZero</code></td><td class="small">Zera OTC em jornadas específicas</td><td>—</td><td class="small">Lógica de contexto, não de preço</td></tr>
+          <tr class="warning"><td><code>SetValueToZero</code></td><td class="small">Zera preços em condições específicas</td><td>—</td><td class="small">Lógica de contexto, não de preço</td></tr>
+          <tr class="warning"><td><code>GetCartState</code></td><td class="small">Determina a modalidade do carrinho</td><td>—</td><td class="small">Entrada do ES, não é mecanismo de preço</td></tr>
+          <tr class="warning"><td><code>GetUniqueOfferCode</code></td><td class="small">Código de oferta exclusiva</td><td>—</td><td class="small">Tratado como geo (Poc4NodeMatrix)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 6. Artefatos -->
+  <section class="stack gap8">
+    <h2>6 · Artefatos necessários na org</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Artefato</th><th>Tipo</th><th>Papel</th><th>Volume estimado</th></tr></thead>
+        <tbody>
+          <tr class="info"><td><code>Poc4BaseMatrix</code></td><td>Decision Matrix</td><td>Preço-base com chave estendida + de/por + portabilidade</td><td>~120 linhas</td></tr>
+          <tr><td><code>Poc4GeoCidadeMatrix</code></td><td>Decision Matrix</td><td>Override por cidade (esparso)</td><td>~20 linhas</td></tr>
+          <tr><td><code>Poc4GeoUFMatrix</code></td><td>Decision Matrix</td><td>Override por UF (wildcard *)</td><td>~30 linhas</td></tr>
+          <tr class="success"><td><code>Poc4GeoDDDMatrix</code></td><td>Decision Matrix</td><td>Override por DDD sub-regional ★</td><td>~50 linhas</td></tr>
+          <tr class="success"><td><code>Poc4NodeMatrix</code></td><td>Decision Matrix</td><td>Oferta exclusiva por nó de rede ★</td><td>~15 linhas</td></tr>
+          <tr><td><code>Poc4BundleMatrix</code></td><td>Decision Matrix</td><td>Preço fechado por combinação TV×Net×Fone×Móvel</td><td>~30 linhas</td></tr>
+          <tr><td><code>Poc4DescontoMatrix</code></td><td>Decision Matrix</td><td>Política Comercial — desconto estrutural</td><td>~50 linhas</td></tr>
+          <tr><td><code>Poc4PagamentoMatrix</code></td><td>Decision Matrix</td><td>Ajuste por método de pagamento</td><td>~20 linhas</td></tr>
+          <tr><td><code>Poc4BonusMatrix</code></td><td>Decision Matrix</td><td>Bônus condicionado a crédito (geo COALESCE)</td><td>~30 linhas</td></tr>
+          <tr><td><code>Poc4InstalacaoMatrix</code></td><td>Decision Matrix</td><td>OTC de instalação por produto × UF</td><td>~15 linhas</td></tr>
+          <tr><td><code>Poc4AdesaoMatrix</code></td><td>Decision Matrix</td><td>OTC de adesão por produto × prazo × segmento</td><td>~25 linhas</td></tr>
+          <tr><td><code>Poc4MultaMatrix</code></td><td>Decision Matrix</td><td>Multa de fidelização por produto × prazo</td><td>~20 linhas</td></tr>
+          <tr class="info"><td><code>PrecoCompleto</code></td><td>Expression Set</td><td>Orquestrador de 22 steps → 7 saídas (3 principais + 4 auxiliares)</td><td>1 artefato</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">Total estimado: ~425 linhas de dados sintéticos + reais. Fontes:
+      <code>force-app/main/default/{decisionMatrixDefinition,expressionSetDefinition}/Poc4*</code> e <code>PrecoCompleto</code>.</p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 7. Dado real vs proxy -->
+  <section class="stack gap8">
+    <h2>7 · O que é dado real e o que é insumo de migração</h2>
+
+    <div class="callout success">
+      <div class="ct">✅ POC concluída — sem pendências para execução</div>
+      <p class="small">Todos os 18 cenários foram validados e o motor está funcional.
+        Os itens listados abaixo <b>não são pendências da POC</b> — são valores de negócio que precisarão
+        ser carregados nas matrizes quando a <b>migração de produção</b> for iniciada.
+        A estrutura (chaves, steps, ES) está 100% pronta e validada; falta apenas substituir os números proxy pelos reais.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="hd"><span>Real — usado na validação</span><span class="pill success">✓ confirmado na POC</span></div>
+        <div class="bd"><ul style="margin:0;padding-left:18px" class="small">
+          <li><b>Modalidades</b>: CELULAR+FONE+INTERNET FIXA, INDIVIDUAL, etc.</li>
+          <li><b>De/por</b>: R$ 319,90 → R$ 269,90; R$ 159,90 → R$ 139,00</li>
+          <li><b>Multa</b>: R$ 240 (12m), R$ 200 (24m)</li>
+          <li><b>Tipo de pedido / operação</b>: Novo, Portabilidade, Retencao</li>
+          <li><b>DDD</b>: 99 DDDs presentes na Pricing_Matrix__c</li>
+          <li><b>UF</b>: 27 estados com cobertura completa</li>
+          <li><b>Crédito</b>: OK / REST (presente no Bonus__c)</li>
+          <li>Volume real: 2.927 Pricing, 1.732 Politica_Commercial, 60 Payment_Method, 14 Installation</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <div class="hd"><span>Proxy — insumo para carga de produção</span><span class="pill neutral">não bloqueia POC</span></div>
+        <div class="bd">
+          <p class="small" style="margin-bottom:10px;color:var(--text-2)">O <b>mecanismo</b> de cada item abaixo foi validado com valor proxy. Na migração, substitui-se apenas o número — sem alterar matriz, ES ou código.</p>
+          <ul style="margin:0;padding-left:18px" class="small">
+          <li><b>Dados de Node</b> (Nodes__c dos produtos Oferta Exclusiva — não exportados do sbx)</li>
+          <li><b>Valor do bônus em R$</b> (real é franquia/GB — proxy usado para provar o mecanismo)</li>
+          <li><b>Desconto da Política Comercial</b> (magnitude veio nula no export; estrutura 100% pronta)</li>
+          <li><b>Taxa de instalação por UF</b> (Installation_Amount nulo para maioria; wildcard validado)</li>
+          <li><b>Preços por DDD específico</b> (COALESCE DDD validado com valor proxy; aguarda tabela real)</li>
+        </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- 8. Fora do escopo e resultados alcançados -->
+  <section class="stack gap8">
+    <h2>8 · Fora do escopo e resultados alcançados</h2>
+    <div class="grid2">
+      <div class="card">
+        <div class="hd">Deliberadamente fora do escopo</div>
+        <div class="bd"><ul style="margin:0;padding-left:18px" class="small">
+          <li><b>Promoção com vigência</b> (data início/fim) → motor nativo de Promotions</li>
+          <li><b>SimCard R$15</b> / Dependentes → fora da grade de preço</li>
+          <li><b>Cross-Sell</b> (OperationSubType) → variação de contexto, não de preço</li>
+          <li><b>PME Fixa com Physical Layer</b> → complexidade separada, fora da POC</li>
+          <li><b>Aparelho / eSIM / SendSimcard</b> → fora do escopo BRE</li>
+        </ul>
+        <p class="small tertiary" style="margin-top:10px">
+          A régua é a natureza, não o nome: <b>política/preço estrutural</b> (permanente, sem data de fim) → BRE;
+          <b>promoção</b> (tem vigência, campanha) → Promotions nativas.
+        </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="hd"><span>Resultados alcançados</span><span class="pill success">18/18 PASS</span></div>
+        <div class="bd"><ul style="margin:0;padding-left:18px" class="small">
+          <li>✅ <b>18/18 cenários PASS</b> via REST com dados reais</li>
+          <li>✅ <b>0 linhas de Apex</b> — apenas ES + Decision Matrices</li>
+          <li>✅ <b>0 SOQL</b> por avaliação dentro do ES</li>
+          <li>✅ Saídas expostas: <code>PRECO_RECORRENTE</code>, <code>OTC_FINAL</code>, <code>MULTA_FIDELIDADE</code></li>
+          <li>✅ <b>7,62 ms/avaliação</b> em bulk de 200 (PrecoCompleto · 12 matrizes)</li>
+          <li>✅ <b>200 itens no carrinho</b> sem risco de governador Salesforce</li>
+          <li>✅ Script <code>scripts/test_completa.py</code> e dados em <code>data/completa/</code></li>
+        </ul></div>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="ct">POC Completa — Concluída</div>
+      <p class="small">Todos os critérios de sucesso atingidos. O argumento decisivo para a migração é o
+        <b>governador de carrinho</b>: monólito naïve estoura a 14–15 itens (7 SOQL/item × 100 SOQL/tx);
+        o BRE processa 200 itens com <b>0 SOQL e 7,48 ms/avaliação</b> — sem risco, sem teto.
+        Ver <a class="link" href="performance.html#6">seção 6 do dashboard de performance</a> para os dados completos.</p>
+    </div>
+  </section>
+
+</div>
+<!-- sidebar global -->
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = "..";</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

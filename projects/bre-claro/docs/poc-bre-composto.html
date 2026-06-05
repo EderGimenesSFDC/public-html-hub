@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>POC · Preço Composto — Base × Ajustes (Salesforce Industries BRE)</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #f1f3f5;
+    --surface-3: #eaedf0;
+    --text: #1c2024;
+    --text-2: #5b6470;
+    --text-3: #8a929c;
+    --stroke: #e2e6ea;
+    --stroke-2: #d4d9de;
+    --accent: #2b6cb0;
+    --accent-soft: #e8f0f9;
+    --success: #2f8a57;
+    --success-soft: #e6f4ec;
+    --warning: #b7791f;
+    --warning-soft: #fbf2e0;
+    --danger: #c0392b;
+    --danger-soft: #fbeae8;
+    --info: #2b6cb0;
+    --info-soft: #e8f0f9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  p { margin: 0; }
+  .sub { color: var(--text-2); }
+  .small { font-size: 13px; }
+  .tertiary { color: var(--text-3); }
+  code, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+  }
+  code {
+    background: var(--surface-3);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+  .divider { height: 1px; background: var(--stroke); margin: 28px 0; border: none; }
+  section { margin-top: 6px; }
+  .stack { display: flex; flex-direction: column; }
+  .gap6 > * + * { margin-top: 6px; }
+  .gap8 > * + * { margin-top: 8px; }
+  .gap10 > * + * { margin-top: 10px; }
+  .gap14 > * + * { margin-top: 14px; }
+  .gap24 > * + * { margin-top: 24px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid4, .grid3, .grid2 { grid-template-columns: 1fr; } }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat .l { font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+  .stat.danger .v { color: var(--danger); }
+  .stat.warning .v { color: var(--warning); }
+  .stat.success .v { color: var(--success); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card .hd {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--stroke);
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .card .bd { padding: 16px; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--stroke-2);
+  }
+  .callout .ct { font-weight: 600; margin-bottom: 4px; }
+  .callout.info { background: var(--info-soft); border-color: #cfe0f2; }
+  .callout.success { background: var(--success-soft); border-color: #c6e6d4; }
+  .callout.warning { background: var(--warning-soft); border-color: #ecd9ad; }
+  .callout.danger { background: var(--danger-soft); border-color: #f0c8c2; }
+  .callout.info .ct { color: var(--info); }
+  .callout.success .ct { color: var(--success); }
+  .callout.warning .ct { color: var(--warning); }
+  .callout.danger .ct { color: var(--danger); }
+
+  .pill {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px;
+    border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill.neutral { background: var(--surface-3); color: var(--text-2); }
+  .pill.info { background: var(--info-soft); color: var(--info); }
+  .pill.success { background: var(--success-soft); color: var(--success); }
+  .pill.warning { background: var(--warning-soft); color: var(--warning); }
+  .pill.clickable { cursor: pointer; border-color: var(--stroke-2); }
+  .pill.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); font-weight: 600; }
+  tr.danger td { background: var(--danger-soft); }
+  tr.warning td { background: var(--warning-soft); }
+  tr.info td { background: var(--info-soft); }
+  tr.success td { background: var(--success-soft); }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; }
+  td.center, th.center { text-align: center; }
+
+  pre {
+    background: var(--surface-3);
+    border: 1px solid var(--stroke-2);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  /* bar chart */
+  .chart { display: flex; align-items: flex-end; gap: 14px; height: 200px; padding: 8px 4px 0; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; max-width: 64px; border-radius: 4px 4px 0 0; }
+  .bar.info { background: var(--accent); }
+  .bar.success { background: var(--success); }
+  .bar.warning { background: var(--warning); }
+  .bar-val { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .bar-cat { font-size: 12px; color: var(--text-2); margin-top: 6px; text-align: center; }
+
+  .head-badge { display:inline-block; font-size:12px; color:var(--text-2); border:1px solid var(--stroke-2); border-radius:999px; padding:2px 10px; }
+</style>
+</head>
+<body>
+<div class="wrap stack gap24">
+
+  <!-- Cabeçalho -->
+  <div class="stack gap6">
+    <div class="row">
+      <span class="head-badge">org org-demo · API v60</span>
+      <span class="pill success">validada ponta a ponta</span>
+      <span class="pill neutral">caminho B · promoção fora do BRE</span>
+    </div>
+    <h1>POC · Preço Composto — Base × Ajustes (Salesforce Industries BRE)</h1>
+    <p class="sub">
+      Evolução da POC anterior. Um Expression Set (<code>PrecoComposto</code>) compõe o preço a partir de
+      <b>blocos independentes</b>: a grade de <b>preço-base nacional</b> e a <b>adesão (OTC)</b> formam o Bloco 1;
+      o <b>ajuste por forma de pagamento</b> é uma regra à parte; e a <b>geografia</b> (cidade/UF) entra como
+      <b>override absoluto e esparso</b> resolvido por <b>COALESCE</b>. O <b>CANAL</b> é uma <b>dimensão atômica
+      com curinga</b> (<code>*</code> = todos os canais; canal específico = override) — atacando o ofensor #1 do
+      monólito direto na grade. Promoção fica <b>fora</b> do BRE (Promotions nativas — roadmap). Construída e
+      validada na org <code>org-demo</code>.
+    </p>
+  </div>
+
+  <div class="grid4">
+    <div class="stat"><div class="v">5</div><div class="l">Decision Matrices ativas (Base, Geo Cidade, Geo UF, Pagamento, Adesão)</div></div>
+    <div class="stat"><div class="v">8</div><div class="l">Steps (5 lookups + 3 cálculos)</div></div>
+    <div class="stat"><div class="v">39</div><div class="l">Linhas carregadas (19 base / 3 cidade / 2 UF / 9 pgto / 6 adesão)</div></div>
+    <div class="stat success"><div class="v">12/12</div><div class="l">Cenários validados via REST (canal, segmento, geo cidade&gt;UF&gt;nacional, pgto, OTC)</div></div>
+  </div>
+
+  <div class="callout info">
+    <div class="ct">Em uma frase (para todos)</div>
+    <div>Hoje os preços da Claro moram em <b>uma planilha gigante e única</b>, com muita repetição e regras de
+    cálculo escondidas em código — mudar um preço é lento e arriscado. Esta prova de conceito entrega o
+    <b>mesmo resultado</b> com <b>peças pequenas e especializadas</b> que um motor de regras combina sozinho:
+    a mesma decisão de preço com <b>~30× menos linhas</b>, fácil de auditar e ajustar. Testamos
+    <b>12 situações reais — todas corretas</b>.</div>
+  </div>
+
+  <div class="grid3">
+    <div class="card"><div class="hd">O problema (hoje)</div>
+      <div class="bd"><p>Uma planilha para tudo: <b>~2.927 linhas</b> para apenas <b>97 decisões reais</b>
+      (~30× de repetição), <b>29 colunas</b> (quase metade quase vazias) e a regra de preço dentro do
+      <b>código (Apex)</b>.</p></div>
+    </div>
+    <div class="card"><div class="hd">O que fizemos</div>
+      <div class="bd"><p>Quebramos em <b>5 matrizes especializadas</b> (preço base, cidade, estado, forma de
+      pagamento e adesão). Um <b>motor de regras</b> (Expression Set) combina tudo passo a passo,
+      <b>sem programação</b>.</p></div>
+    </div>
+    <div class="card"><div class="hd">O resultado</div>
+      <div class="bd"><p>Preço mensal + adesão calculados em <b>uma única execução declarativa</b>;
+      <b>12/12 cenários</b> validados direto na org; estrutura <b>pronta para auditar e versionar</b>.</p></div>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <div class="ct">Como ler esta página</div>
+    <div><b>Para todos →</b> seções 1–3 (a solução visual, como pensamos e exemplos reais). &nbsp;
+    <b>Para o time técnico →</b> seções 4–5 (passo a passo e lições de plataforma). &nbsp;
+    <b>Estratégia e escala →</b> seções 6–8 (comparativo, preço por cidade/UF e como evitamos a explosão de
+    linhas e colunas).</div>
+  </div>
+
+  <div class="callout success">
+    <div class="ct">Nota técnica · resultado numérico puro e rastreável</div>
+    <div>Os 8 steps rodam numa única transação declarativa, sem Apex. A saída expõe
+    <code>PRECO_BASE_RESOLVIDO</code>, <code>PRECO_RECORRENTE</code> e <code>OTC_FINAL</code> como <b>números</b>
+    (ex.: <code>289.9</code>, não objeto de moeda) — corrigindo o tipo da POC anterior. Estrutura derivada dos
+    inputs reais do cliente (<code>Pricing_Matrix__c</code>) + geografia <b>sintética</b> (a base real é
+    nacional) para fechar todos os arquétipos mapeados.</div>
+  </div>
+
+  <!-- 1. Solução visual -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>1 · Solução visual</h2>
+    <p class="sub">As 5 matrizes resolvem lookups independentes; o nó de cálculo resolve a geografia por
+      <b>COALESCE</b> (cidade &gt; UF &gt; nacional), soma o ajuste de pagamento (recorrente) e expõe o OTC de
+      adesão. Promoção entra depois, fora do BRE. O <b>CANAL</b> é coluna <b>wildcard</b> na grade de preço-base
+      (<code>*</code> = todos os canais; canal específico = override). A <b>geografia</b> entra como
+      <b>override absoluto e esparso</b> em duas matrizes (cidade/UF) — só com as exceções (detalhes na seção 7).</p>
+
+    <div class="grid2">
+      <div class="callout info">
+        <div class="ct">Em linguagem simples · o "curinga" (<code>*</code>)</div>
+        <div>É uma linha que diz <b>"para qualquer canal, vale este preço"</b>. Só escrevo uma linha de
+        <b>exceção</b> quando um canal específico (ex.: televendas) tem preço diferente. Assim evito repetir o
+        mesmo preço para cada canal — o que hoje multiplica milhares de linhas.</div>
+      </div>
+      <div class="callout info">
+        <div class="ct">Em linguagem simples · o "COALESCE" geográfico</div>
+        <div>O motor usa <b>o preço mais específico que existir</b>: se a cidade tem preço próprio, usa o da
+        cidade; senão, o do estado; senão, o nacional. É como buscar do <b>mais específico para o mais geral</b>
+        — sem precisar cadastrar todas as cidades.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd">Arquitetura base × ajustes <span class="head-badge">Expression Set: PrecoComposto</span></div>
+      <div class="bd" id="diagram"></div>
+    </div>
+
+    <h3>Os 8 steps em ordem de execução</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th class="center">#</th><th>Tipo</th><th>Etapa</th><th>Artefato / Ação</th><th>Entrada → Saída</th>
+        </tr></thead>
+        <tbody id="steps-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2. Como foi pensada -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>2 · Como a POC foi pensada</h2>
+    <div class="grid3">
+      <div class="card"><div class="hd">Bloco 1 — Grade de preço-base + geo</div>
+        <div class="bd"><p>Recorrente base por <code>PRODUTO × MODALIDADE × DURACAO × SEGMENTO × CANAL*</code>
+        e a adesão (<code>OTC</code>) por <code>PRODUTO × DURACAO</code>. É o "valor de tabela" nacional.
+        <code>CANAL</code> é coluna <b>curinga</b> (1 linha <code>*</code> serve todos). A <b>geografia</b>
+        sobrepõe via 2 matrizes esparsas (cidade/UF) resolvidas por <b>COALESCE</b>.</p></div>
+      </div>
+      <div class="card"><div class="hd">Bloco 2 — Ajustes / benefícios</div>
+        <div class="bd"><p>Ajuste por <b>forma de pagamento</b> (regra comercial: boleto/débito/cartão) como
+        matriz própria, sinalizado (negativo = desconto), <b>aditivo em R$</b>. Desacoplado do preço-base.</p></div>
+      </div>
+      <div class="card"><div class="hd">Fora do BRE — Promoção</div>
+        <div class="bd"><p>Promoção/desconto <b>não</b> entra no BRE neste corte (caminho B). Vai para o
+        módulo nativo de <b>Promotions</b> no roadmap. Se necessário, vira matriz-delta dentro do BRE
+        (caminho A).</p></div>
+      </div>
+    </div>
+
+    <h3>O encadeamento (o ponto central)</h3>
+    <p class="sub">Cada step de cálculo (<code>AssignParameterValues</code>) compõe uma variável a partir das
+      saídas das matrizes. As saídas aparecem como <code>&lt;NomeMatriz&gt;__&lt;Coluna&gt;</code>:</p>
+    <pre>step 6  PRECO_BASE_RESOLVIDO = IF(CompostoGeoCidadeMatrix__PRECO_CIDADE > 0,
+                                  CompostoGeoCidadeMatrix__PRECO_CIDADE,
+                                  IF(CompostoGeoUfMatrix__PRECO_UF > 0,
+                                     CompostoGeoUfMatrix__PRECO_UF,
+                                     CompostoBaseMatrix__PRECO_BASE))     // COALESCE: cidade > UF > nacional
+step 7  PRECO_RECORRENTE     = PRECO_BASE_RESOLVIDO + CompostoPagamentoMatrix__AJUSTE
+step 8  OTC_FINAL            = CompostoAdesaoMatrix__OTC</pre>
+
+    <div class="callout info">
+      <div class="ct">Princípio: a matriz só faz lookup; o cálculo é separado</div>
+      <div>A Decision Matrix devolve um valor armazenado (<code>PRECO_BASE</code>, <code>AJUSTE</code>,
+      <code>OTC</code>). A composição (<code>+</code>) vive nos steps de cálculo. Trocar a regra de pagamento
+      não toca no preço-base nem na adesão.</div>
+    </div>
+
+    <h3>Correção de rota vs. a POC anterior: fator ❌ → chave + valor absoluto ✅</h3>
+    <p class="sub">A POC anterior modelava o preço como <b>cascata multiplicativa</b>
+      (<code>base × fator_canal × fator_fidelidade − desconto</code>), tratando "canal de venda" como um
+      <b>fator</b>. A análise do Apex (<code>Solar_PricingPlan*</code>) e dos dados derrubou essa premissa.</p>
+    <div class="grid2">
+      <div class="callout danger">
+        <div class="ct">O que não se sustentou</div>
+        <div>Não existe fator/percentual na base. Reconfirmado no <code>Pricing_Matrix__c</code> (4.877 linhas (sandbox)):
+        <code>IsPercentDiscount__c = false</code> em <b>100%</b>, <code>ValueType__c</code> vazio em
+        <b>100%</b>, e só 60 linhas com ajuste — todas em <b>R$ absoluto</b>. Logo, <code>base × 0,95</code>
+        não corresponde a nada nos dados.</div>
+      </div>
+      <div class="callout success">
+        <div class="ct">O modelo real (e o que a POC adota)</div>
+        <div>O canal <b>não é fator — é dimensão da chave</b>. No Apex, <code>Promotion_Channel__c</code>
+        (multi-select) entra como <b>filtro</b> (<code>INCLUDES</code>) que <b>seleciona</b> a linha de preço
+        <b>absoluto</b>; ajustes (adesão, desconto) são somados em R$. Por isso a POC é
+        <b>aditiva com valores absolutos</b> e canal/operação/etc. viram <b>colunas de chave</b>.</div>
+      </div>
+    </div>
+    <pre>ANTES (não se sustentou):  PRECO = base × FATOR_POLITICA(canal) × FATOR_FIDELIDADE(prazo) − DESC_BUNDLE
+AGORA (espelha os dados):  PRECO_RECORRENTE = COALESCE(geo_cidade, geo_uf, base(prod,modal,dur,segmento,canal*)) + AJUSTE(prod,forma_pgto)</pre>
+    <p class="small tertiary">Ressalva: o campo <code>IsPercentDiscount__c</code> existe no schema (a plataforma
+      suporta %), mas os dados não usam (0 ocorrências). Eventual desconto % seria exceção e tende ao módulo
+      de Promoções — fora do preço-base.</p>
+  </section>
+
+  <!-- 3. Cenários -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>3 · Cenários de teste (execução real)</h2>
+    <p class="sub">Selecione um cenário para ver as entradas, a decomposição do preço e o comando para
+      reproduzir. Valores retornados pela execução real do ES <code>PrecoComposto</code> via REST.</p>
+    <p class="small tertiary">Produtos da POC (codes de negócio, mapeiam IDs do export):
+      <code>COMBO_RES</code> (bundle residencial por modalidade) ·
+      <code>FIBRA_500</code> / <code>FIBRA_350</code> (ofertas individuais) ·
+      <code>SVA_MAX</code> (add-on).</p>
+
+    <div class="row" id="scenario-pills"></div>
+    <p class="sub" id="scenario-resumo" style="margin-top:6px;"></p>
+
+    <div class="grid2">
+      <div class="stack gap8">
+        <h3>Entradas enviadas</h3>
+        <div class="tbl-wrap"><table><thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+          <tbody id="inputs-body"></tbody></table></div>
+      </div>
+      <div class="stack gap8">
+        <h3>Saída retornada (outputValues)</h3>
+        <div class="tbl-wrap"><table><thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+          <tbody id="outputs-body"></tbody></table></div>
+        <p class="small sub" id="decomp"></p>
+      </div>
+    </div>
+
+    <div class="stack gap8">
+      <h3>Decomposição do preço (rastreabilidade)</h3>
+      <div class="card"><div class="bd"><div class="chart" id="stage-chart"></div></div></div>
+      <p class="small tertiary">Fonte: execução real do Expression Set <code>PrecoComposto</code> via REST · org org-demo</p>
+    </div>
+
+    <div class="stack gap8">
+      <h3>Como executar este cenário (POST)</h3>
+      <pre id="curl-block"></pre>
+    </div>
+  </section>
+
+  <!-- 4. Passo a passo -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>4 · Passo a passo para reproduzir do zero</h2>
+    <div class="stack gap14">
+      <div class="stack gap6">
+        <div class="row"><span class="pill neutral">Pré-requisito</span><b>Org com Business Rules Engine (Industries) ativo</b></div>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 1</span><b>Deploy das 5 Decision Matrices (sem o ES ainda)</b></div>
+        <pre>sf project deploy start -o org-demo \
+  -d force-app/main/default/decisionMatrixDefinition/CompostoBaseMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/CompostoGeoCidadeMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/CompostoGeoUfMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/CompostoPagamentoMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/decisionMatrixDefinition/CompostoAdesaoMatrix.decisionMatrixDefinition-meta.xml</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 2</span><b>Desabilitar as versões, carregar linhas (Bulk), reabilitar</b></div>
+        <p class="small sub">Linhas (<code>CalculationMatrixRow</code>) exigem a versão <b>desabilitada</b>. Como
+        nenhum ES referencia as matrizes ainda, desabilitá-las é livre. CSV <b>sem</b> a coluna <code>Name</code> e em <b>LF</b>.</p>
+        <pre># desabilita (Apex) → import bulk → reabilita UMA versão por vez
+sf apex run -o org-demo -f scripts/composto_disable.apex
+for f in base geocidade geouf pagamento adesao; do
+  sf data import bulk -o org-demo -s CalculationMatrixRow -f data/composto/${f}_rows.csv --wait 5
+done
+# reabilitar: uma DML por versão (ver Lições)</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill info">Passo 3</span><b>Deploy do Expression Set orquestrador (por último)</b></div>
+        <pre>sf project deploy start -o org-demo \
+  -d force-app/main/default/expressionSetDefinition/PrecoComposto.expressionSetDefinition-meta.xml</pre>
+      </div>
+      <div class="stack gap6">
+        <div class="row"><span class="pill success">Passo 4</span><b>Invocar o pipeline (ver seção 3 para o comando completo)</b></div>
+        <p class="small sub">Endpoint: <code>POST /services/data/v60.0/actions/custom/runExpressionSet/PrecoComposto</code>.
+        Corpo: <code>{ "inputs": [ { ...variáveis... } ] }</code>. Invoque sempre em <b>bulk</b> (lista de inputs numa chamada).</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="ct">Ordem à prova de trava</div>
+      <div>Matrizes primeiro → carga → ES por último. Se ativar o ES antes da carga, a inserção de linhas é
+      bloqueada (<code>INVALID_INPUT</code>) e desabilitar a matriz passa a exigir deletar a versão do ES
+      (matriz referenciada por ES ativo).</div>
+    </div>
+  </section>
+
+  <!-- 5. Lições novas -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>5 · Lições aprendidas nesta POC (registradas no runbook)</h2>
+    <p class="sub">Achados desta construção que foram adicionados ao guia técnico <code>guia-criar-alterar-bre.md</code>.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Tema</th><th>Achado</th><th>Como tratar</th></tr></thead>
+        <tbody id="lessons-body"></tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div class="callout danger">
+        <div class="ct">No-match é silencioso — e perigoso</div>
+        <div>Produto inexistente retornou <code>PRECO_RECORRENTE = 0.0</code> com <code>isSuccess: true</code>
+        (validado em campo). Em pricing, "venderia de graça". Exige linha/coluna <b>wildcard</b> de fallback
+        ou guarda de nulo no ES.</div>
+      </div>
+      <div class="callout info">
+        <div class="ct">Tipo numérico: enum diferente em matriz vs. ES</div>
+        <div>A <b>coluna</b> da matriz aceita <code>Number</code> (dado numérico puro); a <b>variável</b> do ES
+        só aceita <code>Currency</code> (enum <code>ExpsSetDataType</code> rejeita <code>Number</code>). Padrão:
+        coluna <code>Number</code> + variável <code>Currency</code>. O valor continua trafegando numérico.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Comparativo -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>6 · Evolução em relação à POC anterior</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Aspecto</th><th>POC anterior (PrecoFinalPOC)</th><th>POC Composto (esta)</th></tr></thead>
+        <tbody>
+          <tr><td>Modelo de preço</td><td>Cascata multiplicativa (base × política × fidelidade − bundle)</td>
+            <td class="success">Base × ajustes aditivos (base + ajuste; OTC separado)</td></tr>
+          <tr><td>Dimensões da chave base</td><td>PRODUTO × MODALIDADE</td>
+            <td class="success">PRODUTO × MODALIDADE × DURACAO × <b>SEGMENTO</b> × <b>CANAL*</b> (wildcard)</td></tr>
+          <tr><td>Geografia (cidade/UF)</td><td>—</td>
+            <td class="success"><b>Override absoluto esparso</b> (2 matrizes) + COALESCE cidade&gt;UF&gt;nacional</td></tr>
+          <tr><td>Tipo dos valores</td><td class="warning">Currency (valor numérico "embrulhado")</td>
+            <td class="success">Number na matriz; Currency só na variável do ES</td></tr>
+          <tr><td>Promoção/desconto</td><td>Matriz de bundle dentro do BRE</td>
+            <td class="info">Fora do BRE (Promotions nativas — roadmap)</td></tr>
+          <tr><td>Adesão (OTC)</td><td>—</td><td class="success">Matriz própria (member fee)</td></tr>
+          <tr><td>Dados</td><td>Sintéticos (intencionais — geo é nacional no sbx)</td><td class="success">Estrutura derivada do real + geo sintético · mecanismo validado ✓</td></tr>
+          <tr><td>Cenários validados</td><td>2/2</td><td class="success">12/12 (canal, segmento, geo cidade&gt;UF&gt;nacional, pgto, OTC)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7. Precificação geográfica -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>7 · Precificação geográfica (por cidade / UF / DDD)</h2>
+    <p class="sub">Pergunta recorrente: "como fica o preço por cidade?". Resposta em duas partes — o que os
+      dados mostram hoje, e o mecanismo nativo do BRE para quando isso for real.</p>
+
+    <div class="callout success">
+      <div class="ct">✅ Mecanismo validado — sem pendências para execução da POC</div>
+      <p class="small">O padrão COALESCE cidade › UF › nacional foi <b>implementado e validado por REST</b>
+        com dados sintéticos calibrados. O uso de dados sintéticos foi uma escolha intencional — o sandbox
+        da Claro tem pricing 100% nacional (campos <code>Offer*</code> vazios), então geramos overrides
+        regionais para exercitar o mecanismo. <b>Não há nada pendente para a POC.</b>
+        Em produção, as matrizes de cidade/UF nascem vazias e recebem linha apenas quando surgir preço
+        regional real — sem alterar o pipeline.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="ct">Achado nos dados: o preço hoje é nacional (geo não diferencia)</div>
+      <div>No export <code>Pricing_Matrix__c</code> (4.877 linhas (sandbox)): <code>OfferUF__c</code>,
+      <code>OfferCity__c</code> e <code>OfferDDD__c</code> estão <b>100% vazias</b>;
+      <code>UF__c</code> (185 linhas) traz <b>as 27 UFs juntas</b> num multi-select = "nacional";
+      <code>DDD__c</code> é <code>-</code> em 4.638 linhas e, nas 5 com valor, lista <b>todos os DDDs</b>.
+      Não há linha que precifique uma cidade diferente de outra. A máquina de especificidade existe no Apex
+      legado (<code>GetOfferPrice</code> por nó/cidade/UF/DDD), mas <b>os dados não a exercitam</b> — e
+      empacotar "todos os DDDs" num multi-select é o próprio anti-pattern de redundância/full-scan.</div>
+    </div>
+
+    <div class="grid4">
+      <div class="stat danger"><div class="v">0</div><div class="l">Linhas com Offer UF/Cidade/DDD preenchido</div></div>
+      <div class="stat warning"><div class="v">1</div><div class="l">Valor distinto de UF__c ("todas as 27")</div></div>
+      <div class="stat warning"><div class="v">2</div><div class="l">Valores distintos de DDD__c ("-" e "todos")</div></div>
+      <div class="stat"><div class="v">nacional</div><div class="l">Granularidade efetiva de preço hoje</div></div>
+    </div>
+
+    <h3>Implementado na POC: hierarquia cidade &gt; UF &gt; nacional (COALESCE)</h3>
+    <p class="sub">Como a base real é nacional, geramos <b>dados sintéticos</b> para fechar o cenário e
+      <b>provar o padrão na org</b>. A geografia não vira coluna na base (multiplicaria linhas por cidade):
+      são <b>duas matrizes esparsas</b> — <code>CompostoGeoCidadeMatrix</code> e <code>CompostoGeoUfMatrix</code> —
+      que <b>só têm linha onde há override</b>. O ES resolve por <b>COALESCE via <code>IF</code></b>:</p>
+    <pre>PRECO_BASE_RESOLVIDO = IF(geo_cidade > 0, geo_cidade,        // nível mais específico
+                       IF(geo_uf > 0, geo_uf,                // intermediário (estado)
+                          base_nacional))                    // default
+// no-match retorna 0 → vira o sinal "não há override neste nível"</pre>
+    <p class="small tertiary">A expressão do ES suporta <code>IF()</code> e comparação — <b>confirmado em runtime</b>
+      (<code>IF(250&gt;0,250,999)</code>→250; <code>IF(0&gt;0,…)</code>→999). Aqui o no-match silencioso (=0)
+      deixa de ser perigoso e vira <b>feature</b> do COALESCE.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Entrada (cidade / UF)</th><th>PRECO_BASE_RESOLVIDO</th><th>Resolução (cidade &gt; UF &gt; nacional)</th></tr></thead>
+        <tbody>
+          <tr class="success"><td>Campinas / SP</td><td><b>R$ 269,90</b></td><td>linha de <b>cidade</b> vence (mais barato que o nacional 289,90)</td></tr>
+          <tr class="success"><td>Rio de Janeiro / RJ</td><td><b>R$ 309,90</b></td><td>linha de <b>cidade</b> vence (mais caro que o nacional)</td></tr>
+          <tr class="info"><td>Manaus / AM</td><td><b>R$ 319,90</b></td><td>sem cidade → cai no override de <b>UF</b> (AM)</td></tr>
+          <tr><td>Santos / SP</td><td>R$ 289,90</td><td>sem cidade nem UF → <b>nacional</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">Validado por REST (cenários 6–9 e 10–11 na seção 3): cidade, fallback de UF e nacional.</p>
+
+    <div class="grid2">
+      <div class="stack gap8">
+        <h3>Por que COALESCE em vez de coluna wildcard</h3>
+        <div class="callout info">
+          <div class="ct">Só 1 coluna wildcard por matriz → 2 níveis</div>
+          <div>Uma matriz wildcard resolve só <b>específico → catch-all</b> (2 níveis). Para
+          <code>cidade &gt; UF &gt; nacional</code> (3+ níveis) com <b>valores absolutos</b>, usa-se
+          <b>lookups em camadas + COALESCE</b> no ES — uma matriz esparsa por nível.</div>
+        </div>
+        <p class="small sub">O desempate de especificidade que hoje é <b>código Apex</b>
+          (<code>GetOfferPrice</code> por nó/cidade/UF/DDD) vira <b>dado declarativo + COALESCE</b>.</p>
+      </div>
+      <div class="stack gap8">
+        <h3>Por que isto NÃO re-monolitiza</h3>
+        <div class="callout success">
+          <div class="ct">1 · Linha esparsa, não produto cartesiano</div>
+          <div>Só existe linha onde o preço <b>de fato</b> difere (3 de cidade + 2 de UF cobrem a hierarquia).
+          Linhas ∝ exceções reais, não <code>|cidades| × |produtos|</code>.</div>
+        </div>
+        <div class="callout success">
+          <div class="ct">2 · Uma responsabilidade por matriz</div>
+          <div>Cada nível geo é uma matriz própria; base, pagamento e adesão seguem separadas — o pipeline
+          continua, nada vira tabelão.</div>
+        </div>
+        <div class="callout success">
+          <div class="ct">3 · Especificidade declarativa</div>
+          <div>O COALESCE entre camadas substitui o desempate implícito do Apex por regra legível e auditável.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <div class="ct">Recomendação</div>
+      <div>O padrão geo está <b>implementado e validado</b> (com dados sintéticos). Como a base real hoje é
+      <b>nacional</b>, em produção as matrizes de cidade/UF nascem <b>vazias</b> (zero override = 100% nacional)
+      e recebem linha só quando surgir preço regional de verdade — <b>sem refatorar</b> o pipeline. Antes disso,
+      confirmar com o time se o pricing geográfico real não vive em outro objeto (os campos <code>Offer*</code>
+      vazios sugerem que a fonte pode ser outra).</div>
+    </div>
+  </section>
+
+  <!-- 8. Atacando a explosão: linhas e colunas -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>8 · Atacando a explosão: linhas <i>e</i> colunas</h2>
+    <p class="sub">O tabelão monolítico (<code>Pricing_Matrix__c</code>) sofre de <b>dois</b> excessos
+      independentes: <b>linhas demais</b> (redundância) e <b>colunas demais</b> (esparsidade). A arquitetura
+      modular ataca os dois — mas com mecanismos diferentes. Vale separar.</p>
+
+    <!-- 8a LINHAS -->
+    <h3>8a · Linhas — o maior ofensor é a redundância, não a geografia</h3>
+    <p class="sub">Medido no RecordType <code>Pricing</code>: só existem <b>5 produtos</b> e
+      <b>97 decisões de negócio reais</b> (<code>produto × modalidade × duração</code>), mas elas viram
+      <b>2.927 linhas físicas</b> — uma inflação de <b>~30×</b>. O preço lógico é minúsculo; o volume é quase
+      todo redundância.</p>
+
+    <div class="grid4">
+      <div class="stat danger"><div class="v">2.927</div><div class="l">Linhas físicas (RT Pricing)</div></div>
+      <div class="stat"><div class="v">5</div><div class="l">Produtos distintos</div></div>
+      <div class="stat success"><div class="v">97</div><div class="l">Decisões reais (prod × modal × dur)</div></div>
+      <div class="stat warning"><div class="v">~30×</div><div class="l">Fator de inflação</div></div>
+    </div>
+
+    <div class="card"><div class="bd stack gap8">
+      <div class="row" style="justify-content:space-between"><span class="small sub">Monólito hoje</span><b class="small" style="color:var(--danger)">2.927 linhas</b></div>
+      <div style="height:18px;background:var(--surface-3);border-radius:5px;overflow:hidden"><div style="height:100%;width:100%;background:var(--danger)"></div></div>
+      <div class="row" style="justify-content:space-between;margin-top:6px"><span class="small sub">BRE modular (decisões reais + exceções)</span><b class="small" style="color:var(--success)">~100 linhas</b></div>
+      <div style="height:18px;background:var(--surface-3);border-radius:5px;overflow:hidden"><div style="height:100%;width:3.4%;background:var(--success)"></div></div>
+    </div></div>
+
+    <p class="sub">Os mecanismos que inflam as linhas — e o antídoto, sempre o mesmo princípio:
+      <b>uma decisão lógica = uma linha; o resto é fallback/default ou outro módulo</b>.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Ofensor (o que infla as linhas)</th><th>Evidência</th><th>Antídoto (mesmo princípio)</th></tr></thead>
+        <tbody>
+          <tr class="success"><td><b>Multi-select de canal</b> (<code>Promotion_Channel__c</code>) <span class="pill success">aplicado</span></td>
+            <td class="small">A mesma decisão repetida por combinação de canais empacotados num campo só (20 combos distintos) — e ainda força full-scan.</td>
+            <td class="small"><b>Implementado nesta POC:</b> <code>CANAL</code> virou coluna <b>atômica + wildcard</b> na base. 1 linha <code>*</code> serve todos os canais; só overrides reais (TELEVENDAS, TOP_PME) ganham linha. Validado por REST (cenários 3–4).</td></tr>
+          <tr class="warning"><td><b>Empilhamento por data</b> (promo/desconto cravado na grade)</td>
+            <td class="small">55 chaves com mais de uma data; linhas datadas que se acumulam e geram chaves ambíguas.</td>
+            <td class="small">Promoção sai para <b>Promotions nativas</b> (fora da base). A grade para de acumular linhas datadas.</td></tr>
+          <tr class="info"><td><b>Geografia</b> (cidade/UF/DDD)</td>
+            <td class="small">Hoje <b>latente</b> — o preço é nacional (ver §7). Quando virar real, explodiria por cidade × produto.</td>
+            <td class="small"><b>Camadas + COALESCE</b> (§7): guarda só o desvio regional, o resto cai no <code>*</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout success">
+      <div class="ct">Sim — é o maior ofensor, com a ressalva certa (e o canal já foi atacado)</div>
+      <div>A geografia (COALESCE) hoje <b>não</b> é o maior ofensor; é latente. O ofensor real é a
+      <b>redundância</b> (canal multi-select + empilhamento por data). O <b>princípio</b> por trás do
+      COALESCE — guardar só a decisão única, com default/fallback — é a arma contra ela. <b>O canal atômico +
+      wildcard já está implementado e validado nesta POC</b> (linha <code>*</code> + overrides). Restam a
+      promoção-fora-da-base e a geografia em camadas, ambas no roadmap.</div>
+    </div>
+
+    <!-- 8b COLUNAS -->
+    <h3 style="margin-top:6px">8b · Colunas — atacadas por decomposição, não por wildcard</h3>
+    <p class="sub">Resposta direta à sua dúvida: <b>sim, a solução também ataca colunas — mas por outro
+      mecanismo</b>. Linhas se resolvem com atomicidade + wildcard; <b>colunas se resolvem normalizando</b>
+      (uma matriz por responsabilidade, cada uma estreita). O tabelão tem 29 colunas e quase metade é ruído:</p>
+
+    <div class="grid4">
+      <div class="stat"><div class="v">29</div><div class="l">Colunas no objeto monolítico</div></div>
+      <div class="stat danger"><div class="v">13</div><div class="l">Colunas &lt; 10% preenchidas (esparsas)</div></div>
+      <div class="stat danger"><div class="v">5</div><div class="l">Colunas <b>100% vazias</b></div></div>
+      <div class="stat success"><div class="v">2–4</div><div class="l">Colunas por matriz no BRE</div></div>
+    </div>
+    <p class="small tertiary">Colunas 100% vazias no export: <code>ValueType__c</code>, <code>OfferUF__c</code>,
+      <code>OfferCity__c</code>, <code>OfferDDD__c</code>, <code>Combo_Multi__c</code>. Quase vazias:
+      <code>Region__c</code> (0,1%), <code>DDD__c</code> (0,1%), <code>AdjustmentType__c</code> (1,2%),
+      <code>End_Date__c</code> (3,1%), <code>UF__c</code> (3,8%), <code>From/To_Quantity__c</code> (4,3%).</p>
+
+    <p class="sub">Numa tabela larga, <b>toda</b> linha carrega <b>todas</b> as colunas — mesmo as vazias. São
+      <code>29 × 4.877 ≈ 141 mil células</code>, ~45% delas mortas. A decomposição troca isso por matrizes em
+      que cada coluna <b>só existe onde de fato muda o preço</b>:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>&nbsp;</th><th>Monólito (<code>Pricing_Matrix__c</code>)</th><th>BRE modular</th></tr></thead>
+        <tbody>
+          <tr><td><b>Estrutura</b></td><td>1 tabela larga</td><td class="success">N matrizes estreitas (base, pagamento, adesão…)</td></tr>
+          <tr><td><b>Colunas por linha</b></td><td class="warning">29 (todas, sempre)</td><td class="success">2–4 (só as que importam para aquela decisão)</td></tr>
+          <tr><td><b>Colunas mortas</b></td><td class="warning">13 de 29 (~45%)</td><td class="success">0 — a coluna só nasce onde pesa</td></tr>
+          <tr><td><b>Dimensão "vale p/ tudo"</b></td><td>coluna com "todas as 27 UFs" / "todos os DDDs"</td><td class="success">1 linha <code>*</code> (wildcard) — sem coluna poluída</td></tr>
+          <tr><td><b>Data / promoção</b></td><td>colunas <code>Start/End_Date</code>, <code>FullPrice</code>… na grade</td><td class="info">saem para Promotions nativas — colunas desaparecem</td></tr>
+          <tr><td><b>Derivados</b> (modalidade, jornada)</td><td>armazenados como coluna</td><td class="success">calculados como input no ES — não viram coluna de dado</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid2">
+      <div class="callout info">
+        <div class="ct">Linhas ⇒ atomicidade + wildcard/COALESCE</div>
+        <div>Cada dimensão vira valor único por linha; o <code>*</code> absorve "vale para todos"; o COALESCE
+        encadeia camadas. Resultado: <b>guarda-se só o delta</b>.</div>
+      </div>
+      <div class="callout success">
+        <div class="ct">Colunas ⇒ decomposição (normalização)</div>
+        <div>Uma matriz por responsabilidade, cada uma só com as colunas que mudam <b>seu</b> valor. Colunas
+        esparsas, datas e derivados saem da grade. Some o produto <code>linhas × colunas</code> (células).</div>
+      </div>
+    </div>
+    <pre>MONÓLITO   1 tabela × 29 colunas × 4.877 linhas (sandbox)  ≈ 141k células (~45% mortas)
+BRE        base(4)·pagamento(2)·adesão(2) + linha wildcard onde varia  → ordem de centenas de células</pre>
+    <p class="small tertiary">Trade-off honesto: decompor demais vira orquestração complexa. O alvo certo é
+      <b>uma matriz por preocupação de preço independente</b> — não uma matriz por coluna.</p>
+  </section>
+
+  <!-- 9 Equivalencia com dado real -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>9 · Equivalência com o dado <i>real</i> do cliente</h2>
+    <p class="sub">Os cenários da §3 são <b>sintéticos/curados</b> (provam a mecânica: wildcard, COALESCE, ajustes).
+      Para responder "<b>o BRE devolve o preço que a Claro pratica hoje?</b>" carregamos o catálogo
+      <b>real</b> do <code>Pricing_Matrix__c</code> na estrutura nova e comparamos chave a chave.</p>
+
+    <div class="grid4">
+      <div class="stat success"><div class="v">103/103</div><div class="l">Chaves reais reproduzidas pelo BRE</div></div>
+      <div class="stat"><div class="v">28,3×</div><div class="l">Colapso (2.919 linhas → 103 chaves)</div></div>
+      <div class="stat success"><div class="v">39/39</div><div class="l">Subconjunto limpo (1 preço na origem)</div></div>
+      <div class="stat danger"><div class="v">62%</div><div class="l">Chaves <b>ambíguas</b> na base de origem</div></div>
+    </div>
+
+    <h3>O achado que vale ouro: a base legada é ambígua por construção</h3>
+    <p class="sub">Carregar o catálogo cru "como está" <b>não fecha</b>: a mesma chave
+      (<code>produto × modalidade × duração × segmento</code>) devolve <b>vários preços</b>. Isso não é erro do
+      BRE — é a própria base que se contradiz (janelas de promoção/data sobrepostas).</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Chave usada</th><th>Conflito na origem</th><th>O que a estrutura nova garante</th></tr></thead>
+        <tbody>
+          <tr class="danger"><td class="small"><code>produto×modalidade×duração×segmento</code> (4 campos)</td><td class="small"><b>62%</b> das 103 chaves com ≥2 preços</td><td class="small" rowspan="2"><b>1 preço determinístico por chave.</b> A grade modular impede que a mesma chave tenha dois preços — o que a base legada não consegue.</td></tr>
+          <tr class="warning"><td class="small">+ canal + datas + flags (<b>18 colunas</b>)</td><td class="small">ainda <b>~110 conflitos</b> (linhas idênticas, preços diferentes)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Como provamos (teste de fidelidade de migração)</h3>
+    <ol class="sub" style="margin:0;padding-left:18px">
+      <li><b>Canonizar</b> com regra explícita: preço = <b>moda</b> da chave → desempate pela <b>janela mais recente</b> → maior valor.</li>
+      <li><b>Carregar</b> as 103 chaves canônicas na <code>RealBaseMatrix</code> (estrutura nova).</li>
+      <li><b>Replay</b> chave a chave por REST (<code>scripts/test_real_equiv.py</code>): saída do BRE × preço canônico.</li>
+    </ol>
+    <pre>EQUIVALENCIA BRE x PRECO REAL CANONIZADO (Pricing_Matrix__c)
+Chaves reais carregadas : 103
+Equivalencia TOTAL      : 103/103  (100.0%)
+  - subconjunto LIMPO   : 39/39   (chaves com 1 preco na origem)
+  - subconjunto AMBIGUO : 64/64   (canonizadas por regra explicita)</pre>
+    <p class="small tertiary">Leitura honesta: a §3 prova que a <b>arquitetura</b> calcula certo; a §9 prova que ela
+      <b>carrega o catálogo real</b> e o devolve fielmente — e ainda expõe, de quebra, um problema de
+      <b>governança de dados</b> que o cliente precisa endereçar na migração.</p>
+  </section>
+
+  <!-- 10 Cobertura e extensibilidade -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>10 · Cobertura e extensibilidade</h2>
+    <p class="sub">A POC já cobre o <b>núcleo</b> do motor de preços. E o ponto mais importante para a decisão:
+      <b>tudo o que ainda falta encaixa nos mesmos blocos que já validamos</b> — não exige um paradigma novo nem
+      Apex de regra. O que muda daqui pra frente é <b>largura de catálogo</b> (mais matrizes e dimensões), não a
+      viabilidade.</p>
+
+    <div class="grid4">
+      <div class="stat success"><div class="v">Núcleo</div><div class="l">preço-base, canal, pagamento, OTC, geo — coberto</div></div>
+      <div class="stat success"><div class="v">100%</div><div class="l">dos itens restantes encaixam nos blocos validados</div></div>
+      <div class="stat success"><div class="v">3</div><div class="l">blocos resolvem tudo (matriz · regra no ES · Promoção)</div></div>
+      <div class="stat"><div class="v">0</div><div class="l">paradigmas novos / Apex de regra necessários</div></div>
+    </div>
+
+    <h3>Os 3 blocos que resolvem tudo (todos já provados na POC)</h3>
+    <div class="grid3">
+      <div class="card"><div class="hd">A · Decision Matrix</div><div class="bd small sub">Mais uma dimensão na chave (com <b>curinga</b> onde não diferencia) e valores absolutos. Foi assim que cobrimos canal, segmento e geo.</div></div>
+      <div class="card"><div class="hd">B · Regra no Expression Set</div><div class="bd small sub">Lookup + <code>IF</code>/COALESCE/aditivo. Já usado para resolver geo (cidade>UF>nacional), somar ajuste de pagamento e expor OTC.</div></div>
+      <div class="card"><div class="hd">C · Promoções nativas</div><div class="bd small sub">Promoção/empacotamento sai da grade de preço para o motor de Promotions da plataforma — versionável e com vigência própria.</div></div>
+    </div>
+
+    <div class="card"><div class="bd stack gap8">
+      <div class="row"><span class="pill success">comprovado na prática</span><b>POC PrecoAvancado — 11/11 cenários validados</b></div>
+      <p class="small sub" style="margin:0">Não é só teoria: montamos uma segunda POC que implementa <b>os 6 mecanismos fora do núcleo</b> com os mesmos blocos —
+        chave estendida (RequestType/Operação) + <b>de/por</b>, Política Comercial (desconto), <b>bundle por combinação de componentes</b>,
+        instalação <b>OTC geográfica</b>, <b>bônus com restrição de crédito</b> e <b>multa de fidelização</b>. ES de 13 steps (6 lookups + IF de jornada + COALESCE de bundle +
+        desconto/bônus aditivos + OTC + multa exposta), <b>11/11</b> via REST (<code>scripts/test_avancado.py</code>).
+        Página dedicada: <a href="poc-bre-avancado.html" style="color:var(--accent);font-weight:600;text-decoration:none">poc-bre-avancado.html &rarr;</a></p>
+      <p class="small tertiary" style="margin:0"><b>Carregada com dados reais</b> do diagnóstico (org <code>org-fonte</code>): modalidades reais, <b>de/por real</b> (de R$319,90 por R$269,90; de R$159,90 por R$139,00) e <b>multa real</b> (R$240/R$200). Volume na origem: multa em <b>2.725</b> linhas, de/por em 126, bundle em 237, Política Comercial em 1.732 e <code>Bonus__c</code> com 479 registros. Magnitudes de desconto/bônus/instalação seguem como proxy (não vieram preenchidas no export).</p>
+    </div></div>
+
+    <h3>10a · Camadas de preço — como cada uma é atendida</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Camada</th><th>O que é</th><th>Como atender</th></tr></thead>
+        <tbody>
+          <tr class="success"><td><b>Preço-base</b> (<code>Pricing</code>)</td><td class="small">Recorrente por produto × modalidade × duração × segmento</td><td><span class="pill success">já na POC</span></td></tr>
+          <tr class="success"><td><b>OTC de adesão</b> (member fee)</td><td class="small">Taxa de adesão one-time</td><td><span class="pill success">já na POC</span></td></tr>
+          <tr class="success"><td><b>Ajuste de pagamento</b> (<code>Payment_Method</code>)</td><td class="small">Acréscimo/desconto por forma de pagamento</td><td><span class="pill success">já na POC</span></td></tr>
+          <tr><td><b>Política Comercial / Desconto</b></td><td class="small">Desconto comercial absoluto por opcional × grupo × perfil</td><td><span class="pill info">+ matriz + step aditivo no ES</span> <span class="small tertiary">(= padrão do pagamento)</span></td></tr>
+          <tr><td><b>Bundle por combinação de componentes</b></td><td class="small">Preço do combo depende de quais produtos estão no carrinho (TV/Internet/Fone/Móvel) × qtde</td><td><span class="pill info">+ matriz de componentes (curinga)</span></td></tr>
+          <tr><td><b>Taxa de instalação</b> (<code>Installation</code>)</td><td class="small">OTC que varia por Região/UF</td><td><span class="pill info">+ matriz por Região/UF</span> <span class="small tertiary">(= COALESCE da §7)</span></td></tr>
+          <tr><td><b>Bônus</b> (<code>Bonus__c</code>)</td><td class="small">Por modalidade × cidade/DDD/UF × perfil × restrição de crédito (prioridade cidade>DDD>UF)</td><td><span class="pill info">+ matriz + COALESCE</span> <span class="small tertiary">(= padrão da §7)</span></td></tr>
+          <tr><td><b>Promoção / Empacotamento</b></td><td class="small">Desconto temporário por canal/fatura/grupo/duração</td><td><span class="pill warning">Promoção nativa</span> <span class="small tertiary">(ou matriz delta)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>10b · Dimensões e mecanismos — como cada um é atendido</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Efeito</th><th>Como atender</th></tr></thead>
+        <tbody>
+          <tr><td><b>RequestType</b> (Novo/Portabilidade/Renovação)</td><td class="small">Linha de preço diferente</td><td><span class="pill info">+ coluna na chave</span></td></tr>
+          <tr><td><b>OperationType / Jornada</b></td><td class="small">Troca o campo de preço (base usa <code>FullPrice</code>, prospect usa <code>PricingValue</code>)</td><td><span class="pill info">coluna na chave + <code>IF</code> no ES</span></td></tr>
+          <tr><td><b>Restrição de crédito</b> (REST/OK)</td><td class="small">Afeta bônus/oferta</td><td><span class="pill info">+ coluna na chave</span></td></tr>
+          <tr><td><b>Source → Target</b> (migração/upgrade)</td><td class="small">Preço depende do produto de origem</td><td><span class="pill info">+ 2 colunas na chave</span></td></tr>
+          <tr><td><b>Camada física / Tipo de IP / Móvel PME</b></td><td class="small">Group(UF)×ParentGroup(Região)×DDD×Physical_Layer</td><td><span class="pill info">+ colunas na chave (curinga)</span></td></tr>
+          <tr><td><b>Quantidade / faixas</b></td><td class="small"><code>From/To_Quantity</code>, multiplicador × Quantity</td><td><span class="pill info">matriz com faixa + regra no ES</span></td></tr>
+          <tr><td><b>Multa de fidelização</b></td><td class="small">Valor/vigência de multa</td><td><span class="pill info">saídas extras da matriz</span></td></tr>
+          <tr><td><b>Empacotado / Binding (rec. vs one-time)</b></td><td class="small">Cobrar junto/separado; qual campo recebe o valor</td><td><span class="pill info">flag de saída + roteamento no ES</span></td></tr>
+          <tr><td><b>"De/Por"</b> (FullPrice × PricingValue)</td><td class="small">Preço cheio vs cobrado</td><td><span class="pill info">2 saídas na matriz</span></td></tr>
+          <tr><td><b>Elegibilidade "Not Sell"</b></td><td class="small">Remove itens não vendáveis</td><td><span class="pill info">BRE Qualification</span> <span class="small tertiary">(capability nativa, fora do ES de preço)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card"><div class="bd stack gap8">
+      <div class="row"><span class="pill info">próximo passo</span><b>Dimensionar o esforço (não a viabilidade)</b></div>
+      <p class="small sub" style="margin:0">O export inicial trouxe parte do modelo. Para <b>quantificar</b> volume de matrizes/linhas por camada,
+        rodamos <code>scripts/diagnostico_cobertura.sh &lt;org&gt;</code> na org do cliente — ele confirma o que existe e
+        está em uso. O resultado vira o plano de incrementos (sugestão: Política Comercial e RequestType+OperationType
+        primeiro — maior impacto, mesmo padrão já validado).</p>
+    </div></div>
+  </section>
+
+  <!-- Artefatos -->
+  <hr class="divider" />
+  <section class="stack gap10">
+    <h2>Artefatos criados na org</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Artefato</th><th>Tipo</th><th>Papel</th></tr></thead>
+        <tbody>
+          <tr><td><code>CompostoBaseMatrix</code></td><td>Decision Matrix</td><td>Preço-base nacional (PRODUTO × MODALIDADE × DURACAO × SEGMENTO × <b>CANAL*</b> → PRECO_BASE). CANAL = coluna wildcard.</td></tr>
+          <tr><td><code>CompostoGeoCidadeMatrix</code></td><td>Decision Matrix</td><td>Override geo por cidade, absoluto e esparso (PRODUTO × MODALIDADE × DURACAO × CIDADE → PRECO_CIDADE)</td></tr>
+          <tr><td><code>CompostoGeoUfMatrix</code></td><td>Decision Matrix</td><td>Override geo por UF/estado, absoluto e esparso (PRODUTO × MODALIDADE × DURACAO × UF → PRECO_UF)</td></tr>
+          <tr><td><code>CompostoPagamentoMatrix</code></td><td>Decision Matrix</td><td>Ajuste por forma de pagamento (PRODUTO × FORMA_PAGAMENTO → AJUSTE, sinalizado)</td></tr>
+          <tr><td><code>CompostoAdesaoMatrix</code></td><td>Decision Matrix</td><td>OTC de adesão / member fee (PRODUTO × DURACAO → OTC)</td></tr>
+          <tr class="info"><td><code>PrecoComposto</code></td><td>Expression Set</td><td>Orquestrador: 8 steps (5 lookups + COALESCE geo + recorrente + OTC) → PRECO_BASE_RESOLVIDO, PRECO_RECORRENTE, OTC_FINAL</td></tr>
+          <tr class="success"><td><code>RealBaseMatrix</code> / <code>RealBase</code></td><td>Matrix + ES</td><td><b>Equivalência com dado real</b>: 103 chaves canonizadas do <code>Pricing_Matrix__c</code> → validadas 103/103 (<code>scripts/test_real_equiv.py</code>)</td></tr>
+          <tr class="success"><td><code>Avc*</code> (6 matrizes) / <code>PrecoAvancado</code></td><td>Matrix + ES</td><td><b>POC de extensibilidade</b>: chave estendida + de/por, Política Comercial, bundle por componentes, instalação OTC geo, bônus + crédito e <b>multa de fidelização</b> (<code>AvcMultaMatrix</code>). ES de 13 steps → <b>11/11</b> via REST (<code>scripts/test_avancado.py</code>)</td></tr>
+          <tr><td><code>GeoProbeMatrix</code> / <code>PrecoGeoProbe</code></td><td>Matrix + ES (prova)</td><td>Prova de coluna wildcard / especificidade geográfica — descartável</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">Fontes: <code>force-app/main/default/{decisionMatrixDefinition,expressionSetDefinition}/Composto*</code> · dados em <code>data/composto/</code>.</p>
+  </section>
+
+</div>
+
+<script>
+// ───────── Dados ─────────
+const ENDPOINT = "https://<sua-instancia>.my.salesforce.com/services/data/v60.0/actions/custom/runExpressionSet/PrecoComposto";
+// Codes de negocio legiveis (mapeiam IDs do export Pricing_Matrix__c.csv)
+const PA = "COMBO_RES";  // bundle residencial por modalidade (export ID_PRODUTO_EXEMPLO)
+const PB = "FIBRA_500";  // oferta individual de internet     (export ID_PRODUTO_EXEMPLO)
+const CFI = "CELULAR+FONE+INTERNET FIXA";
+const IND = "INDIVIDUAL";
+// base de input padrão (nova chave: SEGMENTO + CIDADE + UF; CANAL atômico)
+const IN = (o) => Object.assign({ PRODUTO: PA, MODALIDADE: CFI, DURACAO: "0", SEGMENTO: "RESIDENCIAL", CANAL: "LOJA", CIDADE: "NA", UF: "NA", FORMA_PAGAMENTO: "Cartao" }, o);
+
+const SCENARIOS = [
+  {
+    id: "base", titulo: "1 — Base nacional + cartão", tone: "info",
+    resumo: "Preço-base nacional, canal qualquer (cai no *), cartão (ajuste 0), sem fidelidade → paga adesão.",
+    inputs: IN({}),
+    base: 289.9, resolvido: 289.9, ajuste: 0, recorrente: 289.9, otc: 149.9,
+  },
+  {
+    id: "boleto", titulo: "2 — Ajuste por boleto", tone: "success",
+    resumo: "Boleto aplica −R$ 10 no recorrente (regra comercial aditiva, fora de promoção).",
+    inputs: IN({ FORMA_PAGAMENTO: "Boleto" }),
+    base: 289.9, resolvido: 289.9, ajuste: -10, recorrente: 279.9, otc: 149.9,
+  },
+  {
+    id: "canal_over", titulo: "3 — CANAL TELEVENDAS (override)", tone: "success",
+    resumo: "Canal específico TELEVENDAS tem linha própria (−10 vs *): a exceção vence o curinga.",
+    inputs: IN({ CANAL: "TELEVENDAS" }),
+    base: 279.9, resolvido: 279.9, ajuste: 0, recorrente: 279.9, otc: 149.9,
+  },
+  {
+    id: "canal_wild", titulo: "4 — CANAL desconhecido → cai no *", tone: "info",
+    resumo: "Canal sem linha específica (WHATSAPP) cai no curinga * = preço-base padrão. Sem no-match silencioso.",
+    inputs: IN({ CANAL: "WHATSAPP" }),
+    base: 289.9, resolvido: 289.9, ajuste: 0, recorrente: 289.9, otc: 149.9,
+  },
+  {
+    id: "pme", titulo: "5 — Segmento PME", tone: "success",
+    resumo: "Mesmo produto/modalidade, SEGMENTO=PME → grade própria (dimensão de segmento = Business Unit).",
+    inputs: IN({ MODALIDADE: IND, SEGMENTO: "PME" }),
+    base: 169.9, resolvido: 169.9, ajuste: 0, recorrente: 169.9, otc: 149.9,
+  },
+  {
+    id: "geo_cid_barato", titulo: "6 — Geo cidade (Campinas, +barato)", tone: "info",
+    resumo: "Campinas tem override de cidade (269,90) que vence o nacional (289,90) — COALESCE: cidade > UF > nacional.",
+    inputs: IN({ CIDADE: "SP-Campinas", UF: "SP" }),
+    base: 289.9, resolvido: 269.9, ajuste: 0, recorrente: 269.9, otc: 149.9,
+  },
+  {
+    id: "geo_cid_caro", titulo: "7 — Geo cidade (Rio, +caro)", tone: "info",
+    resumo: "Rio tem override de cidade (309,90), mais caro que o nacional. Override absoluto, não fator.",
+    inputs: IN({ CIDADE: "RJ-Rio de Janeiro", UF: "RJ" }),
+    base: 289.9, resolvido: 309.9, ajuste: 0, recorrente: 309.9, otc: 149.9,
+  },
+  {
+    id: "geo_uf", titulo: "8 — Geo UF (AM, fallback)", tone: "success",
+    resumo: "Manaus não tem linha de cidade, mas o estado AM tem override de UF (319,90): cai no nível UF.",
+    inputs: IN({ CIDADE: "AM-Manaus", UF: "AM" }),
+    base: 289.9, resolvido: 319.9, ajuste: 0, recorrente: 319.9, otc: 149.9,
+  },
+  {
+    id: "geo_none", titulo: "9 — Geo nenhum → nacional", tone: "info",
+    resumo: "Santos não tem cidade nem UF com override → COALESCE cai no preço nacional (289,90).",
+    inputs: IN({ CIDADE: "SP-Santos", UF: "SP" }),
+    base: 289.9, resolvido: 289.9, ajuste: 0, recorrente: 289.9, otc: 149.9,
+  },
+  {
+    id: "f500_cid", titulo: "10 — FIBRA500 cidade + boleto", tone: "success",
+    resumo: "Outro produto: override de cidade (149,90) compõe com boleto (−10) = 139,90. Adesão própria.",
+    inputs: IN({ PRODUTO: PB, MODALIDADE: IND, CIDADE: "SP-Campinas", UF: "SP", FORMA_PAGAMENTO: "Boleto" }),
+    base: 159.9, resolvido: 149.9, ajuste: -10, recorrente: 139.9, otc: 99.9,
+  },
+  {
+    id: "f500_uf", titulo: "11 — FIBRA500 UF AM", tone: "info",
+    resumo: "FIBRA500 no AM cai no override de UF (179,90), mais caro que o nacional (159,90).",
+    inputs: IN({ PRODUTO: PB, MODALIDADE: IND, CIDADE: "AM-Manaus", UF: "AM" }),
+    base: 159.9, resolvido: 179.9, ajuste: 0, recorrente: 179.9, otc: 99.9,
+  },
+  {
+    id: "dur12", titulo: "12 — Duração 12 (sem OTC)", tone: "success",
+    resumo: "Fidelidade 12 meses → base menor (269,90) e adesão isenta (OTC = 0).",
+    inputs: IN({ DURACAO: "12" }),
+    base: 269.9, resolvido: 269.9, ajuste: 0, recorrente: 269.9, otc: 0,
+  },
+];
+
+const STEPS = [
+  { n: 1, tipo: "Lookup", nome: "Preço Base nacional", artefato: "CompostoBaseMatrix", io: "PRODUTO, MODALIDADE, DURACAO, SEGMENTO, CANAL* → PRECO_BASE" },
+  { n: 2, tipo: "Lookup", nome: "Override Cidade", artefato: "CompostoGeoCidadeMatrix", io: "PRODUTO, MODALIDADE, DURACAO, CIDADE → PRECO_CIDADE (esparso)" },
+  { n: 3, tipo: "Lookup", nome: "Override UF", artefato: "CompostoGeoUfMatrix", io: "PRODUTO, MODALIDADE, DURACAO, UF → PRECO_UF (esparso)" },
+  { n: 4, tipo: "Lookup", nome: "Ajuste Pagamento", artefato: "CompostoPagamentoMatrix", io: "PRODUTO, FORMA_PAGAMENTO → AJUSTE" },
+  { n: 5, tipo: "Lookup", nome: "Adesão (OTC)", artefato: "CompostoAdesaoMatrix", io: "PRODUTO, DURACAO → OTC" },
+  { n: 6, tipo: "Cálculo", nome: "Resolve Geo (COALESCE)", artefato: "AssignParameterValues", io: "PRECO_BASE_RESOLVIDO = IF(cidade>0, cidade, IF(uf>0, uf, nacional))" },
+  { n: 7, tipo: "Cálculo", nome: "Compõe Recorrente", artefato: "AssignParameterValues", io: "PRECO_RECORRENTE = PRECO_BASE_RESOLVIDO + AJUSTE" },
+  { n: 8, tipo: "Cálculo", nome: "Expõe OTC", artefato: "AssignParameterValues", io: "OTC_FINAL = CompostoAdesaoMatrix__OTC" },
+];
+
+const LESSONS = [
+  { tema: "Geo absoluto multi-nível (COALESCE/IF)", tone: "success",
+    achado: "Hierarquia cidade > UF > nacional com valores absolutos não cabe em 1 coluna wildcard (só dá 2 níveis). Confirmado em runtime: a expressão do ES suporta IF() e comparação (IF(250>0,250,999)→250; IF(0>0,...)→999).",
+    fix: "Uma matriz esparsa por nível (×CIDADE, ×UF) só com as exceções + resolução no ES: IF(cidade>0, cidade, IF(uf>0, uf, nacional)). O no-match=0 vira feature: 'sem override aqui' → cai pro próximo. 12/12 validados." },
+  { tema: "Enum de tipo numérico", tone: "info",
+    achado: "Deploy do ES falha com 'Number' is not a valid value for the enum 'ExpsSetDataType'. Coluna de matriz aceita Number; variável de ES não.",
+    fix: "Coluna da matriz = Number; variável do ES (outputs e resultados) = Currency. Valor trafega numérico." },
+  { tema: "Input compartilhado", tone: "info",
+    achado: "PRODUTO entra nas 5 matrizes e MODALIDADE/DURACAO em várias. Declarar a variável repetida por matriz é desnecessário.",
+    fix: "Declarar a variável de input UMA vez (um lookupName); o casamento nas demais é por nome de coluna." },
+  { tema: "Habilitar versão de matriz", tone: "warning",
+    achado: "Update em lote de várias versões (matrizes diferentes) falha: 'Only a single Decision Matrix version can be enabled at a time' e dá rollback total.",
+    fix: "Reabilitar UMA versão por vez (uma DML por versão, transações separadas)." },
+  { tema: "No-match silencioso", tone: "danger",
+    achado: "Input sem linha correspondente retorna 0.0 com isSuccess=true (não dá erro). Perigoso na base; útil no geo (sinaliza 'sem override').",
+    fix: "Na base: linha/coluna wildcard de fallback. No geo: explorado de propósito pelo COALESCE. Sempre testar o caminho no-match." },
+  { tema: "Colunas são fixas por matriz", tone: "warning",
+    achado: "Não dá para adicionar coluna criando nova versão: 'all versions must have the same column headers'. E mudar a coluna da versão existente falha ('has no columns').",
+    fix: "Para mudar o schema (ex.: trocar OPERACAO por SEGMENTO) é preciso uma matriz nova. Recriar exigiu apagar antes os registros runtime (CalculationMatrixVersion + CalculationMatrix via Apex) e a ExpressionSetVersion, pois o metadata fica 'referenced elsewhere'." },
+];
+
+const brl = (n) => "R$ " + n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const pillTone = (t) => (t === "success" ? "success" : (t === "danger" || t === "warning") ? "warning" : "info");
+const rowTone = (t) => (t === "danger" ? "danger" : t === "warning" ? "warning" : t === "info" ? "info" : "");
+
+// ───────── Diagrama SVG ─────────
+function renderDiagram() {
+  const box="#f1f3f5",boxStroke="#d4d9de",accent="#2b6cb0",green="#2f8a57",warn="#b7791f",
+    txt="#1c2024",txt2="#5b6470",txt3="#8a929c",line="#c4ccd4";
+  const mX=232, mW=212, mH=46;
+  // 5 matrizes empilhadas; base+geocidade+geouf -> COALESCE; +pagamento -> recorrente; adesao -> OTC
+  const mat = {
+    base:  {y:10,  stroke:boxStroke, tag:"Base",      tagC:accent, t1:"1 · Preço Base nacional",  t2:"PROD × MODAL × DUR × SEGM × CANAL*"},
+    cid:   {y:66,  stroke:accent,    tag:"Geo cidade",tagC:accent, t1:"2 · Override Cidade",       t2:"… × CIDADE  (esparso)"},
+    uf:    {y:122, stroke:accent,    tag:"Geo UF",    tagC:accent, t1:"3 · Override UF",           t2:"… × UF  (esparso)"},
+    pag:   {y:178, stroke:warn,      tag:"Ajuste",    tagC:warn,   t1:"4 · Pagamento",             t2:"PROD × FORMA_PGTO"},
+    ade:   {y:234, stroke:boxStroke, tag:"OTC",       tagC:green,  t1:"5 · Adesão (OTC)",          t2:"PROD × DUR"},
+  };
+  const coalX=520, coalY=40, coalW=190, coalH=92;          // 40-132
+  const recX=520, recY2=170, recW=190, recH=62;            // 170-232
+  const outX=792, outW=188, recOutY=176, otcY=240, outH=54;
+  let s = `<svg viewBox="0 0 1000 410" width="100%" role="img" aria-label="Diagrama: base nacional + override geo (COALESCE) + ajuste de pagamento + OTC">`;
+
+  // entradas
+  s += `<rect x="8" y="40" width="150" height="230" rx="8" fill="#eaedf0" stroke="${boxStroke}"/>`;
+  s += `<text x="83" y="62" text-anchor="middle" font-size="13" font-weight="600" fill="${txt}">ENTRADAS</text>`;
+  ["PRODUTO","MODALIDADE","DURACAO","SEGMENTO","CANAL *","CIDADE","UF","FORMA_PGTO"].forEach((t,i)=>{
+    s += `<text x="83" y="${84+i*22}" text-anchor="middle" font-size="9.5" fill="${txt2}">${t}</text>`;
+  });
+
+  // matrizes + ligações entradas->matriz
+  Object.values(mat).forEach((m)=>{
+    s += `<line x1="158" y1="155" x2="${mX}" y2="${m.y+mH/2}" stroke="${line}" stroke-width="1"/>`;
+    s += `<rect x="${mX}" y="${m.y}" width="${mW}" height="${mH}" rx="8" fill="${box}" stroke="${m.stroke}" stroke-width="1.4"/>`;
+    s += `<text x="${mX+13}" y="${m.y+20}" font-size="12" font-weight="600" fill="${txt}">${m.t1}</text>`;
+    s += `<text x="${mX+13}" y="${m.y+37}" font-size="9" fill="${txt2}">${m.t2}</text>`;
+    s += `<text x="${mX+mW-11}" y="${m.y+15}" text-anchor="end" font-size="8.5" font-weight="600" fill="${m.tagC}">${m.tag}</text>`;
+  });
+
+  // base+cidade+uf -> COALESCE
+  [mat.base,mat.cid,mat.uf].forEach((m)=>{ s += `<line x1="${mX+mW}" y1="${m.y+mH/2}" x2="${coalX}" y2="${coalY+coalH/2}" stroke="${line}" stroke-width="1.2"/>`; });
+
+  // nó COALESCE
+  s += `<rect x="${coalX}" y="${coalY}" width="${coalW}" height="${coalH}" rx="8" fill="${box}" stroke="${accent}" stroke-width="1.5"/>`;
+  s += `<text x="${coalX+coalW/2}" y="${coalY+22}" text-anchor="middle" font-size="12" font-weight="600" fill="${txt}">Resolve Geo (COALESCE)</text>`;
+  s += `<text x="${coalX+coalW/2}" y="${coalY+42}" text-anchor="middle" font-size="9.5" fill="${txt2}">IF(cidade&gt;0, cidade,</text>`;
+  s += `<text x="${coalX+coalW/2}" y="${coalY+56}" text-anchor="middle" font-size="9.5" fill="${txt2}">IF(uf&gt;0, uf, nacional))</text>`;
+  s += `<text x="${coalX+coalW/2}" y="${coalY+80}" text-anchor="middle" font-size="9" font-weight="600" fill="${accent}">= PRECO_BASE_RESOLVIDO</text>`;
+
+  // COALESCE -> Recorrente (vertical) ; pagamento -> Recorrente
+  s += `<line x1="${coalX+coalW/2}" y1="${coalY+coalH}" x2="${recX+recW/2}" y2="${recY2}" stroke="${accent}" stroke-width="1.4"/>`;
+  s += `<line x1="${mX+mW}" y1="${mat.pag.y+mH/2}" x2="${recX}" y2="${recY2+recH/2}" stroke="${warn}" stroke-width="1.3"/>`;
+
+  // nó Recorrente
+  s += `<rect x="${recX}" y="${recY2}" width="${recW}" height="${recH}" rx="8" fill="${box}" stroke="${accent}" stroke-width="1.5"/>`;
+  s += `<text x="${recX+recW/2}" y="${recY2+24}" text-anchor="middle" font-size="11.5" font-weight="600" fill="${txt}">Compõe recorrente</text>`;
+  s += `<text x="${recX+recW/2}" y="${recY2+44}" text-anchor="middle" font-size="9.5" fill="${txt2}">resolvido + AJUSTE (pgto)</text>`;
+
+  // Recorrente -> PRECO_RECORRENTE
+  s += `<line x1="${recX+recW}" y1="${recY2+recH/2}" x2="${outX}" y2="${recOutY+outH/2}" stroke="${line}" stroke-width="1.5"/>`;
+  s += `<rect x="${outX}" y="${recOutY}" width="${outW}" height="${outH}" rx="8" fill="${accent}" stroke="${accent}"/>`;
+  s += `<text x="${outX+outW/2}" y="${recOutY+24}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">PRECO_RECORRENTE</text>`;
+  s += `<text x="${outX+outW/2}" y="${recOutY+42}" text-anchor="middle" font-size="9" fill="#fff">recorrente mensal</text>`;
+
+  // Adesão -> OTC_FINAL
+  s += `<line x1="${mX+mW}" y1="${mat.ade.y+mH/2}" x2="${outX}" y2="${otcY+outH/2}" stroke="${line}" stroke-width="1.2"/>`;
+  s += `<rect x="${outX}" y="${otcY}" width="${outW}" height="${outH}" rx="8" fill="${green}" stroke="${green}"/>`;
+  s += `<text x="${outX+outW/2}" y="${otcY+24}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">OTC_FINAL</text>`;
+  s += `<text x="${outX+outW/2}" y="${otcY+42}" text-anchor="middle" font-size="9" fill="#fff">cobrança única (adesão)</text>`;
+
+  // promoção fora (roadmap) — faixa inferior
+  const pX=coalX, pY=320, pW=outX+outW-coalX;
+  s += `<rect x="${pX}" y="${pY}" width="${pW}" height="44" rx="8" fill="none" stroke="${txt2}" stroke-width="1.2" stroke-dasharray="5 4"/>`;
+  s += `<text x="${pX+pW/2}" y="${pY+19}" text-anchor="middle" font-size="11" font-weight="600" fill="${txt2}">Promoção / desconto — FORA do BRE</text>`;
+  s += `<text x="${pX+pW/2}" y="${pY+35}" text-anchor="middle" font-size="9.5" fill="${txt2}">Promotions nativas (roadmap) · ou matriz-delta (caminho A) se necessário</text>`;
+  s += `</svg>`;
+  document.getElementById("diagram").innerHTML = s;
+}
+
+// ───────── Bar chart genérico ─────────
+function renderBars(elId, cats, data, tones, fmt) {
+  const max = Math.max(...data) * 1.15 || 1;
+  let h = "";
+  data.forEach((v,i)=>{
+    const pct = max ? (v/max*100) : 0;
+    const tone = Array.isArray(tones) ? tones[i] : tones;
+    h += `<div class="bar-col">
+      <div class="bar-val">${fmt(v)}</div>
+      <div class="bar ${tone}" style="height:${Math.max(pct,1.5)}%"></div>
+      <div class="bar-cat">${cats[i]}</div>
+    </div>`;
+  });
+  document.getElementById(elId).innerHTML = h;
+}
+
+// ───────── Steps table ─────────
+function renderSteps() {
+  document.getElementById("steps-body").innerHTML = STEPS.map(s=>`
+    <tr>
+      <td class="center">${s.n}</td>
+      <td><span class="pill ${s.tipo==='Lookup'?'info':'success'}">${s.tipo}</span></td>
+      <td>${s.nome}</td>
+      <td><code>${s.artefato}</code></td>
+      <td class="small">${esc(s.io)}</td>
+    </tr>`).join("");
+}
+
+// ───────── Lessons table ─────────
+function renderLessons() {
+  document.getElementById("lessons-body").innerHTML = LESSONS.map(l=>`
+    <tr class="${rowTone(l.tone)}">
+      <td><b>${l.tema}</b></td>
+      <td class="small">${esc(l.achado)}</td>
+      <td class="small sub">${esc(l.fix)}</td>
+    </tr>`).join("");
+}
+
+// ───────── Scenario explorer ─────────
+let curIdx = 0;
+function renderScenario() {
+  const sc = SCENARIOS[curIdx];
+  document.getElementById("scenario-pills").innerHTML = SCENARIOS.map((s,i)=>
+    `<span class="pill clickable ${i===curIdx?('active '+s.tone):'neutral'}" data-i="${i}">${s.titulo}</span>`).join("");
+  document.querySelectorAll("#scenario-pills .pill").forEach(p=>{
+    p.onclick = ()=>{ curIdx = parseInt(p.dataset.i); renderScenario(); };
+  });
+  document.getElementById("scenario-resumo").textContent = sc.resumo;
+  document.getElementById("inputs-body").innerHTML = Object.entries(sc.inputs).map(([k,v])=>
+    `<tr><td><code>${k}</code></td><td>${esc(v)}</td></tr>`).join("");
+  const outs = { PRECO_RECORRENTE: sc.recorrente, OTC_FINAL: sc.otc };
+  document.getElementById("outputs-body").innerHTML = Object.entries(outs).map(([k,v])=>
+    `<tr class="${k==='PRECO_RECORRENTE'?sc.tone:''}"><td><code>${k}</code></td><td><b>${brl(v)}</b></td></tr>`).join("");
+  const sinal = sc.ajuste < 0 ? "−" : "+";
+  const geoStep = (sc.resolvido !== sc.base)
+    ? `nacional <code>${brl(sc.base)}</code> → <code>${brl(sc.resolvido)}</code> (override geo) · ` : "";
+  document.getElementById("decomp").innerHTML =
+    `Decomposição: ${geoStep}<code>${brl(sc.resolvido)}</code> ${sinal} <code>${brl(Math.abs(sc.ajuste))}</code> (pgto) = <b>${brl(sc.recorrente)}</b> · adesão <code>${brl(sc.otc)}</code>`;
+  renderBars("stage-chart", ["Nacional","Resolvido (geo)","Recorrente","OTC adesão"], [sc.base, sc.resolvido, sc.recorrente, sc.otc],
+    ["info", sc.resolvido !== sc.base ? "success" : "info", sc.tone === "success" ? "success" : "info", "warning"], brl);
+  const body = JSON.stringify({ inputs: [sc.inputs] });
+  document.getElementById("curl-block").textContent =
+    `TOK=$(sf org display -o org-demo --json | python3 -c "import json,sys;print(json.load(sys.stdin)['result']['accessToken'])")\ncurl -s "${ENDPOINT}" \\\n  -H "Authorization: Bearer $TOK" \\\n  -H "Content-Type: application/json" \\\n  -X POST -d '${body}'`;
+}
+
+// ───────── Init ─────────
+renderDiagram();
+renderSteps();
+renderLessons();
+renderScenario();
+</script>
+<!-- sidebar global -->
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = "..";</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

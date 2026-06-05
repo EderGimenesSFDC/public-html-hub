@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Técnico BRE — Criar e Alterar · Claro BR</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #F4F6F9; color: #1A1A1A; line-height: 1.65;
+  }
+  .page { max-width: 900px; margin: 0 auto; padding: 40px 28px 100px; }
+  h1 { font-size: 26px; font-weight: 800; color: #032D60; margin-bottom: 6px; line-height: 1.2; }
+  h2 { font-size: 19px; font-weight: 700; color: #032D60; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #E0E6EF; }
+  h3 { font-size: 15px; font-weight: 700; color: #032D60; margin: 24px 0 8px; }
+  p  { margin-bottom: 14px; }
+  a  { color: #0176D3; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  /* Meta header */
+  .meta { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; padding: 14px 18px; margin-bottom: 28px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-item { font-size: 12px; color: #555; }
+  .meta-item strong { color: #032D60; display: block; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 2px; }
+  .meta-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #E8F5E9; color: #2E7D32; }
+
+  /* Section numbers */
+  .sec-num { background: #032D60; color: #fff; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin-right: 8px; flex-shrink: 0; vertical-align: middle; }
+
+  /* Code */
+  pre {
+    background: #1E1E2E; color: #CDD6F4; border-radius: 8px;
+    padding: 16px 18px; margin: 14px 0; overflow-x: auto;
+    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 12.5px; line-height: 1.6;
+  }
+  code { background: #E8EDF2; padding: 1px 5px; border-radius: 3px; font-size: 12.5px; font-family: 'SF Mono', 'Fira Code', Consolas, monospace; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  /* Callouts */
+  .callout {
+    border-radius: 8px; padding: 14px 18px; margin: 16px 0;
+    display: flex; gap: 12px; font-size: 13px; line-height: 1.55;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-tip  { background: #E3F2FD; border-left: 3px solid #0176D3; }
+  .callout-warn { background: #FFF3E0; border-left: 3px solid #E65C00; }
+  .callout-ok   { background: #E8F5E9; border-left: 3px solid #2E7D32; }
+  .callout-note { background: #F3E5F5; border-left: 3px solid #6A1B9A; }
+  .callout ul, .callout ol { padding-left: 18px; margin-top: 6px; }
+  .callout li { margin-bottom: 4px; }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 480px; }
+  th { background: #032D60; color: #fff; padding: 9px 12px; text-align: left; font-size: 11px; font-weight: 700; }
+  td { padding: 8px 12px; border-bottom: 1px solid #EBEBEB; vertical-align: top; line-height: 1.5; }
+  tr:nth-child(even) td { background: #F8F9FB; }
+
+  /* Steps */
+  .steps { list-style: none; margin: 16px 0; }
+  .step { display: flex; gap: 14px; margin-bottom: 16px; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: #032D60;
+    color: #fff; font-size: 13px; font-weight: 700; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-body { flex: 1; padding-top: 3px; }
+  .step-title { font-weight: 700; color: #032D60; font-size: 14px; margin-bottom: 4px; }
+  .step-desc  { font-size: 13px; color: #444; }
+
+  /* Arm table row */
+  .arm-num { background: #032D60; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+
+  ul, ol { padding-left: 20px; margin-bottom: 14px; }
+  li { margin-bottom: 6px; }
+
+  .toc { background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; padding: 16px 20px; margin-bottom: 28px; }
+  .toc-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #555; margin-bottom: 10px; }
+  .toc a { color: #0176D3; text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  .toc li { margin-bottom: 5px; }
+
+  .divider { height: 1px; background: #E0E0E0; margin: 32px 0; }
+
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+  .badge-ok { background: #E8F5E9; color: #2E7D32; }
+  .badge-warn { background: #FFF3E0; color: #E65C00; }
+
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding: 7px 12px 7px 36px; position: relative; border-bottom: 1px solid #F0F0F0; font-size: 13px; }
+  .checklist li::before { content: '☐'; position: absolute; left: 10px; font-size: 15px; color: #888; }
+  .checklist li:nth-child(odd) { background: #F8F9FB; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div style="margin-bottom:8px">
+    <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888">
+      Salesforce Industries · BRE · Runbook
+    </span>
+  </div>
+  <h1>Criar e Alterar um BRE<br><span style="color:#0176D3">Salesforce Industries / Revenue Cloud</span></h1>
+
+  <!-- Meta -->
+  <div class="meta" style="margin-top:16px">
+    <div class="meta-item"><strong>Tipo</strong>Tech Spec / Runbook</div>
+    <div class="meta-item"><strong>Domínio</strong>Expression Set + Decision Matrix</div>
+    <div class="meta-item"><strong>Status</strong><span class="meta-badge">Validado em campo</span></div>
+    <div class="meta-item"><strong>Org de referência</strong><code>org-demo</code> · API v60.0 · Jun/2026</div>
+  </div>
+
+  <!-- ToC -->
+  <div class="toc">
+    <div class="toc-title">Índice</div>
+    <ol>
+      <li><a href="#contexto">Contexto — Decision Matrix vs. Expression Set</a></li>
+      <li><a href="#prereqs">Pré-requisitos</a></li>
+      <li><a href="#parte-a">Parte A — Criar um BRE do zero</a></li>
+      <li><a href="#parte-b">Parte B — Alterar um BRE existente</a></li>
+      <li><a href="#armadilhas">Armadilhas conhecidas (23 lições aprendidas em campo)</a></li>
+      <li><a href="#checklist">Checklist de entrega</a></li>
+      <li><a href="#referencias">Referências — artefatos validados</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. CONTEXTO -->
+  <h2 id="contexto"><span class="sec-num">1</span>Contexto</h2>
+  <p>O <strong>BRE (Business Rules Engine)</strong> do Salesforce Industries permite expressar regras de
+  decisão/cálculo de forma <strong>declarativa</strong>, sem Apex "dono" das regras. Os dois blocos centrais são:</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bloco</th><th>Metadata</th><th>Runtime (objeto)</th><th>Papel</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Decision Matrix</strong></td>
+          <td><code>DecisionMatrixDefinition</code></td>
+          <td><code>CalculationMatrix</code> / <code>CalculationMatrixVersion</code> / <code>CalculationMatrixRow</code></td>
+          <td>Tabela de lookup: chave(s) de entrada → valor(es) de saída</td>
+        </tr>
+        <tr>
+          <td><strong>Expression Set</strong></td>
+          <td><code>ExpressionSetDefinition</code></td>
+          <td><code>ExpressionSet</code> / <code>ExpressionSetVersion</code></td>
+          <td>Orquestrador: encadeia lookups e cálculos, mantém contexto compartilhado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="callout-icon">💡</span>
+    <div>
+      <strong>Mental model:</strong> a <em>Definition</em> é a metadata (versionável por deploy).
+      As <strong>linhas</strong> da matriz são <strong>dados</strong> (<code>CalculationMatrixRow</code>),
+      carregados em runtime via API/Bulk — <strong>não</strong> vão no deploy.<br><br>
+      O Expression Set "navega" entre matrizes sem relacionamento físico entre elas: ele mantém um
+      <strong>contexto</strong> de variáveis e a saída de um step alimenta o próximo
+      (ex.: <code>preço base → política → fidelidade → bundle → preço final</code>).
+    </div>
+  </div>
+
+  <!-- 2. PRÉ-REQUISITOS -->
+  <h2 id="prereqs"><span class="sec-num">2</span>Pré-requisitos</h2>
+  <ul>
+    <li><strong>BRE habilitado</strong> na org (feature Salesforce Industries / Revenue Cloud).</li>
+    <li><strong>Salesforce CLI</strong> (<code>sf</code>) autenticado na org alvo:</li>
+  </ul>
+  <pre><code>sf org login web -a org-demo
+sf org display -o org-demo</code></pre>
+  <ul>
+    <li>Projeto SFDX com a pasta <code>force-app/main/default/{decisionMatrixDefinition,expressionSetDefinition}</code>.</li>
+  </ul>
+
+  <!-- 3. PARTE A -->
+  <h2 id="parte-a"><span class="sec-num">3</span>Parte A — Criar um BRE do zero</h2>
+
+  <div class="callout callout-ok">
+    <span class="callout-icon">✅</span>
+    <div><strong>Ordem à prova de trava para POC do zero:</strong> faça o deploy <strong>só das matrizes primeiro</strong>,
+    carregue as linhas (desabilita → load → reabilita <strong>uma versão por vez</strong>) e
+    <strong>só então</strong> deploye o Expression Set. Isso evita a armadilha #22
+    (não dá pra desabilitar matriz referenciada por ES ativo) já na carga inicial.</div>
+  </div>
+
+  <ol class="steps">
+    <li class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Definir a Decision Matrix</div>
+        <div class="step-desc">
+          Crie <code>force-app/main/default/decisionMatrixDefinition/&lt;Nome&gt;.decisionMatrixDefinition-meta.xml</code>.
+          Cada coluna é <code>Input</code> (chave) ou <code>Output</code> (resultado).
+        </div>
+        <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;DecisionMatrixDefinition xmlns="http://soap.sforce.com/2006/04/metadata"&gt;
+    &lt;label&gt;Real Preco Matrix&lt;/label&gt;
+    &lt;type&gt;Standard&lt;/type&gt;
+    &lt;versions&gt;
+        &lt;fullName&gt;RealPrecoMatrix_V1&lt;/fullName&gt;
+        &lt;columns&gt;
+            &lt;columnType&gt;Input&lt;/columnType&gt;
+            &lt;dataType&gt;Text&lt;/dataType&gt;
+            &lt;displaySequence&gt;1&lt;/displaySequence&gt;
+            &lt;isWildcardColumn&gt;false&lt;/isWildcardColumn&gt;
+            &lt;name&gt;PRODUTO&lt;/name&gt;
+        &lt;/columns&gt;
+        &lt;!-- demais colunas Input (MODALIDADE, DURACAO, CANAL)... --&gt;
+        &lt;columns&gt;
+            &lt;columnType&gt;Output&lt;/columnType&gt;
+            &lt;dataType&gt;Number&lt;/dataType&gt;
+            &lt;displaySequence&gt;5&lt;/displaySequence&gt;
+            &lt;isWildcardColumn&gt;false&lt;/isWildcardColumn&gt;
+            &lt;name&gt;PRECO_BASE&lt;/name&gt;
+        &lt;/columns&gt;
+        &lt;status&gt;Active&lt;/status&gt;
+        &lt;versionNumber&gt;1&lt;/versionNumber&gt;
+    &lt;/versions&gt;
+&lt;/DecisionMatrixDefinition&gt;</code></pre>
+        <div class="callout callout-tip" style="margin-top:10px">
+          <span class="callout-icon">💡</span>
+          <div><strong>Coluna wildcard:</strong> use <code>isWildcardColumn=true</code> para linhas "default/catch-all".
+          Exige <code>&lt;wildcardValue&gt;*&lt;/wildcardValue&gt;</code> declarado após <code>&lt;name&gt;</code>.
+          <strong>Limite: apenas UMA coluna wildcard por matriz.</strong>
+          Hierarquia mais profunda (cidade &gt; UF &gt; nacional) se faz com lookups em camadas + COALESCE no ES.</div>
+        </div>
+        <div class="callout callout-warn" style="margin-top:8px">
+          <span class="callout-icon">⚠️</span>
+          <div><strong>Tipo numérico:</strong> coluna de matriz usa <code>dataType=Number</code> (sem rótulo de moeda).
+          Variável do ES usa <code>Currency</code> (o enum <code>ExpsSetDataType</code> não aceita <code>Number</code>).
+          Padrão validado: <strong>coluna da matriz <code>Number</code> + variável do ES <code>Currency</code></strong>.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Definir o Expression Set (orquestrador)</div>
+        <div class="step-desc">
+          Crie <code>.../expressionSetDefinition/&lt;Nome&gt;.expressionSetDefinition-meta.xml</code>.
+          Três partes importantes: <strong>steps</strong> (sequência), <strong>variables</strong> (contexto),
+          e referências às matrizes.
+        </div>
+        <pre><code>&lt;!-- Step 1: lookup numa matriz --&gt;
+&lt;steps&gt;
+    &lt;actionType&gt;GetOutputsFromDecisionMatrix&lt;/actionType&gt;
+    &lt;decisionTable&gt;
+        &lt;decisionTableName&gt;RealPrecoMatrix&lt;/decisionTableName&gt;
+        &lt;type&gt;DecisionMatrix&lt;/type&gt;
+    &lt;/decisionTable&gt;
+    &lt;name&gt;Step1_Base&lt;/name&gt;
+    &lt;sequenceNumber&gt;1&lt;/sequenceNumber&gt;
+    &lt;stepType&gt;BusinessKnowledgeModel&lt;/stepType&gt;
+&lt;/steps&gt;
+
+&lt;!-- Step 2: cálculo / composição --&gt;
+&lt;steps&gt;
+    &lt;actionType&gt;AssignParameterValues&lt;/actionType&gt;
+    &lt;assignment&gt;
+        &lt;assignedParameter&gt;PRECO_POS_POLITICA&lt;/assignedParameter&gt;
+        &lt;expression&gt;RealPrecoMatrix__PRECO_BASE * RealPoliticaMatrix__FATOR&lt;/expression&gt;
+    &lt;/assignment&gt;
+    &lt;name&gt;Step_Calculo&lt;/name&gt;
+    &lt;sequenceNumber&gt;3&lt;/sequenceNumber&gt;
+    &lt;resultIncluded&gt;true&lt;/resultIncluded&gt;
+    &lt;stepType&gt;BusinessKnowledgeModel&lt;/stepType&gt;
+&lt;/steps&gt;</code></pre>
+        <div class="callout callout-warn" style="margin-top:10px">
+          <span class="callout-icon">⚠️</span>
+          <div><strong>Limite rígido:</strong> máximo de <strong>200 steps por versão de ES</strong>.
+          Cada lookup e cada cálculo conta como 1 step.
+          <strong>Input compartilhado:</strong> declare a variável de entrada <strong>uma única vez</strong>
+          mesmo que alimente várias matrizes — o casamento é feito por nome de coluna em runtime.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Deploy da metadata</div>
+        <pre><code>sf project deploy start -o org-demo \
+  -d force-app/main/default/decisionMatrixDefinition/RealPrecoMatrix.decisionMatrixDefinition-meta.xml \
+  -d force-app/main/default/expressionSetDefinition/RealPreco.expressionSetDefinition-meta.xml</code></pre>
+      </div>
+    </li>
+
+    <li class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Carregar as linhas da matriz (dados)</div>
+        <div class="step-desc">Monte um CSV com <strong>apenas</strong> estas colunas
+          (não inclua <code>Name</code> — ver armadilha #1):</div>
+        <pre><code>CalculationMatrixVersionId,InputData,OutputData
+ID_MATRIZ_EXEMPLO,"{""PRODUTO"":""COM_INT_RES_1GB"",""MODALIDADE"":""INDIVIDUAL"",""DURACAO"":""0"",""CANAL"":""DIGITAL""}","{""PRECO_BASE"":199.9}"</code></pre>
+        <p>Primeiro obtenha o <code>Id</code> da versão:</p>
+        <pre><code>sf data query -o org-demo \
+  -q "SELECT Id, CalculationMatrix.Name FROM CalculationMatrixVersion WHERE CalculationMatrix.Name LIKE 'Real%'"</code></pre>
+        <p>Carga via Bulk API (CSV em LF — ver armadilha #8):</p>
+        <pre><code>sf data import bulk -o org-demo -s CalculationMatrixRow -f real_preco.csv --wait 30</code></pre>
+        <div class="callout callout-warn" style="margin-top:10px">
+          <span class="callout-icon">⚠️</span>
+          <div>Carregar linhas exige a versão da matriz <strong>DESABILITADA</strong>.
+          Numa matriz recém criada e ativa, desabilite a versão antes do load e reabilite depois.
+          Habilite <strong>uma versão por vez</strong> — até matrizes <em>diferentes</em> não podem ser
+          habilitadas na mesma transação (armadilha #4).</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Ativar e validar</div>
+        <pre><code># Confirma versão ativa
+sf data query -o org-demo \
+  -q "SELECT COUNT() FROM ExpressionSetVersion WHERE ExpressionSet.ApiName='RealPreco' AND IsActive=true"
+
+# Invoca via REST
+curl -s "$INSTANCE_URL/services/data/v60.0/actions/custom/runExpressionSet/RealPreco" \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -X POST -d '{"inputs":[{"PRODUTO":"COM_INT_RES_1GB","MODALIDADE":"INDIVIDUAL","DURACAO":"0","CANAL":"DIGITAL"}]}'</code></pre>
+        <p>Resposta esperada: <code>isSuccess: true</code> e <code>outputValues</code> com os valores calculados.
+        Teste sempre o caminho <strong>no-match</strong> também (armadilha #10).</p>
+      </div>
+    </li>
+  </ol>
+
+  <!-- 4. PARTE B -->
+  <h2 id="parte-b"><span class="sec-num">4</span>Parte B — Alterar um BRE existente</h2>
+
+  <h3>Caso 1 — Alterar linhas de uma matriz (com janela curta)</h3>
+  <div class="callout callout-tip">
+    <span class="callout-icon">💡</span>
+    <div><strong>Linha é DADO, não estrutura.</strong> Para incluir/editar/excluir linhas você
+    <strong>NÃO</strong> precisa recriar a matriz nem criar nova versão. A única regra é que a
+    plataforma não permite DML com a versão habilitada.</div>
+  </div>
+  <pre><code>1. Desativar a versão do ES que referencia a matriz  (IsActive=false)
+2. Deletar a versão do ES
+3. Desabilitar a versão da matriz                     (IsEnabled=false)
+4. Inserir/atualizar/deletar as linhas (Bulk API)
+5. Reabilitar a versão da matriz                      (IsEnabled=true) — UMA POR VEZ
+6. Redeployar o Expression Set</code></pre>
+  <p>Apex anônimo para os passos 1–3 e 5:</p>
+  <pre><code>// 1+2. desativa e deleta versão do ES
+List&lt;ExpressionSetVersion&gt; evs = [SELECT Id, IsActive FROM ExpressionSetVersion
+                                  WHERE ExpressionSet.ApiName = 'RealPreco'];
+for (ExpressionSetVersion v : evs) v.IsActive = false;  update evs;
+delete evs;
+
+// 3. desabilita versão da matriz
+CalculationMatrixVersion mv = [SELECT Id, IsEnabled FROM CalculationMatrixVersion WHERE Id = '0lNak...'];
+mv.IsEnabled = false;  update mv;</code></pre>
+  <pre><code># 4. carrega as novas linhas
+sf data import bulk -o org-demo -s CalculationMatrixRow -f novas_linhas.csv --wait 30
+
+# 6. redeploy reativa o ES
+sf project deploy start -o org-demo -d force-app/main/default/expressionSetDefinition/RealPreco.expressionSetDefinition-meta.xml</code></pre>
+
+  <h3>Caso 1-B — Trocar linhas SEM downtime (blue-green de versão) — recomendado</h3>
+  <pre><code>1. Cria a versão V2 da matriz (desabilitada)        — a V1 segue servindo o ES
+2. Popula a V2 com o conjunto COMPLETO de linhas     — DML livre (V2 desabilitada)
+3. Ativa/habilita a V2                                — swap automático: V1 aposentada, V2 sobe
+                                                        (o ES resolve pela versão habilitada, sem redeploy)</code></pre>
+  <div class="callout callout-ok">
+    <span class="callout-icon">✅</span>
+    <div><strong>Rollback trivial:</strong> reative a V1. O ES não muda — ele referencia a matriz por nome
+    e usa a versão habilitada em runtime.<br>
+    <strong>Pela UI do Decision Matrix Designer,</strong> "Criar nova versão" clona as linhas da versão atual,
+    permitindo editar só o delta manualmente.</div>
+  </div>
+
+  <h3>Caso 2 — Alterar a estrutura (colunas da matriz ou steps do ES)</h3>
+  <p>Mudança estrutural = nova versão. Edite o <code>-meta.xml</code> incrementando
+  <code>versionNumber</code> / <code>fullName</code> (<code>..._V2</code>), ajuste
+  <code>rank</code>/<code>status</code> e faça deploy. A versão anterior é preservada para rollback.</p>
+
+  <h3>Caso 3 — Versionar/publicar nova regra do ES</h3>
+  <ul>
+    <li>Suba a nova <code>ExpressionSetVersion</code> com <code>status=Active</code> e <code>versionNumber</code> maior.</li>
+    <li>Para remover: <code>IsActive=false</code> → <code>delete</code> (nessa ordem — não dá pra deletar versão ativa).</li>
+  </ul>
+
+  <!-- 5. ARMADILHAS -->
+  <h2 id="armadilhas"><span class="sec-num">5</span>Armadilhas conhecidas — 23 lições aprendidas em campo</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:32px">#</th>
+          <th style="width:28%">Sintoma</th>
+          <th style="width:28%">Causa</th>
+          <th>Correção</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Lookup sempre retorna vazio/0 após carga via Bulk</td><td>O campo <code>Name</code> do <code>CalculationMatrixRow</code> é o hash da chave usado no match; informá-lo no CSV sobrescreve o hash</td><td><strong>Não inclua a coluna <code>Name</code></strong> na carga</td></tr>
+        <tr><td>2</td><td><code>An expression set version can have a maximum of 200 steps</code></td><td>Teto rígido de 200 steps por versão de ES</td><td>Decomponha em mais matrizes / múltiplos ES encadeados</td></tr>
+        <tr><td>3</td><td><code>INVALID_INPUT</code> ao inserir/atualizar linha</td><td>Versão da matriz <strong>habilitada</strong> não aceita DML de linhas</td><td>Desabilite a versão, faça o DML, reabilite</td></tr>
+        <tr><td>4</td><td><code>Only a single Decision Matrix version can be enabled at a time</code></td><td>Tentou habilitar várias versões na mesma transação — vale para matrizes <em>diferentes</em></td><td>Habilite <strong>uma versão por vez</strong> (transações separadas)</td></tr>
+        <tr><td>5</td><td><code>We can't disable this version ... referenced in these expression set versions</code></td><td>Matriz é a única versão ativa referenciada por ES ativo</td><td>Delete a versão do ES antes; redeploy depois</td></tr>
+        <tr><td>6</td><td><code>You can't delete an active expression set version</code></td><td>Tentou deletar versão ativa de ES</td><td><code>IsActive=false</code> primeiro, depois <code>delete</code></td></tr>
+        <tr><td>7</td><td>Apex CPU/DML limit na carga</td><td>Inserir &gt;~5k linhas numa transação Apex</td><td>Use <strong>Bulk API</strong> (ou lotes de ~5k no Apex)</td></tr>
+        <tr><td>8</td><td>Bulk: <code>ClientInputError: LineEnding is invalid</code></td><td>CSV com CRLF</td><td>Gere o CSV com <strong>LF</strong> (<code>\n</code>)</td></tr>
+        <tr><td>9</td><td>SOQL retorna 0 ao filtrar por <code>ExpressionSet.Name='...'</code></td><td><code>Name</code> é o label, não a API</td><td>Filtre por <strong><code>ExpressionSet.ApiName</code></strong></td></tr>
+        <tr><td>10</td><td>Combinação inexistente "zera" o cálculo seguinte, sem erro</td><td><strong>No-match silencioso:</strong> input sem match retorna <code>0.0</code> com <code>isSuccess=true</code></td><td>Adicione linha/coluna <strong>wildcard</strong> de fallback; valide caminho no-match em teste</td></tr>
+        <tr><td>11</td><td>Deploy do ES falha: <code>'Number' is not a valid value for the enum 'ExpsSetDataType'</code></td><td>Enums divergem: coluna da matriz aceita <code>Number</code>, variável do ES só aceita <code>Text</code>/<code>Currency</code></td><td>Coluna da matriz = <code>Number</code>; variável do ES = <code>Currency</code></td></tr>
+        <tr><td>12</td><td>Deploy da matriz falha: <code>You can specify only one wildcard column</code></td><td>(a) &gt;1 coluna wildcard por matriz; (b) wildcard sem <code>&lt;wildcardValue&gt;</code></td><td>Máx. 1 coluna wildcard com <code>&lt;wildcardValue&gt;*&lt;/wildcardValue&gt;</code> após <code>&lt;name&gt;</code></td></tr>
+        <tr><td>13</td><td>Não consigo adicionar coluna; nova versão falha com <code>all versions must have the same column headers</code></td><td>As colunas (schema) são fixas por matriz — todas as versões compartilham o mesmo schema</td><td>Para mudar schema, crie uma <strong>matriz nova</strong></td></tr>
+        <tr><td>14</td><td>Destrutivo da matriz falha: <code>This decision matrix definition is referenced elsewhere</code></td><td>A <code>ExpressionSetDefinition</code> referencia a matriz no nível definição</td><td>Apague a <code>ExpressionSetDefinition</code> inteira num pacote destrutivo <strong>isolado</strong> antes da matriz</td></tr>
+        <tr><td>15</td><td>Deploy da matriz falha: <code>Value too long for field: Description maximum length is:255</code></td><td>Teto de 255 caracteres no <code>&lt;description&gt;</code></td><td>Mantenha a descrição ≤255 chars</td></tr>
+        <tr><td>16</td><td><code>sf data import bulk --wait N</code> trava (não retorna), mas linhas já entraram</td><td>Polling do CLI fica preso aguardando estado do job</td><td>Confirme por contagem SOQL (<code>SELECT COUNT() FROM CalculationMatrixRow WHERE ...</code>)</td></tr>
+        <tr><td>17</td><td>Após destrutivo que falhou, o arquivo local some mesmo o registro continuando na org</td><td>CLI aplica source tracking antes do rollback</td><td>Versione o conteúdo antes de destrutivos; recrie o arquivo a partir do backup</td></tr>
+        <tr><td>18</td><td>Preciso de hierarquia geográfica com valores absolutos, mas só posso ter 1 coluna wildcard</td><td>Uma matriz wildcard só dá 2 níveis</td><td><strong>Confirmado em runtime:</strong> use lookups em camadas + <code>IF(val&gt;0, val, fallback)</code> no ES. No-match=0 vira "sem override neste nível"</td></tr>
+        <tr><td>19</td><td>Carregar catálogo real não fecha: mesma chave devolve vários preços</td><td>Base não-determinística: 62% das chaves têm ≥2 preços (janelas/promoções sobrepostas)</td><td><strong>Canonize</strong> com regra explícita (moda &gt; janela mais recente &gt; maior valor) e reporte subconjunto limpo à parte</td></tr>
+        <tr><td>20</td><td>Preciso que a regra troque qual campo de preço usar conforme a jornada</td><td>Comparar string no ES é arriscado</td><td>Faça a própria matriz devolver um <strong>flag numérico</strong> (<code>IS_BASE</code>=1/0) e resolva no ES com <code>IF(IS_BASE&gt;0, FULLPRICE, PRECO)</code></td></tr>
+        <tr><td>21</td><td>Como orquestrar vários mecanismos sem virar espaguete</td><td>—</td><td>Padrão validado (<code>PrecoAvancado</code>, 13 steps, 11/11): N lookups → steps de composição declarativos com COALESCE e IF. No-match=0 faz ausentes <strong>não afetarem</strong> o cálculo</td></tr>
+        <tr><td>22</td><td>Plataforma não deixa desabilitar a versão da matriz para adicionar linha</td><td>Desativar o ES (<code>IsActive=false</code>) não libera — matriz fica <em>referenciada</em> pelo ES</td><td><strong>Carregue TODOS os dados das matrizes ANTES de ligar o ES.</strong> Para corrigir depois: destructive-delete do ES → desabilitar → carregar → reabilitar → recriar ES</td></tr>
+        <tr><td>23</td><td>Como expor multa/fidelização sem poluir o preço</td><td>—</td><td>Multa é <strong>informação contratual</strong>. Modele como matriz própria (<code>PRODUTO×DURACAO → PENALTY</code>) e exponha como output independente — <strong>não soma no recorrente</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. CHECKLIST -->
+  <h2 id="checklist"><span class="sec-num">6</span>Checklist de entrega</h2>
+  <ul class="checklist">
+    <li><code>DecisionMatrixDefinition</code> por domínio (uma responsabilidade por matriz)</li>
+    <li><code>ExpressionSetDefinition</code> com steps ≤200 e variáveis de contexto nomeadas</li>
+    <li>Deploy da metadata sem erros</li>
+    <li>Linhas carregadas via Bulk (<strong>sem</strong> coluna <code>Name</code>, CSV em LF)</li>
+    <li>Versão do ES ativa (<code>IsActive=true</code> por <code>ApiName</code>)</li>
+    <li>Teste funcional via <code>runExpressionSet</code> — caminho <strong>match E no-match</strong> passando</li>
+    <li>Linha/coluna wildcard de fallback prevista para todo lookup</li>
+    <li>Invocação sempre em <strong>bulk</strong> (lista de inputs numa chamada) na integração</li>
+  </ul>
+
+  <!-- 7. REFERÊNCIAS -->
+  <h2 id="referencias"><span class="sec-num">7</span>Referências — artefatos validados em <code>org-demo</code></h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Artefato</th><th>Tipo</th><th>Observação</th></tr></thead>
+      <tbody>
+        <tr><td><code>RealPrecoMatrix</code> / <code>RealPoliticaMatrix</code></td><td>Decision Matrix</td><td>Dados reais do cliente; 100% de equivalência com o monólito</td></tr>
+        <tr><td><code>RealPreco</code></td><td>Expression Set</td><td>Pipeline base + política (chave <code>PRODUTO × MODALIDADE × DURACAO × CANAL</code>)</td></tr>
+        <tr><td><code>CompostoBaseMatrix</code></td><td>Decision Matrix</td><td>Preço-base nacional. Coluna <code>CANAL</code> atômica + wildcard</td></tr>
+        <tr><td><code>CompostoGeoCidadeMatrix</code> / <code>CompostoGeoUfMatrix</code></td><td>Decision Matrix</td><td>Override geográfico absoluto e esparso. Só exceções têm linha; sem linha → 0 → COALESCE cai pro próximo nível</td></tr>
+        <tr><td><code>PrecoComposto</code></td><td>Expression Set</td><td>8 steps: 5 lookups + COALESCE cidade&gt;UF&gt;nacional + pagamento + OTC. <strong>12/12 cenários validados</strong></td></tr>
+        <tr><td><code>Avc*</code> (6 matrizes) / <code>PrecoAvancado</code></td><td>Decision Matrix / ES</td><td>13 steps: de/por, bundle, desconto, bônus, OTC geo, multa. <strong>11/11 cenários</strong> com dados reais (<code>scripts/test_avancado.py</code>)</td></tr>
+        <tr><td><code>RealBase</code></td><td>Expression Set</td><td><strong>103/103</strong> chaves canonizadas do <code>Pricing_Matrix__c</code>. Colapso 28,3× (2.919 → 103)</td></tr>
+        <tr><td><code>LtScale</code></td><td>ES de benchmark</td><td>1 lookup · prova O(1) com volume. Dados: <a href="performance.html">dashboard de performance</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-note" style="margin-top:24px">
+    <span class="callout-icon">📐</span>
+    <div>
+      <strong>Princípio de arquitetura:</strong> Apex fica na <strong>borda</strong>
+      (integração, bulkificação, montagem de contexto). As <strong>regras</strong> ficam
+      declarativas no BRE. Isso reduz drasticamente o "Apex dono de regra" e melhora governança e versionamento.<br><br>
+      <strong>Padrão recomendado:</strong> indexar <strong>valores absolutos</strong> por uma chave rica
+      (<code>PRODUTO × MODALIDADE × DURACAO × OPERACAO × ...</code>) + ajustes <strong>aditivos em R$</strong>,
+      em vez de multiplicar fatores percentuais (no caso da Claro, <code>IsPercentDiscount__c=false</code> em 100%).
+    </div>
+  </div>
+
+</div><!-- /.page -->
+
+<!-- ── Sidebar global ─────────────────────────────────────────────────────── -->
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = '..';</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>

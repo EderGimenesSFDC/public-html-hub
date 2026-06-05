@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>POC · Preço Avançado — Extensibilidade do BRE (Salesforce Industries)</title>
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #f1f3f5;
+    --surface-3: #eaedf0;
+    --text: #1c2024;
+    --text-2: #5b6470;
+    --text-3: #8a929c;
+    --stroke: #e2e6ea;
+    --stroke-2: #d4d9de;
+    --accent: #2b6cb0;
+    --accent-soft: #e8f0f9;
+    --success: #2f8a57;
+    --success-soft: #e6f4ec;
+    --warning: #b7791f;
+    --warning-soft: #fbf2e0;
+    --danger: #c0392b;
+    --danger-soft: #fbeae8;
+    --info: #2b6cb0;
+    --info-soft: #e8f0f9;
+    --purple: #6941c6;
+    --purple-soft: #f1edfb;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+  h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+  p { margin: 0; }
+  .sub { color: var(--text-2); }
+  .small { font-size: 13px; }
+  .tertiary { color: var(--text-3); }
+  code, .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+  }
+  code {
+    background: var(--surface-3);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+  .divider { height: 1px; background: var(--stroke); margin: 28px 0; border: none; }
+  section { margin-top: 6px; }
+  .stack { display: flex; flex-direction: column; }
+  .gap6 > * + * { margin-top: 6px; }
+  .gap8 > * + * { margin-top: 8px; }
+  .gap10 > * + * { margin-top: 10px; }
+  .gap14 > * + * { margin-top: 14px; }
+  .gap24 > * + * { margin-top: 24px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid4, .grid3, .grid2 { grid-template-columns: 1fr; } }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat .v { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+  .stat .l { font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+  .stat.danger .v { color: var(--danger); }
+  .stat.warning .v { color: var(--warning); }
+  .stat.success .v { color: var(--success); }
+  .stat.accent .v { color: var(--accent); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card .hd {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--stroke);
+    font-weight: 600;
+    font-size: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  }
+  .card .bd { padding: 16px; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--stroke-2);
+  }
+  .callout .ct { font-weight: 600; margin-bottom: 4px; }
+  .callout.info { background: var(--info-soft); border-color: #cfe0f2; }
+  .callout.success { background: var(--success-soft); border-color: #c6e6d4; }
+  .callout.warning { background: var(--warning-soft); border-color: #ecd9ad; }
+  .callout.danger { background: var(--danger-soft); border-color: #f0c8c2; }
+  .callout.info .ct { color: var(--info); }
+  .callout.success .ct { color: var(--success); }
+  .callout.warning .ct { color: var(--warning); }
+  .callout.danger .ct { color: var(--danger); }
+
+  .pill {
+    display: inline-flex; align-items: center;
+    font-size: 12px; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px;
+    border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill.neutral { background: var(--surface-3); color: var(--text-2); }
+  .pill.info { background: var(--info-soft); color: var(--info); }
+  .pill.success { background: var(--success-soft); color: var(--success); }
+  .pill.warning { background: var(--warning-soft); color: var(--warning); }
+  .pill.purple { background: var(--purple-soft); color: var(--purple); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-3); font-weight: 600; }
+  tr.danger td { background: var(--danger-soft); }
+  tr.warning td { background: var(--warning-soft); }
+  tr.info td { background: var(--info-soft); }
+  tr.success td { background: var(--success-soft); }
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; }
+  td.center, th.center { text-align: center; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .diagram { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; padding: 8px; }
+  .diagram img { width: 100%; height: auto; display: block; border-radius: 6px; }
+
+  .head-badge { display:inline-block; font-size:12px; color:var(--text-2); border:1px solid var(--stroke-2); border-radius:999px; padding:2px 10px; }
+  a.link { color: var(--accent); text-decoration: none; font-weight: 600; }
+  a.link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap stack gap24">
+
+  <!-- Cabeçalho -->
+  <div class="stack gap6">
+    <div class="row">
+      <span class="head-badge">org org-demo · API v60</span>
+      <span class="pill success">11/11 validado</span>
+      <span class="pill purple">dados reais (org-fonte)</span>
+      <span class="pill neutral">0 linha de Apex</span>
+    </div>
+    <h1>POC · Preço Avançado — a prova de que o BRE comporta <i>tudo</i></h1>
+    <p class="sub">
+      A POC do <b>Preço Composto</b> mostrou o núcleo (preço-base + geografia + pagamento + adesão). Esta página vai além:
+      pega os <b>mecanismos que sobravam</b> no motor custom do cliente e prova que <b>todos encaixam nos mesmos blocos</b> do BRE —
+      sem paradigma novo e <b>sem uma linha de código</b>. Um Expression Set (<code>PrecoAvancado</code>) orquestra
+      <b>6 matrizes</b> e devolve preço mensal, adesão e multa.
+    </p>
+    <p class="small tertiary">Complementa <a class="link" href="poc-bre-composto.html">poc-bre-composto.html</a> (núcleo) e <a class="link" href="visao-negocio-precificacao.html">visao-negocio-precificacao.html</a> (visão de negócio).</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid4">
+    <div class="stat accent"><div class="v">6</div><div class="l">mecanismos fora do núcleo, cada um em sua matriz</div></div>
+    <div class="stat accent"><div class="v">13</div><div class="l">steps no Expression Set (6 lookups + composição)</div></div>
+    <div class="stat success"><div class="v">11/11</div><div class="l">cenários validados via REST com dado real</div></div>
+    <div class="stat success"><div class="v">0</div><div class="l">linhas de Apex — tudo declarativo</div></div>
+  </div>
+
+  <!-- Resumo executivo -->
+  <div class="callout success">
+    <div class="ct">Em uma frase</div>
+    <p>Cada regra de preço do engine antigo vira uma <b>matriz independente</b>; o Expression Set apenas <b>compõe</b> o
+      resultado com expressões simples (escolher de/por pela jornada, deixar o bundle vencer o base, somar descontos/bônus,
+      expor adesão e multa). <b>Adicionar um mecanismo = adicionar uma matriz</b>, não reabrir código.</p>
+  </div>
+
+  <!-- Diagrama -->
+  <section class="stack gap8">
+    <h2>1 · Como funciona — visão única</h2>
+    <p class="sub small">As entradas alimentam as 6 matrizes; o motor compõe e devolve três saídas. A multa aparece à parte (laranja): é informação contratual, <b>não soma no preço</b>.</p>
+    <div class="diagram"><img src="bre-arquitetura-avancado-preview.svg" alt="Diagrama da arquitetura PrecoAvancado: entradas, 6 matrizes, motor de composição e saídas" /></div>
+    <p class="small tertiary">Mesmo diagrama da página 2 de <code>bre-arquitetura-claro-compactado.drawio</code> (editável no draw.io / diagrams.net).</p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Os 6 mecanismos -->
+  <section class="stack gap8">
+    <h2>2 · Os 6 mecanismos — o que cada um resolve</h2>
+    <p class="sub small">Cada linha é uma Decision Matrix isolada (1 responsabilidade). O ES só decide como combiná-las.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Mecanismo</th><th>Matriz</th><th>Chave (entradas)</th><th>Como o motor usa</th><th>Destino no alvo</th></tr></thead>
+        <tbody>
+          <tr class="success">
+            <td><b>1</b></td>
+            <td><b>Preço base + de/por</b><br><span class="small sub">chave estendida</span></td>
+            <td><code>AvcBaseMatrix</code></td>
+            <td class="small">produto × modalidade × prazo × segmento × <b>tipo de pedido</b> × <b>operação</b></td>
+            <td class="small">Devolve <b>PRECO</b> (por), <b>FULLPRICE</b> (de) e o flag <b>IS_BASE</b>. O ES escolhe via <code>IF(IS_BASE&gt;0, FULLPRICE, PRECO)</code> — jornada base paga o "de", prospect paga o "por".</td>
+            <td><span class="pill success">BRE</span></td>
+          </tr>
+          <tr>
+            <td><b>2</b></td>
+            <td>Política comercial (desconto)</td>
+            <td><code>AvcDescontoMatrix</code></td>
+            <td class="small">produto × segmento × perfil</td>
+            <td class="small">Subtrai do recorrente. Sem linha = sem desconto (0).</td>
+            <td class="small"><span class="pill success">BRE</span> se estrutural<br><span class="pill neutral">nativo</span> se campanha</td>
+          </tr>
+          <tr>
+            <td><b>3</b></td>
+            <td>Bundle por componentes</td>
+            <td><code>AvcBundleMatrix</code></td>
+            <td class="small">TV × Internet × Fone × Móvel</td>
+            <td class="small">Preço fechado da combinação <b>vence o base</b> via <code>IF(bundle&gt;0, bundle, base)</code> (COALESCE).</td>
+            <td class="small"><span class="pill success">BRE</span> se preço de tabela<br><span class="pill neutral">nativo</span> se bundle promocional</td>
+          </tr>
+          <tr>
+            <td><b>4</b></td>
+            <td>Instalação — OTC geográfica</td>
+            <td><code>AvcInstalacaoMatrix</code></td>
+            <td class="small">produto × <b>UF*</b> (curinga)</td>
+            <td class="small">Taxa única (one-time). UF específica vence o curinga nacional <code>*</code>.</td>
+            <td><span class="pill success">BRE</span></td>
+          </tr>
+          <tr>
+            <td><b>5</b></td>
+            <td>Bônus (+ restrição de crédito)</td>
+            <td><code>AvcBonusMatrix</code></td>
+            <td class="small">modalidade × <b>UF*</b> × perfil × <b>crédito</b></td>
+            <td class="small">Só credita quando o crédito é OK. Crédito restrito = sem linha = 0.</td>
+            <td class="small"><span class="pill warning">a decidir</span> franquia estrutural → BRE; incentivo de campanha → nativo</td>
+          </tr>
+          <tr class="warning">
+            <td><b>6</b></td>
+            <td><b>Multa de fidelização</b></td>
+            <td><code>AvcMultaMatrix</code></td>
+            <td class="small">produto × prazo (permanência)</td>
+            <td class="small"><b>Exposta à parte</b> (info contratual), <b>não entra na conta</b> do preço. Prazo 0 = sem fidelidade.</td>
+            <td><span class="pill success">BRE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info">
+      <div class="ct">Por que há desconto/bundle aqui se "promoção fica fora do BRE"?</div>
+      <p class="small">A POC absorve <b>todos</b> os mecanismos do motor antigo para <b>provar viabilidade</b> e servir de <b>instrumento de decisão</b> — não para fixar tudo como matriz. A régua é a natureza, não o nome:
+        <b>promoção</b> (tem vigência, código, campanha) → <b>Promotions nativas</b>; <b>política/preço estrutural</b> (permanente, sem data de fim) → <b>BRE</b>.
+        E mesmo o que vai para o nativo <b>não dispensa o BRE</b>: a promoção incide <b>sobre o preço que o BRE calcula</b> — as matrizes de preço-base seguem sendo a fonte.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Os 11 cenários -->
+  <section class="stack gap8">
+    <h2>3 · Os 11 cenários validados (REST, dado real)</h2>
+    <p class="sub small">Cada cenário isola um mecanismo (e o último combina todos). Valores em R$; preço-base de/por reais do diagnóstico.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Cenário</th><th>Mecanismo provado</th>
+          <th class="num">Mensal</th><th class="num">Desc.</th><th class="num">Bônus</th><th class="num">Adesão</th><th class="num">Multa</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>01</td><td>Base prospect novo</td><td class="small">preço-base (por)</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>02</td><td>Portabilidade</td><td class="small">chave estendida</td><td class="num">259,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>03</td><td>Jornada base (retenção)</td><td class="small">de/por → usa o "de"</td><td class="num">319,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>04</td><td>Perfil PROMO</td><td class="small">política comercial</td><td class="num">239,90</td><td class="num">30,00</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>05</td><td>TV+Net+Fone</td><td class="small">bundle vence base</td><td class="num">309,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>06</td><td>Crédito OK</td><td class="small">bônus + crédito</td><td class="num">249,90</td><td class="num">—</td><td class="num">20,00</td><td class="num">149,90</td><td class="num">—</td></tr>
+          <tr><td>07</td><td>Fibra individual</td><td class="small">de/por real (159,90→139)</td><td class="num">139,00</td><td class="num">—</td><td class="num">—</td><td class="num">99,90</td><td class="num">—</td></tr>
+          <tr><td>08</td><td>Instalação em SP</td><td class="small">OTC geo (UF)</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">99,90</td><td class="num">—</td></tr>
+          <tr><td>09</td><td>Instalação em AM</td><td class="small">OTC geo (UF)</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">209,90</td><td class="num">—</td></tr>
+          <tr class="success"><td>10</td><td><b>Tudo junto</b></td><td class="small">5 mecanismos no mesmo cálculo</td><td class="num"><b>309,90</b></td><td class="num">30,00</td><td class="num">20,00</td><td class="num">99,90</td><td class="num">—</td></tr>
+          <tr class="warning"><td>11</td><td>Fidelidade 12 meses</td><td class="small">multa (permanência)</td><td class="num">269,90</td><td class="num">—</td><td class="num">—</td><td class="num">149,90</td><td class="num"><b>240,00</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">Cenário 10 = 359,90 (bundle quádruplo) − 30 (desconto) − 20 (bônus). Runner: <code>scripts/test_avancado.py</code>.</p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Dado real x proxy -->
+  <section class="stack gap8">
+    <h2>4 · O que é dado real e o que é insumo de migração</h2>
+
+    <div class="callout success">
+      <div class="ct">✅ POC concluída — sem pendências para execução</div>
+      <p class="small">Os 11 cenários foram validados e o motor está funcional.
+        Os itens abaixo <b>não são pendências da POC</b> — são valores de negócio a carregar nas matrizes
+        durante a <b>migração de produção</b>. A estrutura (chaves, steps, ES) está pronta;
+        falta apenas substituir os números proxy pelos reais.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><div class="hd"><span>Real — usado na validação</span><span class="pill success">✓ confirmado na POC</span></div>
+        <div class="bd"><ul style="margin:0;padding-left:18px" class="small">
+          <li><b>De/por</b>: de R$319,90 por R$269,90; de R$159,90 por R$139,00 (FullPrice → PricingValue)</li>
+          <li><b>Multa</b>: R$240 (12 meses) / R$200</li>
+          <li><b>Modalidades</b> reais (CELULAR+FONE+INTERNET FIXA, INDIVIDUAL, …)</li>
+          <li><b>Tipo de pedido / operação</b> (atomizados do multi-select)</li>
+          <li><b>Crédito</b> OK / REST</li>
+          <li>Volume na origem: multa em 2.725 linhas, de/por em 126, bundle em 237, Política Comercial em 1.732, <code>Bonus__c</code> 479 regs</li>
+        </ul></div>
+      </div>
+      <div class="card"><div class="hd"><span>Proxy — insumo para carga de produção</span><span class="pill neutral">não bloqueia POC</span></div>
+        <div class="bd">
+          <p class="small" style="margin-bottom:10px;color:var(--text-2)">O mecanismo de cada item foi validado com valor proxy. Na migração, substitui-se apenas o número — sem alterar matriz, ES ou código.</p>
+          <ul style="margin:0;padding-left:18px" class="small">
+            <li><b>Valor do desconto</b> (Política Comercial veio com magnitude nula no export)</li>
+            <li><b>Valor do bônus</b> (no real é <b>franquia/GB</b>, não R$ — proxy usado para provar o mecanismo)</li>
+            <li><b>Taxa de instalação</b> (<code>Installation_Amount</code> veio nulo; wildcard por UF validado)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Artefatos -->
+  <section class="stack gap8">
+    <h2>5 · Artefatos na org</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Artefato</th><th>Tipo</th><th>Papel</th></tr></thead>
+        <tbody>
+          <tr><td><code>AvcBaseMatrix</code></td><td>Decision Matrix</td><td>Preço-base com chave estendida + de/por (PRECO, FULLPRICE, IS_BASE)</td></tr>
+          <tr><td><code>AvcDescontoMatrix</code></td><td>Decision Matrix</td><td>Desconto da Política Comercial</td></tr>
+          <tr><td><code>AvcBundleMatrix</code></td><td>Decision Matrix</td><td>Preço fechado por combinação de componentes</td></tr>
+          <tr><td><code>AvcInstalacaoMatrix</code></td><td>Decision Matrix</td><td>Taxa de instalação (OTC) por UF — coluna wildcard</td></tr>
+          <tr><td><code>AvcBonusMatrix</code></td><td>Decision Matrix</td><td>Bônus condicionado a crédito (UF wildcard)</td></tr>
+          <tr class="warning"><td><code>AvcMultaMatrix</code></td><td>Decision Matrix</td><td>Multa de fidelização por produto × prazo</td></tr>
+          <tr class="success"><td><code>PrecoAvancado</code></td><td>Expression Set</td><td>Orquestrador de 13 steps → PRECO_RECORRENTE, OTC_FINAL, MULTA_FIDELIDADE, DESCONTO/BONUS/PRECO_LISTA</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small tertiary">Fontes: <code>force-app/main/default/{decisionMatrixDefinition,expressionSetDefinition}/Avc*</code> e <code>PrecoAvancado</code> · dados sintéticos com valores reais em <code>data/avancado/gen_rows.py</code>.</p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Como estender -->
+  <section class="stack gap8">
+    <h2>6 · Como estender daqui pra frente</h2>
+    <div class="grid3">
+      <div class="card"><div class="hd">Nova regra de preço</div><div class="bd small sub">Cria-se uma nova Decision Matrix com a chave certa e um step de lookup no ES. Nada de Apex.</div></div>
+      <div class="card"><div class="hd">Novo valor real</div><div class="bd small sub">Para desconto/bônus/instalação reais, basta atualizar a linha da matriz — a estrutura já existe.</div></div>
+      <div class="card"><div class="hd">Promoção / vigência</div><div class="bd small sub">Promoções com data de início/fim saem para o motor nativo de Promotions (roadmap), fora da grade de preço.</div></div>
+    </div>
+    <div class="callout info" style="margin-top:4px">
+      <div class="ct">Lição de processo (registrada no guia)</div>
+      <p class="small">Uma matriz já ligada a um Expression Set <b>não pode ser recarregada in-place</b> (mesmo com o ES inativo ela segue referenciada). Regra de ouro: <b>carregar todos os dados antes de ligar o ES</b>. Por isso vale superdimensionar a carga inicial.</p>
+    </div>
+  </section>
+
+</div>
+<!-- sidebar global -->
+<link rel="stylesheet" href="../assets/site.css">
+<script>var BRE_BASE = "..";</script>
+<script src="../assets/nav.js"></script>
+</body>
+</html>
